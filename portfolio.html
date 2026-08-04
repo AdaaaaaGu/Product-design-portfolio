@@ -94,6 +94,11 @@
       display:block; margin-top:6px; font-size:10px; color:#ACAFB8;
       letter-spacing:0; word-break:break-all;
     }
+    .img-missing em{
+      display:inline-block; margin-top:8px; padding:3px 8px; font-style:normal;
+      background:#E6E8EE; color:#5C5F68; font-size:10px; font-weight:600;
+      letter-spacing:.08em; text-transform:uppercase;
+    }
   </style>
 
   <style>
@@ -1715,23 +1720,47 @@
 
   // Artwork that hasn't been supplied yet renders as a labelled placeholder
   // that keeps the intended aspect ratio, so layout still reads correctly.
+  // What ratio is this slot actually specified at? Read the authored style
+  // rather than computed values, which are unreliable for a broken image.
+  function ratioOf(img) {
+    var style = img.getAttribute('style') || '';
+    var ar = style.match(/aspect-ratio:\s*([0-9.]+)\s*\/\s*([0-9.]+)/);
+    if (ar) return { label: ar[1] + ' : ' + ar[2], css: ar[1] + '/' + ar[2] };
+
+    var w = style.match(/(?:^|;)\s*width:\s*([0-9.]+)px/);
+    var h = style.match(/(?:^|;)\s*height:\s*([0-9.]+)px/);
+    if (w && h) {
+      var a = parseFloat(w[1]), b = parseFloat(h[1]);
+      var g = (function gcd(x, y) { return y ? gcd(y, x % y) : x; })(a, b);
+      return { label: (a / g) + ' : ' + (b / g), css: a + '/' + b };
+    }
+    // height:auto — the artwork's own proportions decide.
+    return { label: 'any ratio · height follows image', css: '16/10' };
+  }
+
   function placeholder(img) {
     if (img.dataset.placeheld) return;
     img.dataset.placeheld = '1';
+    var ratio = ratioOf(img);
     var box = document.createElement('div');
     box.className = 'img-missing';
     box.style.cssText = img.getAttribute('style') || '';
-    box.style.aspectRatio = getComputedStyle(img).aspectRatio !== 'auto'
-      ? getComputedStyle(img).aspectRatio : '16/10';
+    box.style.aspectRatio = ratio.css;
     box.style.transform = '';
-    var rect = img.getBoundingClientRect();
-    if (rect.width && rect.width < 140) {
+    // Screens other than the active one are display:none, so their images
+    // measure zero. Trust the authored width first, layout only as a fallback.
+    var declared = (img.getAttribute('style') || '')
+      .match(/(?:^|;)\s*width:\s*([0-9.]+)px/);
+    var width = declared ? parseFloat(declared[1])
+                         : img.getBoundingClientRect().width;
+    if (width && width < 140) {
       box.setAttribute('data-tiny', '');
-      box.title = img.getAttribute('src');
+      box.title = img.getAttribute('src') + ' (' + ratio.label + ')';
     } else {
       var label = img.getAttribute('alt') || 'Image';
       box.innerHTML = '<span>' + label +
-        '<code>' + img.getAttribute('src') + '</code></span>';
+        '<code>' + img.getAttribute('src') + '</code>' +
+        '<em>' + ratio.label + '</em></span>';
     }
     img.replaceWith(box);
   }
