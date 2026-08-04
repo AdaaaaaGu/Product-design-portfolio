@@ -91,6 +91,13 @@
       letter-spacing:0; word-break:break-all;
     }
   </style>
+
+  <style>
+    @keyframes pp-flow{to{stroke-dashoffset:-64}}
+    @media (prefers-reduced-motion:reduce){
+      #pp-root [style*="pp-flow"]{animation:none !important}
+    }
+  </style>
 </head>
 <body>
 
@@ -1257,7 +1264,103 @@
         </div>
 
         <figure style="margin:4em 0;">
-          <dc-import name="Pipeline Motion" hint-size="100%,660px"></dc-import>
+          <div id="pp-root" style="width:100%; margin:0; font-family:'Instrument Sans',sans-serif;">
+  <div style="background:#F3F4F8; border:1px solid #DFE1E8;">
+    <svg id="pp-svg" viewBox="540 370 520 260" style="width:100%; aspect-ratio:2 / 1; display:block;">
+      <defs>
+        <radialGradient id="pp-bloom">
+          <stop offset="0%" stop-color="#DD0F26" stop-opacity=".85"></stop>
+          <stop offset="45%" stop-color="#DD0F26" stop-opacity=".28"></stop>
+          <stop offset="100%" stop-color="#DD0F26" stop-opacity="0"></stop>
+        </radialGradient>
+      </defs>
+
+      <g id="pp-sec1" style="opacity:0">
+        <polygon points="68,448 68,290 44,290 44,150 84,150 84,-200 196,-200 196,150 236,150 236,290 212,290 212,448" fill="#E3E5EC"></polygon>
+        <g fill="none" stroke="#0F1014" stroke-width="5" vector-effect="non-scaling-stroke" stroke-linecap="square">
+          <polyline points="68,448 68,290 44,290 44,150 84,150 84,-200"></polyline>
+          <polyline points="212,448 212,290 236,290 236,150 196,150 196,-200"></polyline>
+        </g>
+        <path d="M140 -200 V448" fill="none" stroke="#8A8D96" stroke-width="1.6" vector-effect="non-scaling-stroke" stroke-dasharray="16 12" style="animation:pp-flow 1.6s linear infinite"></path>
+      </g>
+
+      <g id="pp-sec2" style="opacity:0">
+        <polygon points="1328,566 1328,700 1304,700 1304,850 1344,850 1344,1200 1456,1200 1456,850 1496,850 1496,700 1472,700 1472,566" fill="#E3E5EC"></polygon>
+        <g fill="none" stroke="#0F1014" stroke-width="5" vector-effect="non-scaling-stroke" stroke-linecap="square">
+          <polyline points="1328,566 1328,700 1304,700 1304,850 1344,850 1344,1200"></polyline>
+          <polyline points="1472,566 1472,700 1496,700 1496,850 1456,850 1456,1200"></polyline>
+        </g>
+        <path d="M1400 1200 V566" fill="none" stroke="#8A8D96" stroke-width="1.6" vector-effect="non-scaling-stroke" stroke-dasharray="16 12" style="animation:pp-flow 1.6s linear infinite reverse"></path>
+      </g>
+
+      <polygon id="pp-fill" points="-520,432 -180,432 -180,448 330,448 330,402 780,402 780,430 1050,430 1050,466 1240,466 1240,396 1560,396 1560,456 1780,456 1780,438 2120,438 2120,552 1780,552 1780,594 1560,594 1560,566 1240,566 1240,548 1050,548 1050,604 780,604 780,574 330,574 330,556 -180,556 -180,566 -520,566" fill="#E3E5EC"></polygon>
+      <path d="M-520 500 H2120" fill="none" stroke="#8A8D96" stroke-width="1.6" vector-effect="non-scaling-stroke" stroke-dasharray="16 12" style="animation:pp-flow 1.6s linear infinite"></path>
+      <g fill="none" stroke="#0F1014" stroke-width="5" vector-effect="non-scaling-stroke" stroke-linecap="square">
+        <polyline id="pp-top0" points="-520,432 -180,432 -180,448 68,448"></polyline>
+        <polyline id="pp-top1" points="212,448 330,448 330,402 780,402 780,430 1050,430 1050,466 1240,466 1240,396 1560,396 1560,456 1780,456 1780,438 2120,438"></polyline>
+        <polyline id="pp-bot0" points="-520,566 -180,566 -180,556 330,556 330,574 780,574 780,604 1050,604 1050,548 1240,548 1240,566 1328,566"></polyline>
+        <polyline id="pp-bot1" points="1472,566 1560,566 1560,594 1780,594 1780,552 2120,552"></polyline>
+      </g>
+
+      <g id="pp-labels" style="opacity:0">
+        <circle cx="140" cy="448" r="96" fill="url(#pp-bloom)"></circle>
+        <circle cx="1400" cy="566" r="96" fill="url(#pp-bloom)"></circle>
+        <text x="-360" y="414" font-family="Instrument Sans" font-size="38" font-weight="600" letter-spacing="2" fill="#0F1014">PRIMARY PIPE</text>
+        <g font-family="Instrument Sans" font-size="36" font-weight="500" letter-spacing="1.8" fill="#6E7076">
+          <text x="284" y="58">SECONDARY PIPE</text>
+          <text x="1532" y="962">SECONDARY PIPE</text>
+        </g>
+        <g font-family="Instrument Sans" font-size="38" font-weight="600" letter-spacing="1.6" fill="#DD0F26">
+          <text x="284" y="352">T JUNCTION 01</text>
+          <text x="1280" y="678" text-anchor="end">T JUNCTION 02</text>
+        </g>
+      </g>
+
+      <g id="pp-marks" style="opacity:0">
+        <g fill="#DD0F26">
+          <rect x="-193" y="487" width="26" height="26" transform="rotate(45 -180 500)"></rect>
+          <rect x="317" y="487" width="26" height="26" transform="rotate(45 330 500)"></rect>
+          <rect x="767" y="487" width="26" height="26" transform="rotate(45 780 500)"></rect>
+          <rect x="1037" y="487" width="26" height="26" transform="rotate(45 1050 500)"></rect>
+          <rect x="1227" y="487" width="26" height="26" transform="rotate(45 1240 500)"></rect>
+          <rect x="1547" y="487" width="26" height="26" transform="rotate(45 1560 500)"></rect>
+          <rect x="1767" y="487" width="26" height="26" transform="rotate(45 1780 500)"></rect>
+          <rect x="127" y="277" width="26" height="26" transform="rotate(45 140 290)"></rect>
+          <rect x="127" y="137" width="26" height="26" transform="rotate(45 140 150)"></rect>
+          <rect x="1387" y="687" width="26" height="26" transform="rotate(45 1400 700)"></rect>
+          <rect x="1387" y="837" width="26" height="26" transform="rotate(45 1400 850)"></rect>
+          <circle cx="140" cy="448" r="17"></circle>
+          <circle cx="1400" cy="566" r="17"></circle>
+        </g>
+        <g fill="none" stroke="#DD0F26" stroke-width="3" vector-effect="non-scaling-stroke">
+          <circle cx="140" cy="448" r="46"></circle>
+          <circle cx="1400" cy="566" r="46"></circle>
+        </g>
+        <text x="1380" y="300" text-anchor="end" font-family="Instrument Sans" font-size="146" font-weight="600" fill="#DD0F26">13</text>
+        <text x="1950" y="242" text-anchor="end" font-family="Instrument Sans" font-size="35" font-weight="600" fill="#0F1014">places where the full</text>
+        <text x="1950" y="288" text-anchor="end" font-family="Instrument Sans" font-size="35" font-weight="600" fill="#0F1014">parameter set is re-entered</text>
+        <text x="1950" y="336" text-anchor="end" font-family="Instrument Sans" font-size="34" fill="#6E7076">11 diameter changes · 2 junctions</text>
+      </g>
+    </svg>
+
+    <div style="display:flex; gap:0; border-top:1px solid #E6E8EE;">
+      <button id="pp-btn0" type="button" style="flex:1; appearance:none; background:none; border:0; border-top:2px solid #DD0F26; border-right:1px solid #E6E8EE; padding:16px 20px; text-align:left; cursor:pointer; font-family:inherit; font-size:12.5px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:#0F1014;">01 · A tube</button>
+      <button id="pp-btn1" type="button" style="flex:1; appearance:none; background:none; border:0; border-top:2px solid transparent; border-right:1px solid #E6E8EE; padding:16px 20px; text-align:left; cursor:pointer; font-family:inherit; font-size:12.5px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:#8A8D96;">02 · Diameter changes</button>
+      <button id="pp-btn2" type="button" style="flex:1; appearance:none; background:none; border:0; border-top:2px solid transparent; border-right:1px solid #E6E8EE; padding:16px 20px; text-align:left; cursor:pointer; font-family:inherit; font-size:12.5px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:#8A8D96;">03 · A network</button>
+      <button id="pp-btn3" type="button" style="flex:1; appearance:none; background:none; border:0; border-top:2px solid transparent; padding:16px 20px; text-align:left; cursor:pointer; font-family:inherit; font-size:12.5px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:#8A8D96;">04 · The burden</button>
+    </div>
+  </div>
+
+  <div style="position:relative; margin-top:22px; min-height:82px; max-width:640px;">
+    <p id="pp-cap0" style="position:absolute; inset:0; margin:0; font-size:16.5px; line-height:1.6; color:#2B2D34; transition:opacity .3s ease; opacity:1;">People picture a pipeline as a tube. One diameter, one length, one set of numbers to enter.</p>
+    <p id="pp-cap1" style="position:absolute; inset:0; margin:0; font-size:16.5px; line-height:1.6; color:#2B2D34; transition:opacity .3s ease; opacity:0;">Real lines change diameter along their length. Every change is another full set of parameters, entered by hand.</p>
+    <p id="pp-cap2" style="position:absolute; inset:0; margin:0; font-size:16.5px; line-height:1.6; color:#2B2D34; transition:opacity .3s ease; opacity:0;">And no line runs alone. Each junction starts another line — its own diameters, its own distance profile, nested one level down. This is what the input form had to hold.</p>
+    <p id="pp-cap3" style="position:absolute; inset:0; margin:0; font-size:16.5px; line-height:1.6; color:#2B2D34; transition:opacity .3s ease; opacity:0;">Count the places the engineer has to re-enter everything: eleven diameter changes, two junctions. That count — not the table — was the real problem to design against.</p>
+  </div>
+
+  <button id="pp-replay" type="button" style="margin-top:8px; appearance:none; background:none; border:0; padding:0; cursor:pointer; font-family:inherit; font-size:12.5px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:#8A8D96;">↺ Replay</button>
+
+</div>
           <figcaption style="font-size:13px; color:#8A8D96; margin-top:12px; line-height:1.5;">What a real line looks like: the diameter changes along its length, and every junction starts another line.</figcaption>
         </figure>
 
@@ -1603,6 +1706,177 @@
   });
 
   spy();
+})();
+</script>
+
+<script>
+(function () {
+  'use strict';
+  var root = document.getElementById('pp-root');
+  if (!root) return;
+
+  var SPEED = 1000, DWELL = 1900, LOOP = true;
+  var AUTOPLAY = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var SEG = [[-520,-180],[-180,330],[330,780],[780,1050],
+             [1050,1240],[1240,1560],[1560,1780],[1780,2120]];
+  var TU = [440,440,440,440,440,440,440,440];
+  var BU = [560,560,560,560,560,560,560,560];
+  var TS = [432,448,402,430,466,396,456,438];
+  var BS = [566,556,574,604,548,566,594,552];
+  var JN = [{x:140,i:1,w:72,side:'top'},{x:1400,i:5,w:72,side:'bot'}];
+  var VB = [[540,370,520,260],[240,210,1160,580],
+            [-400,-100,2400,1200],[-400,-100,2400,1200]];
+
+  var q = function (s) { return root.querySelector(s); };
+  var svg = q('#pp-svg'), fill = q('#pp-fill');
+  var tops = [q('#pp-top0'), q('#pp-top1')];
+  var bots = [q('#pp-bot0'), q('#pp-bot1')];
+  var secs = [q('#pp-sec1'), q('#pp-sec2')];
+  var labels = q('#pp-labels'), marks = q('#pp-marks');
+  var caps = [q('#pp-cap0'), q('#pp-cap1'), q('#pp-cap2'), q('#pp-cap3')];
+  var btns = [q('#pp-btn0'), q('#pp-btn1'), q('#pp-btn2'), q('#pp-btn3')];
+
+  var p = 0, active = 0, raf = null, timers = [], started = false;
+
+  function clearTimers() { timers.forEach(clearTimeout); timers = []; }
+  function ease(t) {
+    return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
+  }
+
+  function seq(vals) {
+    var pts = [];
+    SEG.forEach(function (s, i) {
+      pts.push([s[0], vals[i]]);
+      pts.push([s[1], vals[i]]);
+    });
+    return pts;
+  }
+
+  // Opens a gap in the run where a junction branches off.
+  function split(pts, vals, side, openFrac) {
+    var cuts = JN.map(function (j, idx) {
+      return { x:j.x, side:j.side, w:j.w * (openFrac[idx] || 0), y:vals[j.i] };
+    }).filter(function (c) { return c.side === side && c.w > 0.5; });
+
+    var lines = [], cur = [pts[0]];
+    for (var k = 1; k < pts.length; k++) {
+      var a = pts[k-1], b = pts[k];
+      var cut = cuts.find(function (c) {
+        return a[1] === b[1] &&
+               c.x > Math.min(a[0], b[0]) && c.x < Math.max(a[0], b[0]);
+      });
+      if (cut) {
+        cur.push([cut.x - cut.w, cut.y]);
+        lines.push(cur);
+        cur = [[cut.x + cut.w, cut.y]];
+      }
+      cur.push(b);
+    }
+    lines.push(cur);
+    return lines.map(function (l) {
+      return l.map(function (pt) {
+        return pt[0].toFixed(1) + ',' + pt[1].toFixed(1);
+      }).join(' ');
+    });
+  }
+
+  function apply(pos) {
+    var i0 = Math.min(Math.max(0, Math.floor(pos)), VB.length - 2);
+    var a = VB[i0], b = VB[i0 + 1], f = pos - i0;
+    svg.setAttribute('viewBox', a.map(function (v, i) {
+      return (v + (b[i] - v) * f).toFixed(1);
+    }).join(' '));
+
+    var m = Math.min(1, Math.max(0, pos));
+    var T = TU.map(function (u, i) { return u + (TS[i] - u) * m; });
+    var B = BU.map(function (u, i) { return u + (BS[i] - u) * m; });
+    var top = seq(T), bot = seq(B);
+
+    fill.setAttribute('points',
+      top.concat(bot.slice().reverse()).map(function (pt) {
+        return pt[0].toFixed(1) + ',' + pt[1].toFixed(1);
+      }).join(' '));
+
+    var op = function (lo, hi) {
+      return Math.min(1, Math.max(0, (pos - lo) / (hi - lo)));
+    };
+    var o = [op(1.0, 1.5), op(1.2, 1.75)];
+    var set = function (els, lines) {
+      els.forEach(function (el, i) {
+        if (el) el.setAttribute('points', lines[i] || '');
+      });
+    };
+    set(tops, split(top, T, 'top', o));
+    set(bots, split(bot, B, 'bot', o));
+
+    secs.forEach(function (el, i) { if (el) el.style.opacity = o[i]; });
+    if (labels) labels.style.opacity = op(1.5, 2) - 0.42 * op(2.2, 2.85);
+    if (marks) marks.style.opacity = op(2.15, 2.9);
+
+    var step = pos < 0.55 ? 0 : (pos < 1.55 ? 1 : (pos < 2.55 ? 2 : 3));
+    if (step !== active) {
+      active = step;
+      caps.forEach(function (el, i) {
+        if (el) el.style.opacity = i === step ? 1 : 0;
+      });
+      btns.forEach(function (el, i) {
+        if (!el) return;
+        el.style.borderTopColor = i === step ? '#DD0F26' : 'transparent';
+        el.style.color = i === step ? '#0F1014' : '#8A8D96';
+      });
+    }
+  }
+
+  function animateTo(n) {
+    cancelAnimationFrame(raf);
+    var from = p, to = n;
+    if (Math.abs(to - from) < 0.001) { apply(to); return; }
+    var d = Math.max(420, SPEED * Math.abs(to - from));
+    var t0 = performance.now();
+    (function tick(now) {
+      var t = Math.min(1, ((now || performance.now()) - t0) / d);
+      p = from + (to - from) * ease(t);
+      apply(p);
+      if (t < 1) raf = requestAnimationFrame(tick);
+    })(t0);
+  }
+
+  function autoplay(lead) {
+    var leg = SPEED + DWELL;
+    var a = lead == null ? 600 : lead;
+    timers.push(setTimeout(function () { animateTo(1); }, a));
+    timers.push(setTimeout(function () { animateTo(2); }, a + leg));
+    timers.push(setTimeout(function () { animateTo(3); }, a + leg * 2 + 400));
+    if (!LOOP) return;
+    timers.push(setTimeout(function () {
+      p = 0; active = -1; apply(0); autoplay(DWELL);
+    }, a + leg * 2 + 400 + SPEED + DWELL + 1400));
+  }
+
+  btns.forEach(function (b, i) {
+    if (b) b.addEventListener('click', function () { clearTimers(); animateTo(i); });
+  });
+
+  var replay = q('#pp-replay');
+  if (replay) replay.addEventListener('click', function () {
+    clearTimers();
+    cancelAnimationFrame(raf);
+    p = 0; active = -1; apply(0);
+    autoplay();
+  });
+
+  apply(0);
+
+  // Hold until the diagram is actually on screen before playing.
+  if (AUTOPLAY && 'IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting && !started) { started = true; autoplay(); }
+      });
+    }, { threshold: 0.45 });
+    io.observe(root);
+  }
 })();
 </script>
 </body>

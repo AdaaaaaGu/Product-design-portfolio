@@ -236,8 +236,210 @@ RUNTIME = """
 </script>
 """
 
-html = html.replace("</head>", EXTRA_CSS + "</head>")
-html = html.replace("</body>", RUNTIME + "</body>")
+# ------------------------------------------------- embedded motion component
+# The Halliburton case study carries a <dc-import name="Pipeline Motion"> slot.
+# That tag only resolves inside Claude Design, so the markup and logic from
+# Pipeline Motion.dc.html get inlined here instead.
+
+MOTION_CSS = """
+  <style>
+    @keyframes pp-flow{to{stroke-dashoffset:-64}}
+    @media (prefers-reduced-motion:reduce){
+      #pp-root [style*="pp-flow"]{animation:none !important}
+    }
+  </style>
+"""
+
+MOTION_JS = """
+<script>
+(function () {
+  'use strict';
+  var root = document.getElementById('pp-root');
+  if (!root) return;
+
+  var SPEED = 1000, DWELL = 1900, LOOP = true;
+  var AUTOPLAY = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var SEG = [[-520,-180],[-180,330],[330,780],[780,1050],
+             [1050,1240],[1240,1560],[1560,1780],[1780,2120]];
+  var TU = [440,440,440,440,440,440,440,440];
+  var BU = [560,560,560,560,560,560,560,560];
+  var TS = [432,448,402,430,466,396,456,438];
+  var BS = [566,556,574,604,548,566,594,552];
+  var JN = [{x:140,i:1,w:72,side:'top'},{x:1400,i:5,w:72,side:'bot'}];
+  var VB = [[540,370,520,260],[240,210,1160,580],
+            [-400,-100,2400,1200],[-400,-100,2400,1200]];
+
+  var q = function (s) { return root.querySelector(s); };
+  var svg = q('#pp-svg'), fill = q('#pp-fill');
+  var tops = [q('#pp-top0'), q('#pp-top1')];
+  var bots = [q('#pp-bot0'), q('#pp-bot1')];
+  var secs = [q('#pp-sec1'), q('#pp-sec2')];
+  var labels = q('#pp-labels'), marks = q('#pp-marks');
+  var caps = [q('#pp-cap0'), q('#pp-cap1'), q('#pp-cap2'), q('#pp-cap3')];
+  var btns = [q('#pp-btn0'), q('#pp-btn1'), q('#pp-btn2'), q('#pp-btn3')];
+
+  var p = 0, active = 0, raf = null, timers = [], started = false;
+
+  function clearTimers() { timers.forEach(clearTimeout); timers = []; }
+  function ease(t) {
+    return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
+  }
+
+  function seq(vals) {
+    var pts = [];
+    SEG.forEach(function (s, i) {
+      pts.push([s[0], vals[i]]);
+      pts.push([s[1], vals[i]]);
+    });
+    return pts;
+  }
+
+  // Opens a gap in the run where a junction branches off.
+  function split(pts, vals, side, openFrac) {
+    var cuts = JN.map(function (j, idx) {
+      return { x:j.x, side:j.side, w:j.w * (openFrac[idx] || 0), y:vals[j.i] };
+    }).filter(function (c) { return c.side === side && c.w > 0.5; });
+
+    var lines = [], cur = [pts[0]];
+    for (var k = 1; k < pts.length; k++) {
+      var a = pts[k-1], b = pts[k];
+      var cut = cuts.find(function (c) {
+        return a[1] === b[1] &&
+               c.x > Math.min(a[0], b[0]) && c.x < Math.max(a[0], b[0]);
+      });
+      if (cut) {
+        cur.push([cut.x - cut.w, cut.y]);
+        lines.push(cur);
+        cur = [[cut.x + cut.w, cut.y]];
+      }
+      cur.push(b);
+    }
+    lines.push(cur);
+    return lines.map(function (l) {
+      return l.map(function (pt) {
+        return pt[0].toFixed(1) + ',' + pt[1].toFixed(1);
+      }).join(' ');
+    });
+  }
+
+  function apply(pos) {
+    var i0 = Math.min(Math.max(0, Math.floor(pos)), VB.length - 2);
+    var a = VB[i0], b = VB[i0 + 1], f = pos - i0;
+    svg.setAttribute('viewBox', a.map(function (v, i) {
+      return (v + (b[i] - v) * f).toFixed(1);
+    }).join(' '));
+
+    var m = Math.min(1, Math.max(0, pos));
+    var T = TU.map(function (u, i) { return u + (TS[i] - u) * m; });
+    var B = BU.map(function (u, i) { return u + (BS[i] - u) * m; });
+    var top = seq(T), bot = seq(B);
+
+    fill.setAttribute('points',
+      top.concat(bot.slice().reverse()).map(function (pt) {
+        return pt[0].toFixed(1) + ',' + pt[1].toFixed(1);
+      }).join(' '));
+
+    var op = function (lo, hi) {
+      return Math.min(1, Math.max(0, (pos - lo) / (hi - lo)));
+    };
+    var o = [op(1.0, 1.5), op(1.2, 1.75)];
+    var set = function (els, lines) {
+      els.forEach(function (el, i) {
+        if (el) el.setAttribute('points', lines[i] || '');
+      });
+    };
+    set(tops, split(top, T, 'top', o));
+    set(bots, split(bot, B, 'bot', o));
+
+    secs.forEach(function (el, i) { if (el) el.style.opacity = o[i]; });
+    if (labels) labels.style.opacity = op(1.5, 2) - 0.42 * op(2.2, 2.85);
+    if (marks) marks.style.opacity = op(2.15, 2.9);
+
+    var step = pos < 0.55 ? 0 : (pos < 1.55 ? 1 : (pos < 2.55 ? 2 : 3));
+    if (step !== active) {
+      active = step;
+      caps.forEach(function (el, i) {
+        if (el) el.style.opacity = i === step ? 1 : 0;
+      });
+      btns.forEach(function (el, i) {
+        if (!el) return;
+        el.style.borderTopColor = i === step ? '#DD0F26' : 'transparent';
+        el.style.color = i === step ? '#0F1014' : '#8A8D96';
+      });
+    }
+  }
+
+  function animateTo(n) {
+    cancelAnimationFrame(raf);
+    var from = p, to = n;
+    if (Math.abs(to - from) < 0.001) { apply(to); return; }
+    var d = Math.max(420, SPEED * Math.abs(to - from));
+    var t0 = performance.now();
+    (function tick(now) {
+      var t = Math.min(1, ((now || performance.now()) - t0) / d);
+      p = from + (to - from) * ease(t);
+      apply(p);
+      if (t < 1) raf = requestAnimationFrame(tick);
+    })(t0);
+  }
+
+  function autoplay(lead) {
+    var leg = SPEED + DWELL;
+    var a = lead == null ? 600 : lead;
+    timers.push(setTimeout(function () { animateTo(1); }, a));
+    timers.push(setTimeout(function () { animateTo(2); }, a + leg));
+    timers.push(setTimeout(function () { animateTo(3); }, a + leg * 2 + 400));
+    if (!LOOP) return;
+    timers.push(setTimeout(function () {
+      p = 0; active = -1; apply(0); autoplay(DWELL);
+    }, a + leg * 2 + 400 + SPEED + DWELL + 1400));
+  }
+
+  btns.forEach(function (b, i) {
+    if (b) b.addEventListener('click', function () { clearTimers(); animateTo(i); });
+  });
+
+  var replay = q('#pp-replay');
+  if (replay) replay.addEventListener('click', function () {
+    clearTimers();
+    cancelAnimationFrame(raf);
+    p = 0; active = -1; apply(0);
+    autoplay();
+  });
+
+  apply(0);
+
+  // Hold until the diagram is actually on screen before playing.
+  if (AUTOPLAY && 'IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting && !started) { started = true; autoplay(); }
+      });
+    }, { threshold: 0.45 });
+    io.observe(root);
+  }
+})();
+</script>
+"""
+
+
+def motion_markup():
+    """Pull the Pipeline Motion markup out of its own .dc.html component."""
+    src = SRC.with_name("Pipeline Motion.dc.html")
+    text = src.read_text(encoding="utf-8")
+    body = re.search(r"</helmet>(.*?)</x-dc>", text, flags=re.S).group(1)
+    return body.replace('ref="{{ rootRef }}"', 'id="pp-root"').strip()
+
+
+html = re.sub(
+    r'<dc-import name="Pipeline Motion"[^>]*></dc-import>',
+    lambda _: motion_markup(),
+    html,
+)
+
+html = html.replace("</head>", EXTRA_CSS + MOTION_CSS + "</head>")
+html = html.replace("</body>", RUNTIME + MOTION_JS + "</body>")
 
 # Tag the preview bar so its buttons can be restyled independently of card links.
 html = html.replace(f'<div style="{BAR}">', f'<div class="preview-bar" style="{BAR}">')
