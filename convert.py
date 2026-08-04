@@ -45,8 +45,10 @@ CARD_IMG = css({
     "transition": "transform 620ms cubic-bezier(.2,.7,.2,1)",
 })
 
+# `display` is deliberately omitted — the .preview-bar CSS rules own it, and an
+# inline display would outrank them.
 BAR = css({
-    "position": "sticky", "top": 0, "zIndex": 50, "display": "flex", "gap": "2px",
+    "position": "sticky", "top": 0, "zIndex": 50, "gap": "2px",
     "alignItems": "center", "background": "#0F1014", "padding": "8px 24px",
     "flexWrap": "wrap",
 })
@@ -125,6 +127,10 @@ EXTRA_CSS = """
     /* Screen routing — only the active screen is shown. */
     [data-screen]{display:none}
     [data-screen].is-on{display:block}
+    /* Design-time screen switcher. Hidden from visitors; append ?preview to
+       the URL to bring it back while working on the pages. */
+    .preview-bar{display:none}
+    .preview-bar.is-shown{display:flex}
     /* Project card image lift (was a JS hover state in the design component). */
     [data-card] img{transform:scale(1)}
     [data-card]:hover img{transform:scale(1.035)}
@@ -156,6 +162,14 @@ RUNTIME = """
 
   var screens = document.querySelectorAll('[data-screen]');
   var navButtons = document.querySelectorAll('[data-nav]');
+
+  // The screen switcher is a design-time tool, not part of the site.
+  // Both forms are accepted: ?preview works when the page is served over
+  // http, #preview survives when it is opened straight off disk.
+  var bar = document.querySelector('.preview-bar');
+  if (bar && /preview/.test(location.search + location.hash)) {
+    bar.classList.add('is-shown');
+  }
 
   function paintNav(active) {
     document.querySelectorAll('.preview-bar [data-nav]').forEach(function (el) {
