@@ -121,6 +121,30 @@ html = re.sub(r'style="' + b("kwItem") + r'"', f'style="{KW_ITEM}"', html)
 html = re.sub(r'style="' + b("barStyle") + r'"', f'style="{BAR}"', html)
 html = re.sub(r'\s*onSubmit="' + b("onSubmit") + r'"', " data-nosubmit", html)
 
+# ------------------------------------------------------- homepage nav anchors
+# "Work" and "Lab" shipped as href="#" placeholders. Point them at the project
+# grid and the lab section, following the scroll-margin-top pattern the
+# existing #contact anchor already uses.
+html, n_work = re.subn(
+    r'<main data-r="cards" style="',
+    '<main id="work" data-r="cards" style="scroll-margin-top:24px; ',
+    html,
+)
+html, n_lab = re.subn(
+    r'<section>(\s*<div style="[^"]*">Lab</div>)',
+    r'<section id="lab" style="scroll-margin-top:24px;">\1',
+    html,
+)
+html, n_wlink = re.subn(
+    r'<a href="#">Work</a>', '<a href="#work" data-jump="work">Work</a>', html)
+html, n_llink = re.subn(
+    r'<a href="#">Lab</a>', '<a href="#lab" data-jump="lab">Lab</a>', html)
+
+assert n_work == 1, f"expected 1 project grid, patched {n_work}"
+assert n_lab == 1, f"expected 1 lab section, patched {n_lab}"
+print(f"anchors: #work x{n_work}, #lab x{n_lab}; "
+      f"links rewired: Work x{n_wlink}, Lab x{n_llink}")
+
 # ------------------------------------------------------------ injected assets
 EXTRA_CSS = """
   <style>
@@ -179,12 +203,12 @@ RUNTIME = """
     });
   }
 
-  function show(name) {
+  function show(name, keepScroll) {
     screens.forEach(function (el) {
       el.classList.toggle('is-on', el.getAttribute('data-screen') === name);
     });
     paintNav(name);
-    window.scrollTo(0, 0);
+    if (!keepScroll) window.scrollTo(0, 0);
     spy();
   }
 
@@ -192,6 +216,30 @@ RUNTIME = """
     el.addEventListener('click', function (e) {
       e.preventDefault();
       show(el.getAttribute('data-nav'));
+    });
+  });
+
+  // "Work" and "Lab" live in the nav on every screen, so from a case study
+  // they have to return to the homepage before scrolling to the section.
+  document.querySelectorAll('[data-jump]').forEach(function (el) {
+    el.addEventListener('click', function (e) {
+      e.preventDefault();
+      var target = document.getElementById(el.getAttribute('data-jump'));
+      if (!target) return;
+      var home = document.querySelector('[data-screen="home"]');
+      var alreadyHome = home && home.classList.contains('is-on');
+      show('home', true);
+      // Gliding across a screen change would scroll through the whole page.
+      var jump = function () {
+        target.scrollIntoView({
+          behavior: alreadyHome ? 'smooth' : 'instant',
+          block: 'start'
+        });
+      };
+      // A screen that was display:none has no layout yet, so its offsets are
+      // stale until the browser reflows. Wait a frame before measuring.
+      if (alreadyHome) jump();
+      else requestAnimationFrame(jump);
     });
   });
 
