@@ -5,7 +5,7 @@
 .Trashes
 
 # Local tooling settings (machine-specific)
-.claude/settings.local.json
+.claude/
 
 # Editor
 .vscode/
