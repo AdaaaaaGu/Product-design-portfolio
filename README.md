@@ -259,10 +259,26 @@ Hairlines: 1px solid
 
 ## Files
 
-- **Portfolio Pages v3.dc.html**: The complete design component (single file)
-  - Template: HTML structure for all screens
-  - Logic: State management, handlers, helper methods
-  - No external dependencies except Google Fonts (Instrument Sans)
+- **portfolio.html** — **the source of truth. Edit this directly.**
+  All seven screens, standalone, no build step, no dependencies except Google
+  Fonts (Instrument Sans).
+
+- **Portfolio Pages v3.dc.html** — the original Claude Design export. Historical
+  only; it needs a `support.js` runtime that was never shipped, so it does not
+  run on its own.
+
+- **convert.py** — **retired 2026-08-09, do not run.** It converted the export
+  above into `portfolio.html`. Design authority has moved to Figma, so changes
+  now go straight into `portfolio.html`; re-running this would overwrite them.
+
+### Where the design lives now
+
+Figma is the source of truth for layout and visual design:
+https://www.figma.com/design/tgnob0hWLMhIgU3QzIp7R1/Ada-Gu-Portfolio-v3
+
+Animations are the exception — they are built as standalone HTML/CSS/JS in
+`website-asset/`, and Figma only carries a `Motion Placeholder` marker
+recording frame size, trigger, state flow, and source file.
 
 ---
 

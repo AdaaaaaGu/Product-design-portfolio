@@ -107,6 +107,107 @@
       #pp-root [style*="pp-flow"]{animation:none !important}
     }
   </style>
+<style>
+/* Pipeline Mental Model */
+@keyframes pm-flow { to { stroke-dashoffset: -66; } }
+@keyframes pm-drawA {
+      0%, 6%   { stroke-dashoffset: 900; }
+      22%, 88% { stroke-dashoffset: 0; }
+      96%,100% { stroke-dashoffset: 900; }
+    }
+@keyframes pm-drawB {
+      0%, 12%  { stroke-dashoffset: 900; }
+      28%, 88% { stroke-dashoffset: 0; }
+      96%,100% { stroke-dashoffset: 900; }
+    }
+@keyframes pm-drawC {
+      0%, 18%  { stroke-dashoffset: 900; }
+      34%, 88% { stroke-dashoffset: 0; }
+      96%,100% { stroke-dashoffset: 900; }
+    }
+@keyframes pm-tipA { 0%,20% { opacity: 0; } 24%,88% { opacity: 1; } 94%,100% { opacity: 0; } }
+@keyframes pm-tipB { 0%,26% { opacity: 0; } 30%,88% { opacity: 1; } 94%,100% { opacity: 0; } }
+@keyframes pm-tipC { 0%,32% { opacity: 0; } 36%,88% { opacity: 1; } 94%,100% { opacity: 0; } }
+@keyframes pm-cardA {
+      0%,40%   { opacity: 0; transform: translateY(9px); }
+      48%,88%  { opacity: 1; transform: translateY(0); }
+      95%,100% { opacity: 0; transform: translateY(9px); }
+    }
+@keyframes pm-cardB {
+      0%,46%   { opacity: 0; transform: translateY(9px); }
+      54%,88%  { opacity: 1; transform: translateY(0); }
+      95%,100% { opacity: 0; transform: translateY(9px); }
+    }
+@keyframes pm-cardC {
+      0%,52%   { opacity: 0; transform: translateY(9px); }
+      60%,88%  { opacity: 1; transform: translateY(0); }
+      95%,100% { opacity: 0; transform: translateY(9px); }
+    }
+@media (prefers-reduced-motion: reduce){
+  [data-motion="pipeline-mental-model"] [style*="pm-"]{animation:none !important}
+}
+
+/* Component Reuse */
+.cr-stage { background: #F3F4F8; border: 1px solid #DFE1E8; }
+.cr-diagram { background: #FAFAFC; }
+.cr-diagram svg { width: 100%; height: auto; display: block; }
+/* --- state visibility -------------------------------------------------- */
+  .cr-layer { opacity: 0; transition: opacity .45s ease; }
+.cr[data-state="0"] .cr-layer--primary,
+  .cr[data-state="1"] .cr-layer--nearfield,
+  .cr[data-state="2"] .cr-layer--junction { opacity: 1; }
+/* --- growth: near-field divider + junction branches --------------------- */
+  .cr-grow { transform: scaleY(0); transition: transform .7s cubic-bezier(.2,.7,.2,1); }
+.cr[data-state="1"] .cr-layer--nearfield .cr-grow,
+  .cr[data-state="2"] .cr-layer--junction  .cr-grow { transform: scaleY(1); }
+.cr-grow--nf     { transform-origin: 270px 250px; }
+.cr-grow--jnorth { transform-origin: 270px 250px; }
+.cr-grow--jsouth { transform-origin: 610px 250px; }
+/* --- pipe primitives ---------------------------------------------------- */
+  .cr-fill    { fill: #E3E5EC; }
+.cr-outline { fill: none; stroke: #0F1014; stroke-width: 2.6; stroke-linecap: square; stroke-linejoin: miter; }
+.cr-center  { fill: none; stroke: #8A8D96; stroke-width: 1.2; stroke-dasharray: 16 12; }
+.cr-station { fill: #DD0F26; }
+.cr-guide   { stroke: #DFE1E8; stroke-width: 1; }
+.cr-outline, .cr-center, .cr-guide { vector-effect: non-scaling-stroke; }
+.cr-flow { animation: cr-flow 1.6s linear infinite; }
+@keyframes cr-flow { to { stroke-dashoffset: -64; } }
+.cr-node-ring { fill: none; stroke: #DD0F26; stroke-width: 2.6; vector-effect: non-scaling-stroke; animation: cr-pulse 2.2s ease-in-out infinite; }
+.cr-node-ring--b { animation-delay: .5s; }
+@keyframes cr-pulse { 0%,100% { r: 12; opacity: 1; } 50% { r: 16; opacity: .35; } }
+/* --- svg type ----------------------------------------------------------- */
+  .cr-dim   { font-size: 13px; font-weight: 500; letter-spacing: 1px; fill: #8A8D96; }
+.cr-title { font-size: 17px; font-weight: 500; fill: #0F1014; }
+.cr-kicker{ font-size: 12.5px; font-weight: 600; letter-spacing: 1px; fill: #DD0F26; }
+.cr-tag   { font-size: 14px; font-weight: 600; fill: #DD0F26; }
+.cr-rule  { fill: none; stroke: #0F1014; stroke-width: 1.4; stroke-dasharray: 1 5; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+.cr-divider { stroke: #DD0F26; stroke-width: 2.2; stroke-dasharray: 9 8; vector-effect: non-scaling-stroke; }
+/* --- tabs --------------------------------------------------------------- */
+  .cr-tabs { display: flex; border-top: 1px solid #E6E8EE; }
+.cr-tabs button {
+    flex: 1; appearance: none; background: none; border: 0;
+    border-top: 2px solid transparent; border-right: 1px solid #E6E8EE;
+    padding: 16px 20px; text-align: left; cursor: pointer;
+    font-family: inherit; font-size: 12.5px; font-weight: 600;
+    letter-spacing: .06em; text-transform: uppercase; color: #8A8D96;
+    transition: border-color .45s ease, color .45s ease;
+  }
+.cr-tabs .cr-reuse { color: #DD0F26; margin-left: 8px; }
+.cr-tabs button:last-child { border-right-color: transparent; }
+.cr[data-state="0"] .cr-tabs button:nth-child(1),
+  .cr[data-state="1"] .cr-tabs button:nth-child(2),
+  .cr[data-state="2"] .cr-tabs button:nth-child(3) { border-top-color: #DD0F26; color: #0F1014; }
+/* --- ui panel ----------------------------------------------------------- */
+  .cr-ui { position: relative; width: 100%; aspect-ratio: 2784 / 960; border-top: 1px solid #E6E8EE; overflow: hidden; }
+.cr-ui img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; opacity: 0; transition: opacity .45s ease; }
+.cr[data-state="0"] .cr-ui img:nth-child(1),
+  .cr[data-state="1"] .cr-ui img:nth-child(2),
+  .cr[data-state="2"] .cr-ui img:nth-child(3) { opacity: 1; }
+@media (prefers-reduced-motion: reduce) {
+    .cr-flow, .cr-node-ring { animation: none; }
+    .cr-grow, .cr-layer, .cr-ui img { transition: none; }
+  }
+</style>
 </head>
 <body>
 
@@ -148,8 +249,8 @@
       
 
       <main id="work" data-r="cards" style="scroll-margin-top:24px; display:grid; grid-template-columns:1fr 1fr; gap:32px 24px; padding-bottom:24px;">
-        <a href="#" data-nav="cognite" style="display:block; color:#0F1014;" data-card>
-          <div style="position:relative; overflow:hidden; background:#F3F4F8; margin-bottom:14px;"><img src="images/cognite-atlas/card.png" alt="Atlas AI agent canvas in a plant workstation" style="display:block; width:100%; aspect-ratio:16/10; object-fit:cover; object-position:center; transition:transform 620ms cubic-bezier(.2,.7,.2,1)"></div>
+        <a href="#" data-nav="cognite" style="display:block; color:#0F1014; grid-column:1 / -1;" data-card>
+          <div style="position:relative; overflow:hidden; background:#F3F4F8; margin-bottom:14px;"><img src="images/cognite-atlas/card.png" alt="Atlas AI agent canvas in a plant workstation" style="display:block; width:100%; aspect-ratio:1152/350; object-fit:cover; object-position:center; transition:transform 620ms cubic-bezier(.2,.7,.2,1)"></div>
           <h2 style="font-weight:600; font-size:23px; line-height:1.2; letter-spacing:-.015em; display:inline; color:inherit;">Cognite · Atlas AI</h2>
           <span style="font-size:13px; color:#8A8D96; margin-left:10px; white-space:nowrap;">2025</span>
           <p style="font-size:14.5px; color:#54575F; margin-top:7px; max-width:40em;">A year on Atlas AI, Cognite's agent platform for industrial data. How much of an AI system's state should the user see, manage, and take back?</p>
@@ -159,7 +260,7 @@
         <a href="#" data-nav="case" style="display:block; color:#0F1014;" data-card>
           <div style="overflow:hidden; background:#F3F4F8; margin-bottom:14px;"><img src="images/halliburton/card.png" alt="Field technician using InnerVue on a laptop at a wellhead" style="display:block; width:100%; aspect-ratio:16/10; object-fit:cover; object-position:center; transition:transform 620ms cubic-bezier(.2,.7,.2,1)"></div>
           <h2 style="font-weight:600; font-size:23px; line-height:1.2; letter-spacing:-.015em; display:inline; color:inherit;">Halliburton InnerVue</h2>
-          <span style="font-size:13px; color:#8A8D96; margin-left:10px; white-space:nowrap;">2024</span>
+          <span style="font-size:13px; color:#8A8D96; margin-left:10px; white-space:nowrap;">2022 – 2024</span>
           <p style="font-size:14.5px; color:#54575F; margin-top:7px; max-width:40em;">Redesigning pipeline data entry around how pipelines actually work.</p>
           <div style="display:flex; flex-wrap:wrap; gap:6px; margin-top:11px"><span style="background:#F3F4F8; padding:4px 9px; font-size:10.5px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:#5C5F68; white-space:nowrap">ENTERPRISE B2B</span><span style="background:#F3F4F8; padding:4px 9px; font-size:10.5px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:#5C5F68; white-space:nowrap">DATA-INTENSIVE</span><span style="background:#F3F4F8; padding:4px 9px; font-size:10.5px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:#5C5F68; white-space:nowrap">DATA VISUALIZATION</span></div>
         </a>
@@ -173,7 +274,7 @@
         </a>
 
         <a href="#" data-nav="pg" style="display:block; color:#0F1014;" data-card>
-          <div style="overflow:hidden; background:#F3F4F8; margin-bottom:14px;"><img src="images/pg-artwork/card.png" alt="P&amp;G product packaging arranged on a white field" style="display:block; width:100%; aspect-ratio:16/10; object-fit:cover; object-position:center; mix-blend-mode:multiply; transition:transform 620ms cubic-bezier(.2,.7,.2,1)"></div>
+          <div style="overflow:hidden; background:#F3F4F8; margin-bottom:14px;"><img src="images/pg-artwork/card.png" alt="P&amp;G product packaging arranged on a white field" style="display:block; width:100%; aspect-ratio:16/10; object-fit:cover; object-position:center; transition:transform 620ms cubic-bezier(.2,.7,.2,1)"></div>
           <h2 style="font-weight:600; font-size:23px; line-height:1.2; letter-spacing:-.015em; display:inline; color:inherit;">P&amp;G AI Artwork</h2>
           <span style="font-size:13px; color:#8A8D96; margin-left:10px; white-space:nowrap;">2022</span>
           <p style="font-size:14.5px; color:#54575F; margin-top:7px; max-width:40em;">The interface around an AI comparison tool, shipped to 10,000+ employees.</p>
@@ -1228,7 +1329,6 @@
             <div style="font-size:10px; font-weight:600; letter-spacing:.1em; color:#ACAFB8; margin-bottom:5px;">02 &nbsp;Case</div>
             <a href="#hb3" data-toc="hb3" style="display:block; padding:5px 0 5px 14px; color:#8A8D96; border-left:1px solid #E6E8EE; line-height:1.4;">The insight underneath</a>
             <a href="#hb4" data-toc="hb4" style="display:block; padding:5px 0 5px 14px; color:#8A8D96; border-left:1px solid #E6E8EE; line-height:1.4;">Three ways to handle overflow</a>
-            <a href="#hb5" data-toc="hb5" style="display:block; padding:5px 0 5px 14px; color:#8A8D96; border-left:1px solid #E6E8EE; line-height:1.4;">Making it cheap enough</a>
           </div>
           <div>
             <div style="font-size:10px; font-weight:600; letter-spacing:.1em; color:#ACAFB8; margin-bottom:5px;">03 &nbsp;Outcome</div>
@@ -1276,53 +1376,14 @@
           <div id="pp-root" style="width:100%; margin:0; font-family:'Instrument Sans',sans-serif;">
   <div style="background:#F3F4F8; border:1px solid #DFE1E8;">
     <svg id="pp-svg" viewBox="540 370 520 260" style="width:100%; aspect-ratio:2 / 1; display:block;">
-      <defs>
-        <radialGradient id="pp-bloom">
-          <stop offset="0%" stop-color="#DD0F26" stop-opacity=".85"></stop>
-          <stop offset="45%" stop-color="#DD0F26" stop-opacity=".28"></stop>
-          <stop offset="100%" stop-color="#DD0F26" stop-opacity="0"></stop>
-        </radialGradient>
-      </defs>
-
-      <g id="pp-sec1" style="opacity:0">
-        <polygon points="68,448 68,290 44,290 44,150 84,150 84,-200 196,-200 196,150 236,150 236,290 212,290 212,448" fill="#E3E5EC"></polygon>
-        <g fill="none" stroke="#0F1014" stroke-width="5" vector-effect="non-scaling-stroke" stroke-linecap="square">
-          <polyline points="68,448 68,290 44,290 44,150 84,150 84,-200"></polyline>
-          <polyline points="212,448 212,290 236,290 236,150 196,150 196,-200"></polyline>
-        </g>
-        <path d="M140 -200 V448" fill="none" stroke="#8A8D96" stroke-width="1.6" vector-effect="non-scaling-stroke" stroke-dasharray="16 12" style="animation:pp-flow 1.6s linear infinite"></path>
-      </g>
-
-      <g id="pp-sec2" style="opacity:0">
-        <polygon points="1328,566 1328,700 1304,700 1304,850 1344,850 1344,1200 1456,1200 1456,850 1496,850 1496,700 1472,700 1472,566" fill="#E3E5EC"></polygon>
-        <g fill="none" stroke="#0F1014" stroke-width="5" vector-effect="non-scaling-stroke" stroke-linecap="square">
-          <polyline points="1328,566 1328,700 1304,700 1304,850 1344,850 1344,1200"></polyline>
-          <polyline points="1472,566 1472,700 1496,700 1496,850 1456,850 1456,1200"></polyline>
-        </g>
-        <path d="M1400 1200 V566" fill="none" stroke="#8A8D96" stroke-width="1.6" vector-effect="non-scaling-stroke" stroke-dasharray="16 12" style="animation:pp-flow 1.6s linear infinite reverse"></path>
-      </g>
 
       <polygon id="pp-fill" points="-520,432 -180,432 -180,448 330,448 330,402 780,402 780,430 1050,430 1050,466 1240,466 1240,396 1560,396 1560,456 1780,456 1780,438 2120,438 2120,552 1780,552 1780,594 1560,594 1560,566 1240,566 1240,548 1050,548 1050,604 780,604 780,574 330,574 330,556 -180,556 -180,566 -520,566" fill="#E3E5EC"></polygon>
       <path d="M-520 500 H2120" fill="none" stroke="#8A8D96" stroke-width="1.6" vector-effect="non-scaling-stroke" stroke-dasharray="16 12" style="animation:pp-flow 1.6s linear infinite"></path>
       <g fill="none" stroke="#0F1014" stroke-width="5" vector-effect="non-scaling-stroke" stroke-linecap="square">
-        <polyline id="pp-top0" points="-520,432 -180,432 -180,448 68,448"></polyline>
-        <polyline id="pp-top1" points="212,448 330,448 330,402 780,402 780,430 1050,430 1050,466 1240,466 1240,396 1560,396 1560,456 1780,456 1780,438 2120,438"></polyline>
-        <polyline id="pp-bot0" points="-520,566 -180,566 -180,556 330,556 330,574 780,574 780,604 1050,604 1050,548 1240,548 1240,566 1328,566"></polyline>
-        <polyline id="pp-bot1" points="1472,566 1560,566 1560,594 1780,594 1780,552 2120,552"></polyline>
-      </g>
-
-      <g id="pp-labels" style="opacity:0">
-        <circle cx="140" cy="448" r="96" fill="url(#pp-bloom)"></circle>
-        <circle cx="1400" cy="566" r="96" fill="url(#pp-bloom)"></circle>
-        <text x="-360" y="414" font-family="Instrument Sans" font-size="38" font-weight="600" letter-spacing="2" fill="#0F1014">PRIMARY PIPE</text>
-        <g font-family="Instrument Sans" font-size="36" font-weight="500" letter-spacing="1.8" fill="#6E7076">
-          <text x="284" y="58">SECONDARY PIPE</text>
-          <text x="1532" y="962">SECONDARY PIPE</text>
-        </g>
-        <g font-family="Instrument Sans" font-size="38" font-weight="600" letter-spacing="1.6" fill="#DD0F26">
-          <text x="284" y="352">T JUNCTION 01</text>
-          <text x="1280" y="678" text-anchor="end">T JUNCTION 02</text>
-        </g>
+        <polyline id="pp-top0" points="-520,432 -180,432 -180,448 330,448 330,402 780,402 780,430 1050,430 1050,466 1240,466 1240,396 1560,396 1560,456 1780,456 1780,438 2120,438"></polyline>
+        <polyline id="pp-top1" points=""></polyline>
+        <polyline id="pp-bot0" points="-520,566 -180,566 -180,556 330,556 330,574 780,574 780,604 1050,604 1050,548 1240,548 1240,566 1560,566 1560,594 1780,594 1780,552 2120,552"></polyline>
+        <polyline id="pp-bot1" points=""></polyline>
       </g>
 
       <g id="pp-marks" style="opacity:0">
@@ -1334,46 +1395,34 @@
           <rect x="1227" y="487" width="26" height="26" transform="rotate(45 1240 500)"></rect>
           <rect x="1547" y="487" width="26" height="26" transform="rotate(45 1560 500)"></rect>
           <rect x="1767" y="487" width="26" height="26" transform="rotate(45 1780 500)"></rect>
-          <rect x="127" y="277" width="26" height="26" transform="rotate(45 140 290)"></rect>
-          <rect x="127" y="137" width="26" height="26" transform="rotate(45 140 150)"></rect>
-          <rect x="1387" y="687" width="26" height="26" transform="rotate(45 1400 700)"></rect>
-          <rect x="1387" y="837" width="26" height="26" transform="rotate(45 1400 850)"></rect>
-          <circle cx="140" cy="448" r="17"></circle>
-          <circle cx="1400" cy="566" r="17"></circle>
         </g>
-        <g fill="none" stroke="#DD0F26" stroke-width="3" vector-effect="non-scaling-stroke">
-          <circle cx="140" cy="448" r="46"></circle>
-          <circle cx="1400" cy="566" r="46"></circle>
-        </g>
-        <text x="1380" y="300" text-anchor="end" font-family="Instrument Sans" font-size="146" font-weight="600" fill="#DD0F26">13</text>
+        <text x="1380" y="300" text-anchor="end" font-family="Instrument Sans" font-size="146" font-weight="600" fill="#DD0F26">7</text>
         <text x="1950" y="242" text-anchor="end" font-family="Instrument Sans" font-size="35" font-weight="600" fill="#0F1014">places where the full</text>
         <text x="1950" y="288" text-anchor="end" font-family="Instrument Sans" font-size="35" font-weight="600" fill="#0F1014">parameter set is re-entered</text>
-        <text x="1950" y="336" text-anchor="end" font-family="Instrument Sans" font-size="34" fill="#6E7076">11 diameter changes · 2 junctions</text>
+        <text x="1950" y="336" text-anchor="end" font-family="Instrument Sans" font-size="34" fill="#6E7076">one for every diameter change along the line</text>
       </g>
     </svg>
 
     <div style="display:flex; gap:0; border-top:1px solid #E6E8EE;">
       <button id="pp-btn0" type="button" style="flex:1; appearance:none; background:none; border:0; border-top:2px solid #DD0F26; border-right:1px solid #E6E8EE; padding:16px 20px; text-align:left; cursor:pointer; font-family:inherit; font-size:12.5px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:#0F1014;">01 · A tube</button>
       <button id="pp-btn1" type="button" style="flex:1; appearance:none; background:none; border:0; border-top:2px solid transparent; border-right:1px solid #E6E8EE; padding:16px 20px; text-align:left; cursor:pointer; font-family:inherit; font-size:12.5px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:#8A8D96;">02 · Diameter changes</button>
-      <button id="pp-btn2" type="button" style="flex:1; appearance:none; background:none; border:0; border-top:2px solid transparent; border-right:1px solid #E6E8EE; padding:16px 20px; text-align:left; cursor:pointer; font-family:inherit; font-size:12.5px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:#8A8D96;">03 · A network</button>
-      <button id="pp-btn3" type="button" style="flex:1; appearance:none; background:none; border:0; border-top:2px solid transparent; padding:16px 20px; text-align:left; cursor:pointer; font-family:inherit; font-size:12.5px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:#8A8D96;">04 · The burden</button>
+      <button id="pp-btn2" type="button" style="flex:1; appearance:none; background:none; border:0; border-top:2px solid transparent; padding:16px 20px; text-align:left; cursor:pointer; font-family:inherit; font-size:12.5px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:#8A8D96;">03 · The burden</button>
     </div>
   </div>
 
   <div style="position:relative; margin-top:22px; min-height:82px; max-width:640px;">
     <p id="pp-cap0" style="position:absolute; inset:0; margin:0; font-size:16.5px; line-height:1.6; color:#2B2D34; transition:opacity .3s ease; opacity:1;">People picture a pipeline as a tube. One diameter, one length, one set of numbers to enter.</p>
     <p id="pp-cap1" style="position:absolute; inset:0; margin:0; font-size:16.5px; line-height:1.6; color:#2B2D34; transition:opacity .3s ease; opacity:0;">Real lines change diameter along their length. Every change is another full set of parameters, entered by hand.</p>
-    <p id="pp-cap2" style="position:absolute; inset:0; margin:0; font-size:16.5px; line-height:1.6; color:#2B2D34; transition:opacity .3s ease; opacity:0;">And no line runs alone. Each junction starts another line — its own diameters, its own distance profile, nested one level down. This is what the input form had to hold.</p>
-    <p id="pp-cap3" style="position:absolute; inset:0; margin:0; font-size:16.5px; line-height:1.6; color:#2B2D34; transition:opacity .3s ease; opacity:0;">Count the places the engineer has to re-enter everything: eleven diameter changes, two junctions. That count — not the table — was the real problem to design against.</p>
+    <p id="pp-cap2" style="position:absolute; inset:0; margin:0; font-size:16.5px; line-height:1.6; color:#2B2D34; transition:opacity .3s ease; opacity:0;">Count the places the engineer has to re-enter everything. That count — not the table — was the real problem to design against.</p>
   </div>
 
   <button id="pp-replay" type="button" style="margin-top:8px; appearance:none; background:none; border:0; padding:0; cursor:pointer; font-family:inherit; font-size:12.5px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:#8A8D96;">↺ Replay</button>
 
 </div>
-          <figcaption style="font-size:13px; color:#8A8D96; margin-top:12px; line-height:1.5;">What a real line looks like: the diameter changes along its length, and every junction starts another line.</figcaption>
+          <figcaption style="font-size:13px; color:#8A8D96; margin-top:12px; line-height:1.5;">What a real line looks like: the diameter changes along its length, and every change is another full parameter set.</figcaption>
         </figure>
 
-        <div data-r="two" style="margin:4.5em 0; display:grid; grid-template-columns:5fr 7fr; gap:48px; align-items:center;">
+        <div data-r="two" style="margin:4.5em 0; display:grid; grid-template-columns:1fr 1fr; gap:32px; align-items:center;">
           <div>
             <p style="color:#2B2D34; margin-bottom:1.2em; font-size:15.5px;">A pipeline is closer to a net — junctions everywhere, and the diameter changes constantly along its length. That physical reality drives everything about the analysis.</p>
             <p style="color:#2B2D34; margin-bottom:1.2em; font-size:15.5px;">The calculation needs a full parameter set — diameter, acoustic velocity, density, viscosity, elevation, deposition thickness — at <em>every point where the pipe changes</em>. So before an engineer can run anything, they have to describe the physical pipeline to the software. That data entry step is where the product was losing them.</p>
@@ -1398,116 +1447,228 @@
           <p style="margin-bottom:1.5em; color:#2B2D34;">What justified the bet was the roadmap: the product's long-term vision involved handling increasingly complex pipeline scenarios, and all of them would sit on top of this input flow. Spending the effort once, here, would compound.</p>
         </div>
 
-        <div data-r="two" style="margin:4.5em 0; display:grid; grid-template-columns:1fr 1fr; gap:32px;">
-          <div>
-            <div style="font-size:11px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:#8A8D96; margin-bottom:12px; text-align:center;">What existed</div>
-            <div style="width:100%; background:#F3F4F8; display:flex; align-items:center; justify-content:center; padding:20px;"><img src="images/halliburton/old-six-tabs.png" alt="Old six-tab input UI, one parameter type per tab" style="max-width:100%; height:auto; display:block;"></div>
-          </div>
-          <div>
-            <div style="font-size:11px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:#8A8D96; margin-bottom:12px; text-align:center;">What I argued for</div>
-            <div style="aspect-ratio:4/3.2; width:100%; background:#F3F4F8; border:1px dashed #E3E5EC; display:flex; align-items:center; justify-content:center; color:#8A8D96; font-size:12px; text-align:center; padding:8px;">/images/halliburton/prioritization.png — restyle in the low-impact quadrant, the input redesign as a big bet</div>
-          </div>
-        </div>
+        <figure style="margin:4.5em 0;"><img src="images/halliburton/prioritization-plot.png" alt="Prioritization plot: restyling low impact, reinventing the input high effort and high impact" style="width:100%; height:auto; display:block;"><figcaption style="font-size:13px; color:#8A8D96; margin-top:12px; line-height:1.5;">Restyling sat in the low-impact quadrant; reinventing the input was the high-effort, high-impact bet.</figcaption></figure>
 
         <div style="margin:150px 0 0; border-top:1px solid #0F1014; padding-top:13px; display:flex; align-items:baseline; gap:13px;"><span style="font-size:10.5px; font-weight:600; letter-spacing:.1em; color:#DD0F26;">02</span><span style="font-size:10.5px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#0F1014;">Making the case</span></div>
         <div style="font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#DD0F26; margin:44px 0 14px;">The insight</div>
         <h3 id="hb3" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:640px;">The insight underneath</h3>
 
-        <div data-r="two" style="margin:3em 0 4.5em; display:grid; grid-template-columns:5fr 7fr; gap:48px; align-items:center;">
-          <div>
-            <p style="color:#2B2D34; margin-bottom:1.2em; font-size:15.5px;">To make that case properly, I ran a round of usability testing and interviews. The pattern was immediate: engineers were constantly jumping back to the first tab, "Distance," because every parameter in every other tab refers to it.</p>
-            <p style="color:#2B2D34; margin-bottom:1.2em; font-size:15.5px;">The six tabs mirrored how the data was stored, not how engineers think. To an engineer, a pipeline is one continuous object where everything is a function of distance. Splitting it into tabs shattered that mental model and forced them to hold it in their heads while clicking back and forth.</p>
-          </div>
-          <div>
-            <div style="aspect-ratio:4/3; width:100%; background:#F3F4F8; border:1px dashed #E3E5EC; display:flex; align-items:center; justify-content:center; color:#8A8D96; font-size:12px; text-align:center; padding:8px;">/images/halliburton/tab-dependency.png — every tab's values key off the Distance tab</div>
-          </div>
-        </div>
-
-        <blockquote style="margin:3em 0; border-left:2px solid #DD0F26; padding-left:26px; max-width:26em;">
+        <div style="max-width:640px;"><p style="margin-bottom:1.5em; color:#2B2D34;">To make that case properly, I ran a round of usability testing and interviews. The pattern was immediate: engineers were constantly jumping back to the first tab, &ldquo;Distance,&rdquo; because every parameter in every other tab refers to it.</p><blockquote style="margin:3em 0; border-left:2px solid #DD0F26; padding-left:26px; max-width:26em;">
           <p style="font-size:24px; font-weight:500; line-height:1.3; letter-spacing:-.015em; color:#0F1014;">The six tabs mirrored how the data was stored, not how engineers think.</p>
-        </blockquote>
+        </blockquote><p style="margin-bottom:1.5em; color:#2B2D34;">To an engineer, a pipeline is one continuous object where everything is a function of distance. Splitting it into tabs shattered that mental model and forced them to hold it in their heads while clicking back and forth.</p></div><figure data-motion="pipeline-mental-model" style="margin:4em 0;"><div style="background:#FFFFFF; border:1px solid #DADAD6; padding:44px 32px 36px;">
+    <svg viewBox="0 0 880 400" style="width:100%; height:auto; display:block;">
+      <defs>
+        <g id="pm-card">
+          <rect x="-4.5" y="-24.5" width="9" height="9" transform="rotate(45 0 -20)" fill="#D6002A"></rect>
+          <g fill="none" stroke="#17181A" stroke-width="1.7" stroke-linecap="square">
+            <path d="M-8,-14 H-13 V14 H-8"></path>
+            <path d="M8,-14 H13 V14 H8"></path>
+          </g>
+          <g fill="#DEE1EA" stroke="#17181A" stroke-width="1.1">
+            <rect x="-6" y="-10.5" width="12" height="5"></rect>
+            <rect x="-6" y="-2.5" width="12" height="5"></rect>
+            <rect x="-6" y="5.5" width="12" height="5"></rect>
+          </g>
+        </g>
+      </defs>
+
+      <g stroke="#E3E3DF" stroke-width="1">
+        <line x1="80" y1="30" x2="80" y2="390"></line>
+        <line x1="270" y1="30" x2="270" y2="390"></line>
+        <line x1="440" y1="30" x2="440" y2="390"></line>
+        <line x1="540" y1="30" x2="540" y2="390"></line>
+        <line x1="610" y1="30" x2="610" y2="390"></line>
+        <line x1="730" y1="30" x2="730" y2="390"></line>
+        <line x1="815" y1="30" x2="815" y2="390"></line>
+      </g>
+
+      <text x="0" y="16" font-size="11" font-weight="600" letter-spacing="1.3" fill="#8C8E92">DISTANCE FROM START</text>
+
+      <use href="#pm-card" x="270" y="60" style="animation:pm-cardA 12s ease-in-out infinite;"></use>
+      <use href="#pm-card" x="440" y="60" style="animation:pm-cardB 12s ease-in-out infinite;"></use>
+      <use href="#pm-card" x="540" y="60" style="animation:pm-cardC 12s ease-in-out infinite;"></use>
+
+      <g stroke="#E2818B" stroke-width="1.2" stroke-dasharray="900" fill="none">
+        <path d="M0 116 H264" style="animation:pm-drawA 12s ease-in-out infinite;"></path>
+        <path d="M0 138 H434" style="animation:pm-drawB 12s ease-in-out infinite;"></path>
+        <path d="M0 160 H534" style="animation:pm-drawC 12s ease-in-out infinite;"></path>
+      </g>
+      <g fill="#E2818B">
+        <polygon points="264,112 271,116 264,120" style="animation:pm-tipA 12s ease-in-out infinite;"></polygon>
+        <polygon points="434,134 441,138 434,142" style="animation:pm-tipB 12s ease-in-out infinite;"></polygon>
+        <polygon points="534,156 541,160 534,164" style="animation:pm-tipC 12s ease-in-out infinite;"></polygon>
+      </g>
+
+      <path d="M0,208 L80,208 L80,212 L270,212 L270,192 L440,192 L440,202 L540,202 L540,218 L610,218 L610,198 L730,198 L730,208 L815,208 L815,212 L880,212 L880,248 L815,248 L815,252 L730,252 L730,262 L610,262 L610,242 L540,242 L540,258 L440,258 L440,268 L270,268 L270,248 L80,248 L80,252 L0,252 Z" fill="#DEE1EA" stroke="#17181A" stroke-width="2" stroke-linejoin="miter"></path>
+      <path d="M0 230 H880" fill="none" stroke="#9CA0A8" stroke-width="1.2" stroke-dasharray="10 12" style="animation:pm-flow 2.6s linear infinite;"></path>
+      <g fill="#D6002A">
+        <rect x="74" y="224" width="12" height="12" transform="rotate(45 80 230)"></rect>
+        <rect x="264" y="224" width="12" height="12" transform="rotate(45 270 230)"></rect>
+        <rect x="434" y="224" width="12" height="12" transform="rotate(45 440 230)"></rect>
+        <rect x="534" y="224" width="12" height="12" transform="rotate(45 540 230)"></rect>
+        <rect x="604" y="224" width="12" height="12" transform="rotate(45 610 230)"></rect>
+        <rect x="724" y="224" width="12" height="12" transform="rotate(45 730 230)"></rect>
+        <rect x="809" y="224" width="12" height="12" transform="rotate(45 815 230)"></rect>
+      </g>
+
+      <g stroke="#E2818B" stroke-width="1.2" stroke-dasharray="900" fill="none">
+        <path d="M0 300 H604" style="animation:pm-drawA 12s ease-in-out infinite;"></path>
+        <path d="M0 322 H724" style="animation:pm-drawB 12s ease-in-out infinite;"></path>
+        <path d="M0 344 H809" style="animation:pm-drawC 12s ease-in-out infinite;"></path>
+      </g>
+      <g fill="#E2818B">
+        <polygon points="604,296 611,300 604,304" style="animation:pm-tipA 12s ease-in-out infinite;"></polygon>
+        <polygon points="724,318 731,322 724,326" style="animation:pm-tipB 12s ease-in-out infinite;"></polygon>
+        <polygon points="809,340 816,344 809,348" style="animation:pm-tipC 12s ease-in-out infinite;"></polygon>
+      </g>
+
+      <use href="#pm-card" x="610" y="382" style="animation:pm-cardA 12s ease-in-out infinite;"></use>
+      <use href="#pm-card" x="730" y="382" style="animation:pm-cardB 12s ease-in-out infinite;"></use>
+      <use href="#pm-card" x="815" y="382" style="animation:pm-cardC 12s ease-in-out infinite;"></use>
+    </svg>
+
+    <div style="display:flex; align-items:center; gap:12px; margin-top:32px; padding-top:20px; border-top:1px solid #DADAD6;">
+      <svg width="27" height="36" viewBox="-16 -27 32 45" style="flex-shrink:0;">
+        <rect x="-4.5" y="-24.5" width="9" height="9" transform="rotate(45 0 -20)" fill="#D6002A"></rect>
+        <g fill="none" stroke="#17181A" stroke-width="1.7" stroke-linecap="square">
+          <path d="M-8,-14 H-13 V14 H-8"></path>
+          <path d="M8,-14 H13 V14 H8"></path>
+        </g>
+        <g fill="#DEE1EA" stroke="#17181A" stroke-width="1.1">
+          <rect x="-6" y="-10.5" width="12" height="5"></rect>
+          <rect x="-6" y="-2.5" width="12" height="5"></rect>
+          <rect x="-6" y="5.5" width="12" height="5"></rect>
+        </g>
+      </svg>
+      <span style="font-size:12.5px; line-height:1.5; color:#5A5C60;">A parameter set: the vector of values that has to be solved at that one distance</span>
+    </div>
+  </div><figcaption style="font-size:13px; color:#8A8D96; margin-top:12px; line-height:1.5;">Every tab's values key off the Distance tab.</figcaption></figure>
+
+        
 
         <div style="max-width:640px;">
           <p style="margin-bottom:1.5em; color:#2B2D34;">Once I saw that, the design was almost self-evident: <strong style="font-weight:600; color:#0F1014;">a single table.</strong> Distance as the anchoring first column, every parameter in a row beside it, so an engineer can see, edit, and cross-reference the whole pipeline profile on one screen.</p>
         </div>
 
         <div style="font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#DD0F26; margin:96px 0 14px;">Testing</div>
-        <h3 id="hb4" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:640px;">Three ways to handle overflow</h3>
-        <div style="max-width:640px;">
-          <p style="margin-bottom:1.5em; color:#2B2D34;">A full parameter set is wider than any screen, so the real design question was overflow. I brought three options to testing.</p>
-        </div>
-
-        <div data-r="three" style="margin:4.5em 0; display:grid; grid-template-columns:repeat(3,1fr); gap:32px;">
-          <div>
-            <div style="aspect-ratio:4/3; background:#F3F4F8; border:1px dashed #E3E5EC; display:flex; align-items:center; justify-content:center; color:#8A8D96; font-size:12px; text-align:center; padding:8px; margin-bottom:14px;">option 1</div>
-            <b style="font-weight:600; font-size:15px; display:block;">Scrollable frame</b>
-            <p style="font-size:13.5px; color:#8A8D96; margin-top:5px;">The simplest move: let the whole table scroll horizontally.</p>
-          </div>
-          <div>
-            <div style="aspect-ratio:4/3; background:#F3F4F8; border:1px dashed #E3E5EC; display:flex; align-items:center; justify-content:center; color:#8A8D96; font-size:12px; text-align:center; padding:8px; margin-bottom:14px;">option 2</div>
-            <b style="font-weight:600; font-size:15px; display:block;">Fixed Distance column <span style="color:#DD0F26; font-weight:600;">· chosen</span></b>
-            <p style="font-size:13.5px; color:#8A8D96; margin-top:5px;">Distance pinned, remaining columns scroll. Fewest clicks, fastest input time.</p>
-          </div>
-          <div>
-            <div style="aspect-ratio:4/3; background:#F3F4F8; border:1px dashed #E3E5EC; display:flex; align-items:center; justify-content:center; color:#8A8D96; font-size:12px; text-align:center; padding:8px; margin-bottom:14px;">option 3</div>
-            <b style="font-weight:600; font-size:15px; display:block;">Collapsible groups</b>
-            <p style="font-size:13.5px; color:#8A8D96; margin-top:5px;">One collapsible group per parameter family.</p>
-          </div>
-        </div>
-
-        <div style="max-width:640px;">
-          <p style="margin-bottom:1.5em; color:#2B2D34;">Option 2 won clearly — fewest clicks, fastest route to any value, fastest input time. Pinning Distance kept the anchor visible no matter where you scrolled, which is exactly what the mental model needed.</p>
-        </div>
-
-        <div style="font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#DD0F26; margin:96px 0 14px;">Shipping</div>
-        <h3 id="hb5" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:640px;">Making it cheap enough to say yes to</h3>
-        <div style="max-width:640px;">
-          <p style="margin-bottom:1.5em; color:#2B2D34;">When I presented the direction, stakeholders were reluctant — reinventing the entire input flow sounded like exactly the time and budget they didn't want to spend. Fair concern.</p>
-          <p style="margin-bottom:1.5em; color:#2B2D34;">Instead of arguing harder, I sat down with the tech lead and mapped which existing components we could reuse inside the new table. <strong style="font-weight:600; color:#0F1014;">That collaboration cut the estimate enough to change the answer.</strong></p>
-        </div>
-
-        <div style="margin:2.5em 0 0; display:flex; align-items:baseline; gap:14px; border-top:1px solid #E6E8EE; padding-top:18px; max-width:640px;">
-          <span style="font-size:10.5px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:#DD0F26; white-space:nowrap;">Shipped</span>
-          <span style="font-size:15.5px; color:#2B2D34;">Q2 2023 — the primary line table now serves more than 1,000 gas and oil engineers in Houston.</span>
-        </div>
-
-        <figure data-r="bleed" style="margin:5.5em 0; width:calc(100% + max((100vw - 1240px) / 2, 0px));">
-          <div style="width:100%; aspect-ratio:16/6.5; background:#F3F4F8; border:1px dashed #E3E5EC; border-right:0; display:flex; align-items:center; justify-content:center; color:#8A8D96; font-size:12px; text-align:center; padding:8px;">/images/halliburton/primary-line.png — one table, Distance pinned, full profile visible</div>
-          <figcaption style="font-size:13px; color:#8A8D96; margin-top:12px; line-height:1.5; max-width:960px;">The shipped primary line input. Q2 2023; 1,000+ engineers in Houston.</figcaption>
-        </figure>
-
-        <div style="margin:150px 0 0; border-top:1px solid #0F1014; padding-top:13px; display:flex; align-items:baseline; gap:13px;"><span style="font-size:10.5px; font-weight:600; letter-spacing:.1em; color:#DD0F26;">03</span><span style="font-size:10.5px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#0F1014;">What it grew into</span></div>
+        <h3 id="hb4" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:640px;">Three ways to handle overflow</h3><div style="max-width:640px;"><p style="margin-bottom:1.5em; color:#2B2D34;">A full parameter set is wider than any screen, so the real design question was overflow. I brought three options to testing.</p><p style="margin-bottom:1.5em; color:#2B2D34;">Option 2 won clearly &mdash; fewest clicks, fastest route to any value, fastest input time. Pinning Distance kept the anchor visible no matter where you scrolled, which is exactly what the mental model needed.</p></div><figure style="margin:4em 0;"><img src="images/halliburton/overflow-options.png" alt="Three overflow options compared: scrollable frame, fixed Distance column (chosen), collapsible groups" style="width:100%; height:auto; display:block;"></figure><div style="margin:150px 0 0; border-top:1px solid #0F1014; padding-top:13px; display:flex; align-items:baseline; gap:13px;"><span style="font-size:10.5px; font-weight:600; letter-spacing:.1em; color:#DD0F26;">03</span><span style="font-size:10.5px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#0F1014;">What it grew into</span></div>
         <div style="font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#DD0F26; margin:44px 0 14px;">The payoff</div>
         <h3 id="hb6" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:640px;">The bet pays off — twice</h3>
         <div style="max-width:640px;">
           <p style="margin-bottom:1.5em; color:#2B2D34;">The reason to reinvent rather than restyle was that the roadmap would build on this foundation. Later in 2023, it did.</p>
         </div>
 
-        <div data-r="zig" style="margin:4.5em 0; display:grid; row-gap:110px;">
-          <div data-r="two" style="display:grid; grid-template-columns:5fr 7fr; gap:48px; align-items:center;">
-            <div>
-              <b style="font-weight:600; font-size:21px; letter-spacing:-.015em; display:block; margin-bottom:12px;">Near field</b>
-              <p style="font-size:15px; color:#2B2D34;">Capturing a diagnostic blind spot close to the valve. Because the table was already structured around distance-keyed segments, this was a minor adaptation of the existing component rather than a new build — which saved significant development time.</p>
-            </div>
-            <div><div style="aspect-ratio:4/3; width:100%; background:#F3F4F8; border:1px dashed #E3E5EC; display:flex; align-items:center; justify-content:center; color:#8A8D96; font-size:12px; text-align:center; padding:8px;">/images/halliburton/near-field.png</div></div>
-          </div>
-          <div data-r="two-flip" style="display:grid; grid-template-columns:7fr 5fr; gap:48px; align-items:center;">
-            <div style="order:2;">
-              <b style="font-weight:600; font-size:21px; letter-spacing:-.015em; display:block; margin-bottom:12px;">T-junctions</b>
-              <p style="font-size:15px; color:#2B2D34;">The harder one. Real client P&amp;IDs meant as many as 50 junctions in a single analysis — secondary pipes branching off the primary line, each with its own full parameter profile.</p>
-            </div>
-            <div style="order:1;"><div style="aspect-ratio:4/3; width:100%; background:#F3F4F8; border:1px dashed #E3E5EC; display:flex; align-items:center; justify-content:center; color:#8A8D96; font-size:12px; text-align:center; padding:8px;">/images/halliburton/t-junction-diagram.png</div></div>
-          </div>
-        </div>
+        <div style="max-width:640px;"><p style="margin-bottom:1.5em; color:#2B2D34;">Capturing a diagnostic blind spot close to the valve. Because the table was already structured around distance-keyed segments, this was a minor adaptation of the existing component rather than a new build &mdash; which saved significant development time.</p></div><figure data-motion="component-reuse" style="margin:4em 0;"><div class="cr" data-state="0">
+    <div class="cr-stage">
 
-        <div style="max-width:640px;">
-          <p style="margin-bottom:1.5em; color:#2B2D34;">The table grew into a complex, multi-line input — primary and secondary lines as linked tabs, junctions marked inline at their distance points. A form built around six parameter tabs could never have absorbed this. A table built around the structure of the pipeline itself absorbed it naturally.</p>
-        </div>
+      <div class="cr-diagram">
+        <svg viewBox="0 0 880 520" role="img" aria-label="One distance table reused across primary line, near field and junction">
 
-        <figure data-r="bleed" style="margin:5.5em 0; width:calc(100% + max((100vw - 1240px) / 2, 0px));">
-          <div style="width:100%; aspect-ratio:16/6.5; background:#F3F4F8; border:1px dashed #E3E5EC; border-right:0; display:flex; align-items:center; justify-content:center; color:#8A8D96; font-size:12px; text-align:center; padding:8px;">/images/halliburton/complex-line.png</div>
-          <figcaption style="font-size:13px; color:#8A8D96; margin-top:12px; line-height:1.5;">The complex line input: primary and secondary lines with T-junctions marked at their positions.</figcaption>
-        </figure>
+          <!-- 01 · PRIMARY LINE ......................................... -->
+          <g class="cr-layer cr-layer--primary cr-guide">
+            <line x1="80"  y1="60" x2="80"  y2="470"></line>
+            <line x1="270" y1="60" x2="270" y2="470"></line>
+            <line x1="440" y1="60" x2="440" y2="470"></line>
+            <line x1="540" y1="60" x2="540" y2="470"></line>
+            <line x1="610" y1="60" x2="610" y2="470"></line>
+            <line x1="730" y1="60" x2="730" y2="470"></line>
+            <line x1="815" y1="60" x2="815" y2="470"></line>
+          </g>
+
+          <!-- 02 · NEAR FIELD .......................................... -->
+          <g class="cr-layer cr-layer--nearfield">
+            <line class="cr-rule" x1="10" y1="150" x2="870" y2="150"></line>
+            <g fill="#0F1014">
+              <polygon points="4,150 15,145 15,155"></polygon>
+              <polygon points="876,150 865,145 865,155"></polygon>
+              <circle cx="270" cy="150" r="4"></circle>
+            </g>
+            <text class="cr-dim"    x="135" y="110" text-anchor="middle">(PHYSICAL VALVE CLOSURE *</text>
+            <text class="cr-dim"    x="135" y="128" text-anchor="middle">ACOUSTIC VELOCITY)</text>
+            <text class="cr-dim"    x="575" y="119" text-anchor="middle">100KM(GAS) / 300KM(LIQUID)</text>
+            <text class="cr-title"  x="135" y="392" text-anchor="middle">InnerVue blind spot</text>
+            <text class="cr-kicker" x="135" y="420" text-anchor="middle">NEAR FIELD</text>
+            <text class="cr-title"  x="575" y="392" text-anchor="middle">InnerVue study area</text>
+            <text class="cr-kicker" x="575" y="420" text-anchor="middle">STANDARD FIELD</text>
+            <line class="cr-divider cr-grow cr-grow--nf" x1="270" y1="40" x2="270" y2="450"></line>
+          </g>
+
+          <!-- PRIMARY LINE BODY — constant across all three states ...... -->
+          <g transform="translate(0,20)">
+            <polygon class="cr-fill" points="0,208 80,208 80,212 270,212 270,192 440,192 440,202 540,202 540,218 610,218 610,198 730,198 730,208 815,208 815,212 880,212 880,248 815,248 815,252 730,252 730,262 610,262 610,242 540,242 540,258 440,258 440,268 270,268 270,248 80,248 80,252 0,252"></polygon>
+            <path class="cr-center cr-flow" d="M0 230 H880"></path>
+            <g class="cr-outline">
+              <polyline points="0,208 80,208 80,212 270,212 270,192 440,192 440,202 540,202 540,218 610,218 610,198 730,198 730,208 815,208 815,212 880,212"></polyline>
+              <polyline points="0,252 80,252 80,248 270,248 270,268 440,268 440,258 540,258 540,242 610,242 610,262 730,262 730,252 815,252 815,248 880,248"></polyline>
+            </g>
+            <g class="cr-station">
+              <rect x="75.5"  y="225.5" width="9" height="9" transform="rotate(45 80 230)"></rect>
+              <rect x="265.5" y="225.5" width="9" height="9" transform="rotate(45 270 230)"></rect>
+              <rect x="435.5" y="225.5" width="9" height="9" transform="rotate(45 440 230)"></rect>
+              <rect x="535.5" y="225.5" width="9" height="9" transform="rotate(45 540 230)"></rect>
+              <rect x="605.5" y="225.5" width="9" height="9" transform="rotate(45 610 230)"></rect>
+              <rect x="725.5" y="225.5" width="9" height="9" transform="rotate(45 730 230)"></rect>
+              <rect x="810.5" y="225.5" width="9" height="9" transform="rotate(45 815 230)"></rect>
+            </g>
+          </g>
+
+          <!-- 03 · JUNCTION — branches drawn OVER the pipe so the mouth
+               reads as open: each fill runs to y=250 (inside the body) and
+               the walls stop on the body's outer edge. .................. -->
+          <g class="cr-layer cr-layer--junction">
+            <g class="cr-grow cr-grow--jnorth">
+              <polygon class="cr-fill" points="248,0 248,120 236,120 236,178 248,178 248,250 292,250 292,178 304,178 304,120 292,120 292,0"></polygon>
+              <path class="cr-center" d="M270 0 V250"></path>
+              <g class="cr-outline">
+                <polyline points="248,0 248,120 236,120 236,178 248,178 248,232"></polyline>
+                <polyline points="292,0 292,120 304,120 304,178 292,178 292,212"></polyline>
+              </g>
+              <g class="cr-station">
+                <rect x="265.5" y="95.5"  width="9" height="9" transform="rotate(45 270 100)"></rect>
+                <rect x="265.5" y="145.5" width="9" height="9" transform="rotate(45 270 150)"></rect>
+              </g>
+            </g>
+            <text class="cr-tag" x="222" y="212" text-anchor="end">T Junction - 01</text>
+
+            <g class="cr-grow cr-grow--jsouth">
+              <polygon class="cr-fill" points="588,250 588,322 576,322 576,380 588,380 588,520 632,520 632,380 644,380 644,322 632,322 632,250"></polygon>
+              <path class="cr-center" d="M610 250 V520"></path>
+              <g class="cr-outline">
+                <polyline points="588,262 588,322 576,322 576,380 588,380 588,520"></polyline>
+                <polyline points="632,282 632,322 644,322 644,380 632,380 632,520"></polyline>
+              </g>
+              <g class="cr-station">
+                <rect x="605.5" y="345.5" width="9" height="9" transform="rotate(45 610 350)"></rect>
+                <rect x="605.5" y="395.5" width="9" height="9" transform="rotate(45 610 400)"></rect>
+              </g>
+            </g>
+            <text class="cr-tag" x="662" y="300">T Junction - 02</text>
+          </g>
+
+          <g class="cr-layer cr-layer--junction">
+            <circle class="cr-node-ring"    cx="270" cy="250" r="12"></circle>
+            <circle cx="270" cy="250" r="5.5" fill="#DD0F26"></circle>
+            <circle class="cr-node-ring cr-node-ring--b" cx="610" cy="250" r="12"></circle>
+            <circle cx="610" cy="250" r="5.5" fill="#DD0F26"></circle>
+          </g>
+
+        </svg>
+      </div>
+
+      <div class="cr-tabs">
+        <button type="button" data-cr-tab="0">01 &middot; Primary Line</button>
+        <button type="button" data-cr-tab="1">02 &middot; Near Field <span class="cr-reuse">Reuse &times;1</span></button>
+        <button type="button" data-cr-tab="2">03 &middot; Junction <span class="cr-reuse">Reuse &times;2</span></button>
+      </div>
+
+      <div class="cr-ui">
+        <img src="images/halliburton/primary-ui.png"    alt="Primary Line distance table">
+        <img src="images/halliburton/near-field-ui.png" alt="Near Field distance table — same component">
+        <img src="images/halliburton/junction-ui.png"   alt="Junction distance table — same component with a secondary line tab">
+      </div>
+
+    </div>
+  </div><figcaption style="font-size:13px; color:#8A8D96; margin-top:12px; line-height:1.5;">One distance table reused across primary line, near field and junction.</figcaption></figure><div style="max-width:640px;"><p style="margin-bottom:1.5em; color:#2B2D34;">The harder one. Real client P&amp;IDs meant as many as 50 junctions in a single analysis &mdash; secondary pipes branching off the primary line, each with its own full parameter profile.</p><p style="margin-bottom:1.5em; color:#2B2D34;">The table grew into a complex, multi-line input &mdash; primary and secondary lines as linked tabs, junctions marked inline at their distance points. A form built around six parameter tabs could never have absorbed this. A table built around the structure of the pipeline itself absorbed it naturally.</p></div>
 
         <div style="font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#DD0F26; margin:96px 0 14px;">The rest of the work</div>
         <h3 id="hb7" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:640px;">Around the table</h3>
@@ -1515,7 +1676,7 @@
           <p style="margin-bottom:1.5em; color:#2B2D34;">The input redesign is the story I care most about, but it was one thread of two years of work across all three portals.</p>
         </div>
 
-        <div data-r="two" style="margin:4em 0; display:grid; grid-template-columns:1fr 1fr; gap:48px; max-width:840px;">
+        <div data-r="two" style="margin:4em 0; display:grid; grid-template-columns:1fr 1fr; gap:32px;">
           <div style="border-top:1px solid #E6E8EE; padding-top:20px;">
             <div style="font-size:10.5px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:#8A8D96; margin-bottom:10px;">Edge Portal · 0-to-1</div>
             <p style="font-size:15px; color:#2B2D34;">The software technicians use on the field compute device to run surveys and capture clean data — now in the hands of 108 field users. Over 14 presentations to business stakeholders, the work secured $2M in funding, and along the way I helped steer the pivot from a technician-only tool to a multi-platform approach with pre-field simulation and cloud-integrated post-field reporting.</p>
@@ -1779,112 +1940,54 @@
   'use strict';
   var root = document.getElementById('pp-root');
   if (!root) return;
-
   var SPEED = 1000, DWELL = 1900, LOOP = true;
   var AUTOPLAY = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  var SEG = [[-520,-180],[-180,330],[330,780],[780,1050],
-             [1050,1240],[1240,1560],[1560,1780],[1780,2120]];
+  var SEG = [[-520,-180],[-180,330],[330,780],[780,1050],[1050,1240],[1240,1560],[1560,1780],[1780,2120]];
   var TU = [440,440,440,440,440,440,440,440];
   var BU = [560,560,560,560,560,560,560,560];
   var TS = [432,448,402,430,466,396,456,438];
   var BS = [566,556,574,604,548,566,594,552];
-  var JN = [{x:140,i:1,w:72,side:'top'},{x:1400,i:5,w:72,side:'bot'}];
-  var VB = [[540,370,520,260],[240,210,1160,580],
-            [-400,-100,2400,1200],[-400,-100,2400,1200]];
+  // three states now — the junction view is gone
+  var VB = [[540,370,520,260],[240,210,1160,580],[-400,-100,2400,1200]];
 
   var q = function (s) { return root.querySelector(s); };
-  var svg = q('#pp-svg'), fill = q('#pp-fill');
-  var tops = [q('#pp-top0'), q('#pp-top1')];
-  var bots = [q('#pp-bot0'), q('#pp-bot1')];
-  var secs = [q('#pp-sec1'), q('#pp-sec2')];
-  var labels = q('#pp-labels'), marks = q('#pp-marks');
-  var caps = [q('#pp-cap0'), q('#pp-cap1'), q('#pp-cap2'), q('#pp-cap3')];
-  var btns = [q('#pp-btn0'), q('#pp-btn1'), q('#pp-btn2'), q('#pp-btn3')];
+  var svg = q('#pp-svg'), fill = q('#pp-fill'), top = q('#pp-top0'), bot = q('#pp-bot0');
+  var marks = q('#pp-marks');
+  var caps = [q('#pp-cap0'), q('#pp-cap1'), q('#pp-cap2')];
+  var btns = [q('#pp-btn0'), q('#pp-btn1'), q('#pp-btn2')];
 
   var p = 0, active = 0, raf = null, timers = [], started = false;
-
   function clearTimers() { timers.forEach(clearTimeout); timers = []; }
-  function ease(t) {
-    return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
-  }
-
+  function ease(t) { return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2; }
   function seq(vals) {
     var pts = [];
-    SEG.forEach(function (s, i) {
-      pts.push([s[0], vals[i]]);
-      pts.push([s[1], vals[i]]);
-    });
+    SEG.forEach(function (s, i) { pts.push([s[0], vals[i]]); pts.push([s[1], vals[i]]); });
     return pts;
   }
-
-  // Opens a gap in the run where a junction branches off.
-  function split(pts, vals, side, openFrac) {
-    var cuts = JN.map(function (j, idx) {
-      return { x:j.x, side:j.side, w:j.w * (openFrac[idx] || 0), y:vals[j.i] };
-    }).filter(function (c) { return c.side === side && c.w > 0.5; });
-
-    var lines = [], cur = [pts[0]];
-    for (var k = 1; k < pts.length; k++) {
-      var a = pts[k-1], b = pts[k];
-      var cut = cuts.find(function (c) {
-        return a[1] === b[1] &&
-               c.x > Math.min(a[0], b[0]) && c.x < Math.max(a[0], b[0]);
-      });
-      if (cut) {
-        cur.push([cut.x - cut.w, cut.y]);
-        lines.push(cur);
-        cur = [[cut.x + cut.w, cut.y]];
-      }
-      cur.push(b);
-    }
-    lines.push(cur);
-    return lines.map(function (l) {
-      return l.map(function (pt) {
-        return pt[0].toFixed(1) + ',' + pt[1].toFixed(1);
-      }).join(' ');
-    });
+  function str(pts) {
+    return pts.map(function (c) { return c[0].toFixed(1) + ',' + c[1].toFixed(1); }).join(' ');
   }
-
   function apply(pos) {
     var i0 = Math.min(Math.max(0, Math.floor(pos)), VB.length - 2);
     var a = VB[i0], b = VB[i0 + 1], f = pos - i0;
-    svg.setAttribute('viewBox', a.map(function (v, i) {
-      return (v + (b[i] - v) * f).toFixed(1);
-    }).join(' '));
+    svg.setAttribute('viewBox', a.map(function (v, i) { return (v + (b[i]-v)*f).toFixed(1); }).join(' '));
 
     var m = Math.min(1, Math.max(0, pos));
-    var T = TU.map(function (u, i) { return u + (TS[i] - u) * m; });
-    var B = BU.map(function (u, i) { return u + (BS[i] - u) * m; });
-    var top = seq(T), bot = seq(B);
+    var T = TU.map(function (u, i) { return u + (TS[i]-u)*m; });
+    var B = BU.map(function (u, i) { return u + (BS[i]-u)*m; });
+    var t = seq(T), bo = seq(B);
+    fill.setAttribute('points', str(t.concat(bo.slice().reverse())));
+    top.setAttribute('points', str(t));
+    bot.setAttribute('points', str(bo));
 
-    fill.setAttribute('points',
-      top.concat(bot.slice().reverse()).map(function (pt) {
-        return pt[0].toFixed(1) + ',' + pt[1].toFixed(1);
-      }).join(' '));
+    var op = function (lo, hi) { return Math.min(1, Math.max(0, (pos-lo)/(hi-lo))); };
+    if (marks) marks.style.opacity = op(1.25, 1.9);
 
-    var op = function (lo, hi) {
-      return Math.min(1, Math.max(0, (pos - lo) / (hi - lo)));
-    };
-    var o = [op(1.0, 1.5), op(1.2, 1.75)];
-    var set = function (els, lines) {
-      els.forEach(function (el, i) {
-        if (el) el.setAttribute('points', lines[i] || '');
-      });
-    };
-    set(tops, split(top, T, 'top', o));
-    set(bots, split(bot, B, 'bot', o));
-
-    secs.forEach(function (el, i) { if (el) el.style.opacity = o[i]; });
-    if (labels) labels.style.opacity = op(1.5, 2) - 0.42 * op(2.2, 2.85);
-    if (marks) marks.style.opacity = op(2.15, 2.9);
-
-    var step = pos < 0.55 ? 0 : (pos < 1.55 ? 1 : (pos < 2.55 ? 2 : 3));
+    var step = pos < 0.55 ? 0 : (pos < 1.55 ? 1 : 2);
     if (step !== active) {
       active = step;
-      caps.forEach(function (el, i) {
-        if (el) el.style.opacity = i === step ? 1 : 0;
-      });
+      caps.forEach(function (el, i) { if (el) el.style.opacity = i === step ? 1 : 0; });
       btns.forEach(function (el, i) {
         if (!el) return;
         el.style.borderTopColor = i === step ? '#DD0F26' : 'transparent';
@@ -1892,7 +1995,6 @@
       });
     }
   }
-
   function animateTo(n) {
     cancelAnimationFrame(raf);
     var from = p, to = n;
@@ -1906,42 +2008,57 @@
       if (t < 1) raf = requestAnimationFrame(tick);
     })(t0);
   }
-
   function autoplay(lead) {
-    var leg = SPEED + DWELL;
-    var a = lead == null ? 600 : lead;
+    var leg = SPEED + DWELL, a = lead == null ? 600 : lead;
     timers.push(setTimeout(function () { animateTo(1); }, a));
-    timers.push(setTimeout(function () { animateTo(2); }, a + leg));
-    timers.push(setTimeout(function () { animateTo(3); }, a + leg * 2 + 400));
+    timers.push(setTimeout(function () { animateTo(2); }, a + leg + 400));
     if (!LOOP) return;
     timers.push(setTimeout(function () {
       p = 0; active = -1; apply(0); autoplay(DWELL);
-    }, a + leg * 2 + 400 + SPEED + DWELL + 1400));
+    }, a + leg + 400 + SPEED + DWELL + 1400));
   }
-
   btns.forEach(function (b, i) {
     if (b) b.addEventListener('click', function () { clearTimers(); animateTo(i); });
   });
-
   var replay = q('#pp-replay');
   if (replay) replay.addEventListener('click', function () {
-    clearTimers();
-    cancelAnimationFrame(raf);
-    p = 0; active = -1; apply(0);
-    autoplay();
+    clearTimers(); cancelAnimationFrame(raf); p = 0; active = -1; apply(0); autoplay();
   });
-
   apply(0);
-
-  // Hold until the diagram is actually on screen before playing.
   if (AUTOPLAY && 'IntersectionObserver' in window) {
-    var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (e) {
-        if (e.isIntersecting && !started) { started = true; autoplay(); }
-      });
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) { if (e.isIntersecting && !started) { started = true; autoplay(); } });
     }, { threshold: 0.45 });
     io.observe(root);
   }
+})();
+</script>
+<script>
+(function () {
+  var root  = document.querySelector('.cr');
+  var tabs  = root.querySelectorAll('[data-cr-tab]');
+  var COUNT = tabs.length;
+  var HOLD  = 4200;
+  var timer = null;
+
+  function go(n) { root.dataset.state = String(n); }
+
+  function play() {
+    timer = setInterval(function () {
+      go((Number(root.dataset.state) + 1) % COUNT);
+    }, HOLD);
+  }
+
+  function stop() { clearInterval(timer); timer = null; }
+
+  tabs.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      stop();
+      go(Number(btn.dataset.crTab));
+    });
+  });
+
+  if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) play();
 })();
 </script>
 </body>

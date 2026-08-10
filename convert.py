@@ -1,9 +1,25 @@
 #!/usr/bin/env python3
-"""Convert a Claude Design .dc.html component into a standalone HTML page.
+"""RETIRED — do not run. Kept for provenance only.
 
-Resolves {{ }} template bindings into concrete inline styles / data attributes
-and replaces the DCLogic class with plain JavaScript.
+    portfolio.html is now the source of truth. Edit it directly.
+
+Originally this converted the Claude Design `.dc.html` export into a standalone
+page: resolving {{ }} template bindings into inline styles and data attributes,
+and replacing the DCLogic class with plain JavaScript. That job is done.
+
+It was retired on 2026-08-09 because the design moved to Figma. Every change
+made after the conversion — the featured Atlas card, its banner ratio, the
+Halliburton date range — had to be re-expressed here as a patch rule against
+the original export. That stack only grows, and running this script now would
+overwrite portfolio.html, silently reverting any edit made directly to it.
+
+The last generated output and portfolio.html were verified byte-identical
+before retirement, so nothing was lost by stopping here.
 """
+raise SystemExit(
+    "convert.py is retired. portfolio.html is the source of truth — edit it "
+    "directly. See the module docstring for why."
+)
 import re
 import sys
 import pathlib
@@ -120,6 +136,35 @@ html = re.sub(r'style="' + b("kwRow") + r'"', f'style="{KW_ROW}"', html)
 html = re.sub(r'style="' + b("kwItem") + r'"', f'style="{KW_ITEM}"', html)
 html = re.sub(r'style="' + b("barStyle") + r'"', f'style="{BAR}"', html)
 html = re.sub(r'\s*onSubmit="' + b("onSubmit") + r'"', " data-nosubmit", html)
+
+# ------------------------------------------- homepage: feature the Atlas card
+# Design change made in Figma (Homepage frame): the Cognite / Atlas AI card is
+# promoted to a full-width feature above the 2x2 grid, with a wide banner crop
+# instead of the 16:10 used by the other cards.
+html, n_feature = re.subn(
+    r'<a href="#" data-nav="cognite" style="display:block; color:#0F1014;" data-card>',
+    '<a href="#" data-nav="cognite" style="display:block; color:#0F1014; '
+    'grid-column:1 / -1;" data-card>',
+    html, count=1)
+
+html, n_ratio = re.subn(
+    r'(<img src="images/cognite-atlas/card\.png"[^>]*aspect-ratio:)16/10',
+    r'\g<1>1152/350', html, count=1)
+
+# Halliburton ran 2022-2024, not just 2024 — corrected in Figma.
+m_hal = re.search(r'<a href="#" data-nav="case"[^>]*data-card>.*?</a>', html, re.S)
+n_year = 0
+if m_hal:
+    block = m_hal.group(0)
+    fixed = block.replace('>2024<', '>2022 – 2024<', 1)
+    if fixed != block:
+        html = html.replace(block, fixed, 1)
+        n_year = 1
+
+assert n_feature == 1, f"featured card not patched ({n_feature})"
+assert n_ratio == 1, f"feature ratio not patched ({n_ratio})"
+print(f"homepage: featured card x{n_feature}, banner ratio x{n_ratio}, "
+      f"halliburton year x{n_year}")
 
 # ------------------------------------------------------- homepage nav anchors
 # "Work" and "Lab" shipped as href="#" placeholders. Point them at the project
