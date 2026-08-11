@@ -406,8 +406,7 @@
         <div style="max-width:640px;">
           <p style="font-size:18.5px; line-height:1.6; margin-bottom:1.4em; color:#0F1014;">Atlas AI is Cognite’s agent platform for industrial data.</p>
           <p style="margin-bottom:1.5em; color:#2B2D34;">Reliability engineers, maintenance planners, and operations teams use it to interrogate the messy reality of a plant — work orders, P&amp;IDs, sensor time series, maintenance histories — through AI agents that query and reason over that data.</p>
-          <p style="margin-bottom:1.5em; color:#2B2D34;">I joined the Atlas AI team as a full-time Product Designer in late 2024 and spent the next year leading design across the agent experience, working alongside the team's design lead and a cross-functional group of PMs, engineers, and solution architects.</p>
-          <p style="margin-bottom:1.5em; color:#2B2D34;">Designing for agents turned out to be a different job than designing for software. Traditional software has state you can point at: this filter is on, this page is open. An agent's state is mostly invisible and partly probabilistic — what it remembers, what it can see, what it will decide on its own.</p>
+          <p style="margin-bottom:1.5em; color:#2B2D34;">Designing for agents turned out to be a different job than designing for software. Traditional software has state you can point at: this filter is on, this page is open. An agent’s state is mostly invisible and partly probabilistic — what it remembers, what it can see, what it will decide on its own.</p>
         </div>
 
         <div data-r="stats" style="margin:3.5em 0 0; display:grid; grid-template-columns:repeat(4,1fr); gap:32px; border-top:1px solid #E6E8EE; padding-top:22px; max-width:840px;">
@@ -441,17 +440,18 @@
         </blockquote>
 
         <div style="max-width:640px;">
-          <p style="margin-bottom:1.5em; color:#2B2D34;">Early on I sketched a spectrum to reason about it. At one end, the user tells the agent everything by hand — the sketch labels it <em>“I don’t know unless you tell me.”</em> At the far end, the agent works everything out on its own: <em>“I know exactly just by listening.”</em></p>
-          <p style="margin-bottom:1.5em; color:#2B2D34;">Every feature has an ideal position on that line, and a buildable position, which is usually further toward the manual end. A lot of my job was deciding where each interaction should sit — and what to protect when it couldn’t sit where I wanted.</p>
+          <p style="margin-bottom:1.5em; color:#2B2D34;">Early on I sketched a spectrum to reason about it. At one end, the user tells the agent everything by hand — the sketch labels it “I don’t know unless you tell me.” At the far end, the agent works everything out on its own: “I know exactly just by listening.”</p>
         </div>
 
-        <figure style="margin:4em 0;">
-          <img src="images/cognite-atlas/manual-auto-spectrum.png" alt="The manual-to-automatic spectrum, mapped against technical constraint — the framework behind all three features." style="width:100%; display:block; aspect-ratio:16/8; object-fit:cover;">
-          <figcaption style="font-size:13px; color:#8A8D96; margin-top:12px; line-height:1.5;">The manual-to-automatic spectrum, mapped against technical constraint — the framework behind all three features.</figcaption>
-        </figure>
-
-        <div style="max-width:640px;">
-          <p style="margin-bottom:1.5em; color:#2B2D34;">This case study follows three features, each dealing with a different part of what the agent holds invisibly. <strong style="font-weight:600; color:#0F1014;">Session persistence</strong> is about the agent’s <em>memory</em>. <strong style="font-weight:600; color:#0F1014;">Context awareness</strong> is about its <em>knowledge</em>. The <strong style="font-weight:600; color:#0F1014;">query tool configuration</strong> is about its <em>freedom</em> — the one feature where the right design was to let the model decide less, not more.</p>
+        <div data-r="two" style="margin:4em 0; display:grid; grid-template-columns:1fr 1fr; gap:16px; align-items:start;">
+          <div>
+            <p style="margin-bottom:1.5em; color:#2B2D34;">Every feature has an ideal position on that line, and a buildable position, which is usually further toward the manual end. A lot of my job was deciding where each interaction should sit — and what to protect when it couldn’t sit where I wanted.</p>
+            <p style="color:#2B2D34;">This case study follows three features, each dealing with a different part of what the agent holds invisibly. Session persistence is about the agent’s memory. Context awareness is about its knowledge. The query tool configuration is about its freedom — the one feature where the right design was to let the model decide less, not more.</p>
+          </div>
+          <figure style="margin:0; padding:0 40px;">
+            <img src="images/cognite-atlas/manual-auto-spectrum.png" alt="The manual-to-automatic spectrum, plotted against technical constraint." style="width:100%; height:auto; display:block;">
+            <figcaption style="font-size:13px; color:#8A8D96; margin-top:12px; line-height:1.5;">The manual-to-automatic spectrum — the framework behind all three features.</figcaption>
+          </figure>
         </div>
 
         <div style="margin:150px 0 0; border-top:1px solid #0F1014; padding-top:13px; display:flex; align-items:baseline; gap:13px;"><span style="font-size:10.5px; font-weight:600; letter-spacing:.1em; color:#6C2BF2;">02</span><span style="font-size:10.5px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#0F1014;">Memory</span></div>
@@ -459,17 +459,46 @@
         <h3 id="cg2" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:640px;">One conversation, many agents</h3>
         <div style="max-width:640px;">
           <p style="margin-bottom:1.5em; color:#2B2D34;">Atlas users work with multiple specialized agents — a root cause analysis agent, a work order agent, a data exploration agent. In the original design, the conversation belonged to the agent: switch agents, lose your chat.</p>
-          <p style="margin-bottom:1.5em; color:#2B2D34;">People adapted in a way that should worry anyone building agent platforms. One of our solution architects described his workaround in Slack: rather than lose context switching between agents, “you end up putting everything into one big agent” — a single mega-agent with every tool attached. The interface’s model of state was quietly deforming how the whole system got built.</p>
-          <p style="margin-bottom:1.5em; color:#2B2D34;">The PRD answered with two P0 requirements: persist the conversation, and add an agent selector at the top of the pane. I suspected those two requirements contradicted each other, so I tested it.</p>
         </div>
 
-        <div data-r="two" style="margin:4.5em 0; display:grid; grid-template-columns:5fr 7fr; gap:48px; align-items:center;">
-          <div><p style="color:#2B2D34; margin-bottom:1.2em; font-size:15.5px;">I built paper prototypes — two interaction models, sticky notes standing in for dropdowns — and ran think-aloud sessions with seven participants, ten minutes each. Cheap on purpose: the question was about mental models, not visual design, and paper answers that faster than Figma.</p><p style="color:#2B2D34; margin-bottom:1.2em; font-size:15.5px;">Seven of seven wanted their conversation to persist. But five of seven expected that switching agents via a top dropdown would <em>erase</em> it.</p></div>
-          <div><img src="images/cognite-atlas/paper-prototypes.png" alt="Paper prototypes" style="width:100%; display:block; aspect-ratio:4/3; object-fit:cover;"></div>
+        <div data-r="two" style="margin:4.5em 0; display:grid; grid-template-columns:1fr 1fr; gap:32px; align-items:start;">
+          <figure style="margin:0;">
+            <img src="images/cognite-atlas/existing-agents.png" alt="The existing Atlas Agents pane, where the agent is chosen manually before the conversation starts." style="width:100%; height:auto; display:block; background:#F3F4F8;">
+            <figcaption style="font-size:13px; color:#8A8D96; margin-top:12px; line-height:1.5;">The existing Atlas Agents require user choose agents manually. Switch agents, lose your chat.</figcaption>
+          </figure>
+          <figure style="margin:0;">
+            <img src="images/cognite-atlas/prd-options.png" alt="The two P0 requirements from the PRD, drawn as interface options." style="width:100%; height:auto; display:block; background:#F3F4F8;">
+            <figcaption style="font-size:13px; color:#8A8D96; margin-top:12px; line-height:1.5;">The PRD answered with two P0 requirements: persist the conversation, and add an agent selector at the top of the pane.</figcaption>
+          </figure>
         </div>
 
         <div style="max-width:640px;">
-          <p style="margin-bottom:1.5em; color:#2B2D34;">The placement itself made a promise: a selector at the conversation level says the conversation is scoped to the agent. Two participants recognized the pattern from other AI products — and both volunteered that they hated losing their history there. Familiarity wasn’t the same as correctness.</p>
+          <p style="margin-bottom:1.5em; color:#2B2D34;">The PRD answered with two P0 requirements: persist the conversation, and add an agent selector at the top of the pane.</p>
+        </div>
+
+        <blockquote style="margin:3em 0; border-left:2px solid #6C2BF2; padding-left:26px; max-width:26em;">
+          <p style="font-size:24px; font-weight:500; line-height:1.3; letter-spacing:-.015em; color:#0F1014;">I suspected those two requirements contradicted each other, so I tested it.</p>
+        </blockquote>
+
+        <div style="max-width:640px;">
+          <p style="color:#2B2D34; margin-bottom:1.2em; font-size:15.5px;">I built paper prototypes — two interaction models, sticky notes standing in for dropdowns — and ran think-aloud sessions with seven participants, ten minutes each. Cheap on purpose: the question was about mental models, not visual design, and paper answers that faster than Figma.</p>
+        </div>
+
+        <div data-r="two" style="margin:4.5em 0; display:grid; grid-template-columns:1fr 1fr; gap:0; align-items:start;">
+          <div>
+            <img src="images/cognite-atlas/paper-prototype-01.jpg" alt="Paper prototype of the first model, with the agent selector at the top of the pane." style="width:100%; height:auto; display:block; background:#F3F4F8;">
+            <div style="font-size:10.5px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:#6C2BF2; margin-top:14px;">option 1</div>
+            <div style="font-size:14.5px; font-weight:500; color:#0F1014; margin-top:3px;">Selector on the top</div>
+          </div>
+          <div>
+            <img src="images/cognite-atlas/paper-prototype-02.jpg" alt="Paper prototype of the second model, with the agent selector embedded in the input at the bottom." style="width:100%; height:auto; display:block; background:#F3F4F8;">
+            <div style="font-size:10.5px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:#6C2BF2; margin-top:14px;">option 2</div>
+            <div style="font-size:14.5px; font-weight:500; color:#0F1014; margin-top:3px;">Selector in the bottom</div>
+          </div>
+        </div>
+
+        <div style="max-width:640px;">
+          <p style="color:#2B2D34; margin-bottom:1.2em; font-size:15.5px;">7 of 7 wanted their conversation to persist. But 5 of 7 expected that switching agents via a top dropdown would erase it. The placement itself made a promise: a selector at the conversation level says the conversation is scoped to the agent.</p>
         </div>
 
         <div style="font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#6C2BF2; margin:96px 0 14px;">The shipped model</div>
@@ -478,13 +507,22 @@
           <p style="margin-bottom:1.5em; color:#2B2D34;">The conversation became the persistent container, and agents became participants inside it — selected at the message level, like addressing someone in a group chat. You can @-mention an agent directly when you know who you need, or take a suggested follow-up action and let the right agent pick it up without ever knowing its name.</p>
         </div>
 
-        <figure data-r="bleed" style="margin:5.5em 0; width:calc(100% + max((100vw - 1240px) / 2, 0px));">
-          <img src="images/cognite-atlas/group-chat-model.png" alt="The shipped model: one persistent conversation, agents invoked at the message level." style="width:100%; display:block; aspect-ratio:16/6.5; object-fit:cover;">
-          <figcaption style="font-size:13px; color:#8A8D96; margin-top:12px; line-height:1.5; max-width:960px;">The shipped model: one persistent conversation, agents invoked at the message level.</figcaption>
+        <figure style="margin:4.5em 0; max-width:640px;">
+          <div style="margin-bottom:32px;">
+            <img src="images/cognite-atlas/group-chat-q2.png" alt="The Q2 shipped model: agent selector embedded in the message input." style="width:100%; max-width:520px; height:auto; display:block; margin:0 auto; background:#F3F4F8;">
+            <div style="font-size:10.5px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:#6C2BF2; margin-top:14px;">2025 Q2 Shipped</div>
+            <div style="font-size:14.5px; font-weight:500; color:#0F1014; margin-top:3px;">Selector in the bottom</div>
+            <p style="font-size:13px; color:#8A8D96; margin-top:8px; line-height:1.5;">It sets up the mental model cleanly: "the agent" is a fixed choice, and the conversation is addressed to whoever's selected.</p>
+          </div>
+          <div>
+            <img src="images/cognite-atlas/group-chat-northstar.png" alt="The north star: a full context bar with agents as participants in one conversation." style="width:100%; max-width:520px; height:auto; display:block; margin:0 auto; background:#F3F4F8;">
+            <div style="font-size:10.5px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:#6C2BF2; margin-top:14px;">North star</div>
+            <div style="font-size:14.5px; font-weight:500; color:#0F1014; margin-top:3px;">Full context bar</div>
+            <p style="font-size:13px; color:#8A8D96; margin-top:8px; line-height:1.5;">Mental model maturing — agents stop being a setting you configure and become participants you address directly.</p>
+          </div>
         </figure>
 
         <div style="max-width:640px;">
-          <p style="margin-bottom:1.5em; color:#2B2D34;">The unanimous test result did something else too: it settled the argument before it started. Nobody relitigates a hierarchy decision when the evidence is 7-for-7 and cost three days.</p>
           <p style="margin-bottom:1.5em; color:#2B2D34;">The feedback that mattered most arrived unprompted — a customer engineer at Rockwell wrote in to say the switching between AI agents was a fantastic new feature, in a thread our team only saw because he’d asked someone to pass the thanks along.</p>
         </div>
 
@@ -492,7 +530,20 @@
         <div style="font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#6C2BF2; margin:44px 0 14px;">Context awareness</div>
         <h3 id="cg4" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:640px;">I see what you see</h3>
         <div style="max-width:640px;">
-          <p style="margin-bottom:1.5em; color:#2B2D34;">The second feature brought agents into Canvas, Cognite’s visual workspace where engineers lay out P&amp;IDs, documents, and asset data during an investigation. The requirement sounded simple: the agent should know what’s on the canvas. The design question was harder — <em>should the user have to tell it?</em></p>
+          <p style="margin-bottom:1.5em; color:#2B2D34;">The second feature brought agents into Canvas, Cognite’s visual workspace where engineers lay out P&amp;IDs, documents, and asset data during an investigation. The requirement sounded simple: the agent should know what’s on the canvas. The design question was harder — should the user have to tell it?</p>
+        </div>
+
+        <div data-r="two" style="margin:4.5em 0; display:grid; grid-template-columns:430fr 450fr; gap:16px; align-items:start;">
+          <figure style="margin:0;">
+            <img src="images/cognite-atlas/context-entry.png" alt="Asking a question about selected Canvas items." style="width:100%; height:auto; display:block; background:#F3F4F8;">
+            <figcaption style="font-size:13px; color:#8A8D96; margin-top:12px; line-height:1.5;">Working towards a fluent agent invocation from Canvas items.</figcaption>
+          </figure>
+          <div>
+            <img src="images/cognite-atlas/context-actionbar.png" alt="Sketches of the Canvas action bar and its agent entry points." style="width:100%; height:auto; display:block; background:#F3F4F8;">
+          </div>
+        </div>
+
+        <div style="max-width:640px;">
           <p style="margin-bottom:1.5em; color:#2B2D34;">On my spectrum, the ideal sat at the far right: the agent simply knows, keyword detection routes intent, no configuration at all. The constraint axis pushed back. Real-time inference over canvas content depended on API capabilities that didn’t exist yet. The buildable version sat closer to the middle: everything on the canvas enters the agent’s context by default, and the user can scope it manually.</p>
         </div>
 
@@ -500,30 +551,30 @@
           <p style="font-size:24px; font-weight:500; line-height:1.3; letter-spacing:-.015em; color:#0F1014;">Trust in an AI system isn’t a feeling you design; it’s the byproduct of the system being verifiable.</p>
         </blockquote>
 
+        <div data-r="two" style="margin:4.5em 0; display:grid; grid-template-columns:420fr 460fr; gap:16px; align-items:center;">
+          <p style="color:#2B2D34;">That compromise created a transparency problem. If the agent silently knows everything, the user has no model of what “everything” is — and no way to catch it when the context is wrong. So the design centered on a context chip, permanently visible above the input: what the agent can currently see, by count and type, editable at any moment.</p>
+          <div>
+            <img src="images/cognite-atlas/context-chip.png" alt="The shipped context chip above the agent input." style="width:100%; height:auto; display:block; background:#F3F4F8;">
+            <div style="font-size:10.5px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:#6C2BF2; margin-top:14px;">2025 Q3 Shipped</div>
+            <div style="font-size:14.5px; font-weight:500; color:#0F1014; margin-top:3px;">Context chip</div>
+            <p style="font-size:13px; color:#8A8D96; margin-top:8px; line-height:1.5;">Context chip and management. What the agent can currently see, by count and type, editable at any moment.</p>
+          </div>
+        </div>
+
         <div style="max-width:640px;">
-          <p style="margin-bottom:1.5em; color:#2B2D34;">That compromise created a transparency problem. If the agent silently knows everything, the user has no model of what “everything” is — and no way to catch it when the context is wrong. So the design centered on a context chip, permanently visible above the input: what the agent can currently see, by count and type, editable at any moment.</p>
-          <p style="margin-bottom:1.5em; color:#2B2D34;">My flow diagrams from that period have the goal written directly on them — <em>“I see what you see”</em> before the user asks anything, and <em>“here is what I am considering”</em> attached to every answer, with the sources highlighted and removable.</p>
+          <p style="margin-bottom:1.5em; color:#2B2D34;">My flow diagrams from that period have the goal written directly on them — “I see what you see” before the user asks anything.</p>
         </div>
 
         <figure style="margin:4em 0;">
-          <img src="images/cognite-atlas/context-flows.png" alt="Exploration flows for canvas context: entry points, context management, and the two mental-model goals." style="width:100%; display:block; aspect-ratio:16/8; object-fit:cover;">
+          <button type="button" data-zoom="images/cognite-atlas/context-flows.png" aria-label="Expand diagram: exploration flows for canvas context" style="display:block; position:relative; width:100%; padding:0; border:0; background:#F3F4F8; cursor:zoom-in; font:inherit; color:inherit;">
+            <img src="images/cognite-atlas/context-flows.png" alt="Exploration flows for canvas context: entry points, context management, and the two mental-model goals." style="width:100%; display:block; aspect-ratio:2977/897;">
+            <span aria-hidden="true" style="position:absolute; right:12px; bottom:12px; display:flex; align-items:center; gap:7px; padding:7px 12px; background:rgba(15,16,20,.78); color:#fff; font-size:10.5px; font-weight:600; letter-spacing:.1em; text-transform:uppercase;">
+              <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4.6 1.6H1.6v3M7.4 1.6h3v3M7.4 10.4h3v-3M4.6 10.4H1.6v-3"/></svg>
+              Expand
+            </span>
+          </button>
           <figcaption style="font-size:13px; color:#8A8D96; margin-top:12px; line-height:1.5;">Exploration flows for canvas context: entry points, context management, and the two mental-model goals.</figcaption>
         </figure>
-
-        <div style="max-width:640px;">
-          <p style="margin-bottom:1.5em; color:#2B2D34;">The same principle shaped the answer side. When the agent responds, its reasoning is one tap away, and the data it cites appears as structured cards — the actual work orders, the actual assets — rather than paraphrased prose. An engineer diagnosing a pump failure doesn’t want a summary she can’t check.</p>
-        </div>
-
-        <div data-r="two" style="margin:4.5em 0; display:grid; grid-template-columns:1fr 1fr; gap:32px;">
-          <div>
-            <img src="images/cognite-atlas/context-shipped-01.png" alt="Context shipped 01" style="width:100%; display:block; aspect-ratio:4/3.2; object-fit:cover;">
-            <p style="font-size:13px; color:#8A8D96; margin-top:12px; line-height:1.5;">The Atlas panel in Canvas, context chip above the input.</p>
-          </div>
-          <div>
-            <img src="images/cognite-atlas/context-shipped-02.png" alt="Context shipped 02" style="width:100%; display:block; aspect-ratio:4/3.2; object-fit:cover;">
-            <p style="font-size:13px; color:#8A8D96; margin-top:12px; line-height:1.5;">An answer citing canvas objects as verifiable data cards, with suggested follow-ups.</p>
-          </div>
-        </div>
 
         <div style="max-width:640px;">
           <p style="margin-bottom:1.5em; color:#2B2D34;">What I took from this feature is that the honest version of “AI-powered” is often a degradation path. You design the ideal, you design the constrained version that can actually ship, and you decide which quality survives the compression. Here, the thing worth protecting was the user’s mental model of what the agent knows. The inference can improve underneath later; the legibility had to be there on day one.</p>
@@ -532,12 +583,12 @@
         <div style="font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#6C2BF2; margin:96px 0 14px;">North star</div>
         <h3 id="cg5" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:640px;">The north star underneath</h3>
         <div style="max-width:640px;">
-          <p style="margin-bottom:1.5em; color:#2B2D34;">These first two features were never separate destinations — they were steps toward the same one. Alongside the shipped work, I designed the flow the team calls the <em>consistent chat experience</em>: one conversation that follows the user across every surface. A chat starts from an email notification, runs through multiple agents, carries its context between apps, and can be saved, left, and resumed days later with everything intact.</p>
-          <p style="margin-bottom:1.5em; color:#2B2D34;">The shipped releases map onto it deliberately. Persistence covers the browser session today; durable, resumable conversations are the next step — which is exactly why long-term storage was scoped out rather than designed out. Having the end state on the wall meant every release could be checked against one question: does this teach users a mental model we’ll never have to break?</p>
+          <p style="margin-bottom:1.5em; color:#2B2D34;">These first two features were never separate destinations — they were steps toward the same north star chat experience: one conversation that follows the user across every surface. So I designed a chat starts from an email notification, runs through multiple agents, carries its context between apps, and can be saved, left, and resumed days later with everything intact.</p>
+          <p style="margin-bottom:1.5em; color:#2B2D34;">The shipped releases map onto it deliberately. Persistence covers the browser session today; durable, resumable conversations are the next step. Having the end state on the wall meant every release could be checked against one question: does this teach users a mental model we’ll never have to break?</p>
         </div>
 
         <figure data-r="bleed" style="margin:5.5em 0; width:calc(100% + max((100vw - 1240px) / 2, 0px));">
-          <img src="images/cognite-atlas/northstar-flow.png" alt="The consistent chat experience: from notification, through multiple agents, to a saved, resumable session." style="width:100%; display:block; aspect-ratio:16/6.5; object-fit:cover;">
+          <img src="images/cognite-atlas/northstar-flow.png" alt="The consistent chat experience: from notification, through multiple agents, to a saved, resumable session." style="width:100%; display:block; aspect-ratio:896/364; object-fit:cover;">
           <figcaption style="font-size:13px; color:#8A8D96; margin-top:12px; line-height:1.5; max-width:960px;">The consistent chat experience: from notification, through multiple agents, to a saved, resumable session.</figcaption>
         </figure>
 
@@ -554,13 +605,13 @@
         </blockquote>
 
         <div style="max-width:640px;">
-          <p style="margin-bottom:1.5em; color:#2B2D34;">The fix was to remove freedom from the model. Builders needed to lock query parameters — filters, returned properties, sort order, limits — so the agent could still decide <em>when</em> to query and <em>what to ask about</em>, but never <em>how the results come back</em>. The initial scope stopped at raw JSON configuration; my design work was the interface that made those locked rules legible to people who don’t write query languages.</p>
+          <p style="margin-bottom:1.5em; color:#2B2D34;">The fix was to remove freedom from the model. Builders needed to lock query parameters — filters, returned properties, sort order, limits — so the agent could still decide when to query and what to ask about, but never how the results come back. The initial scope stopped at raw JSON configuration; my design work was the interface that made those locked rules legible to people who don’t write query languages.</p>
           <p style="margin-bottom:1.5em; color:#2B2D34;">The core of it is a filter builder that handles genuinely complex boolean logic without pretending it’s simple. Basic mode covers grouped AND/OR rules with nesting up to three levels — enough for almost every real case — using progressive disclosure to keep the first-glance surface small. Advanced mode is color-coded JSON for builders who want full expressiveness, with example templates to start from.</p>
           <p style="margin-bottom:1.5em; color:#2B2D34;">The detail I’m most attached to is the seam between them: switching from Advanced back to Basic can be lossy, because arbitrary JSON doesn’t always round-trip into a visual builder — so the interface says exactly that, in a warning modal, before anything is discarded. An interface that translates between audiences owes both of them the truth about what survives translation.</p>
         </div>
 
         <figure data-r="bleed" style="margin:5.5em 0; width:calc(100% + max((100vw - 1240px) / 2, 0px));">
-          <img src="images/cognite-atlas/qkg-filter-iterations.png" alt="Two iterations of the filter builder: flat groups with a plain-language logic summary, then nested groups with Basic and Advanced modes." style="width:100%; display:block; aspect-ratio:16/6.5; object-fit:cover;">
+          <img src="images/cognite-atlas/qkg-filter-iterations.png" alt="Two iterations of the filter builder: flat groups with a plain-language logic summary, then nested groups with Basic and Advanced modes." style="width:100%; display:block; aspect-ratio:896/364; object-fit:cover;">
           <figcaption style="font-size:13px; color:#8A8D96; margin-top:12px; line-height:1.5; max-width:960px;">Two iterations of the filter builder: flat groups with a plain-language logic summary, then nested groups with Basic and Advanced modes.</figcaption>
         </figure>
 
@@ -568,7 +619,7 @@
         <h3 id="cg7" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:640px;">Prototype as the spec</h3>
         <div data-r="two" style="margin:4.5em 0; display:grid; grid-template-columns:5fr 7fr; gap:48px; align-items:center;">
           <div><p style="color:#2B2D34; margin-bottom:1.2em; font-size:15.5px;">Filter logic is exactly the kind of interaction that dies in static specs — the behavior <em>is</em> the design. So instead of writing interaction documentation, I built two working prototypes of the filter builder in React, generating the code with AI and directing it like a design tool, and attached them to the engineering ticket.</p><p style="color:#2B2D34; margin-bottom:1.2em; font-size:15.5px;">Engineers clicked through real nesting behavior, real mode-switching, real edge cases. Questions that would have taken a week of spec ping-pong were answered by opening a file.</p></div>
-          <div><img src="images/cognite-atlas/qkg-prototype.png" alt="Qkg prototype" style="width:100%; display:block; aspect-ratio:4/3; object-fit:cover;"></div>
+          <div><img src="images/cognite-atlas/qkg-prototype.png" alt="The filter builder prototype running in the browser." style="width:100%; display:block; aspect-ratio:495/371; object-fit:cover;"></div>
         </div>
 
         <div style="margin:2.5em 0 0; display:flex; align-items:baseline; gap:14px; border-top:1px solid #E6E8EE; padding-top:18px; max-width:640px;">
@@ -2059,6 +2110,158 @@
   });
 
   if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) play();
+})();
+</script>
+<script>
+/* Expandable diagrams — any [data-zoom] opens its image full-screen, pannable. */
+(function () {
+  'use strict';
+  var triggers = document.querySelectorAll('[data-zoom]');
+  if (!triggers.length) return;
+
+  var overlay, stage, img, hint, fitBtn, closeBtn;
+  var lastFocus = null, prevOverflow = '', fitted = true, dragged = false;
+
+  function mkBtn(label) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.textContent = label;
+    b.style.cssText = 'padding:7px 13px; border:1px solid rgba(255,255,255,.3); background:rgba(15,16,20,.86);' +
+      'color:#fff; font:inherit; font-size:11px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; cursor:pointer;';
+    return b;
+  }
+
+  function build() {
+    overlay = document.createElement('div');
+    overlay.setAttribute('role', 'dialog');
+    overlay.setAttribute('aria-modal', 'true');
+    overlay.setAttribute('aria-label', 'Expanded diagram');
+    overlay.style.cssText = 'position:fixed; inset:0; z-index:9999; display:none; background:rgba(15,16,20,.94);';
+
+    stage = document.createElement('div');
+    stage.tabIndex = 0;
+    stage.style.cssText = 'position:absolute; inset:0; overflow:auto; outline:none; -webkit-overflow-scrolling:touch;';
+
+    img = document.createElement('img');
+    img.alt = '';
+    img.draggable = false;
+    img.style.cssText = 'display:block; max-width:none; user-select:none; -webkit-user-drag:none;';
+    stage.appendChild(img);
+
+    var bar = document.createElement('div');
+    // the diagram's own background is near-white, so the chrome needs its own scrim to stay legible
+    bar.style.cssText = 'position:absolute; top:0; left:0; right:0; display:flex; justify-content:space-between;' +
+      'align-items:center; gap:16px; padding:16px 20px 32px; pointer-events:none;' +
+      'background:linear-gradient(rgba(15,16,20,.9), rgba(15,16,20,0));';
+
+    hint = document.createElement('div');
+    hint.style.cssText = 'font-size:10.5px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:rgba(255,255,255,.75);';
+
+    var actions = document.createElement('div');
+    actions.style.cssText = 'display:flex; gap:8px; pointer-events:auto;';
+    fitBtn = mkBtn('Actual size');
+    closeBtn = mkBtn('Close');
+    actions.appendChild(fitBtn);
+    actions.appendChild(closeBtn);
+
+    bar.appendChild(hint);
+    bar.appendChild(actions);
+    overlay.appendChild(stage);
+    overlay.appendChild(bar);
+    document.body.appendChild(overlay);
+    wire();
+  }
+
+  function applyZoom() {
+    if (fitted) {
+      img.style.width = '100%';
+      img.style.height = 'auto';
+      fitBtn.textContent = 'Actual size';
+      hint.textContent = '';
+      stage.style.cursor = 'default';
+    } else {
+      img.style.width = img.naturalWidth + 'px';
+      img.style.height = 'auto';
+      fitBtn.textContent = 'Fit to screen';
+      hint.textContent = 'Drag to explore';
+      stage.style.cursor = 'grab';
+      // centre on the middle of the diagram
+      stage.scrollLeft = (stage.scrollWidth - stage.clientWidth) / 2;
+      stage.scrollTop = (stage.scrollHeight - stage.clientHeight) / 2;
+    }
+  }
+
+  function open(src, label) {
+    if (!overlay) build();
+    lastFocus = document.activeElement;
+    img.src = src;
+    overlay.setAttribute('aria-label', label || 'Expanded diagram');
+    overlay.style.display = 'block';
+    prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    // open at actual size when the image is wider than the viewport — that is the point of it
+    var start = function () {
+      fitted = img.naturalWidth <= window.innerWidth;
+      applyZoom();
+    };
+    if (img.complete && img.naturalWidth) start(); else img.onload = start;
+    closeBtn.focus();
+  }
+
+  function close() {
+    if (!overlay) return;
+    overlay.style.display = 'none';
+    document.body.style.overflow = prevOverflow;
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+
+  function wire() {
+    closeBtn.addEventListener('click', close);
+    fitBtn.addEventListener('click', function () { fitted = !fitted; applyZoom(); stage.focus(); });
+
+    document.addEventListener('keydown', function (e) {
+      if (overlay.style.display !== 'block') return;
+      if (e.key === 'Escape') { e.preventDefault(); close(); }
+    });
+
+    // click the backdrop (not the image) to dismiss
+    stage.addEventListener('click', function (e) {
+      if (e.target === stage && !dragged) close();
+    });
+
+    // drag-to-pan, mouse only — touch keeps its native scrolling
+    var down = false, sx = 0, sy = 0, sl = 0, st = 0;
+    stage.addEventListener('pointerdown', function (e) {
+      if (e.pointerType !== 'mouse' || fitted) return;
+      down = true; dragged = false;
+      sx = e.clientX; sy = e.clientY;
+      sl = stage.scrollLeft; st = stage.scrollTop;
+      stage.setPointerCapture(e.pointerId);
+      stage.style.cursor = 'grabbing';
+      e.preventDefault();
+    });
+    stage.addEventListener('pointermove', function (e) {
+      if (!down) return;
+      var dx = e.clientX - sx, dy = e.clientY - sy;
+      if (Math.abs(dx) > 3 || Math.abs(dy) > 3) dragged = true;
+      stage.scrollLeft = sl - dx;
+      stage.scrollTop = st - dy;
+    });
+    ['pointerup', 'pointercancel'].forEach(function (t) {
+      stage.addEventListener(t, function () {
+        if (!down) return;
+        down = false;
+        stage.style.cursor = fitted ? 'default' : 'grab';
+        setTimeout(function () { dragged = false; }, 0);
+      });
+    });
+  }
+
+  Array.prototype.forEach.call(triggers, function (btn) {
+    btn.addEventListener('click', function () {
+      open(btn.getAttribute('data-zoom'), btn.getAttribute('aria-label'));
+    });
+  });
 })();
 </script>
 </body>
