@@ -569,7 +569,7 @@
 
         <figure style="margin:4em 0;">
           <button type="button" data-zoom="images/cognite-atlas/context-flow.png" aria-label="Expand diagram: exploration flows for canvas context" style="display:block; position:relative; width:100%; padding:0; border:0; background:transparent; cursor:zoom-in; font:inherit; color:inherit;">
-            <img src="images/cognite-atlas/context-flow.png" alt="Exploration flows for canvas context: entry points, context management, and the two mental-model goals." style="width:100%; display:block; aspect-ratio:2977/897;">
+            <img src="images/cognite-atlas/context-flow.png" alt="Exploration flows for canvas context: entry points, context management, and the two mental-model goals." style="width:100%; display:block; aspect-ratio:4466/1346;">
             <span aria-hidden="true" style="position:absolute; right:12px; bottom:12px; display:flex; align-items:center; gap:7px; padding:7px 12px; background:rgba(15,16,20,.78); color:#fff; font-size:10.5px; font-weight:600; letter-spacing:.1em; text-transform:uppercase;">
               <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4.6 1.6H1.6v3M7.4 1.6h3v3M7.4 10.4h3v-3M4.6 10.4H1.6v-3"/></svg>
               Expand
@@ -2142,16 +2142,21 @@
     overlay.setAttribute('role', 'dialog');
     overlay.setAttribute('aria-modal', 'true');
     overlay.setAttribute('aria-label', 'Expanded diagram');
-    overlay.style.cssText = 'position:fixed; inset:0; z-index:9999; display:none; background:rgba(15,16,20,.94);';
+    overlay.style.cssText = 'position:fixed; inset:0; z-index:9999; display:none; background:rgba(0,0,0,.5);';
 
+    // display:flex + margin:auto on the child, NOT justify/align-center — centring
+    // an overflowing child with align-items would make its top/left unreachable.
     stage = document.createElement('div');
     stage.tabIndex = 0;
-    stage.style.cssText = 'position:absolute; inset:0; overflow:auto; outline:none; -webkit-overflow-scrolling:touch;';
+    stage.style.cssText = 'position:absolute; inset:0; overflow:auto; outline:none; display:flex;' +
+      'padding:64px 24px 32px; -webkit-overflow-scrolling:touch;';
 
     img = document.createElement('img');
     img.alt = '';
     img.draggable = false;
-    img.style.cssText = 'display:block; max-width:none; user-select:none; -webkit-user-drag:none;';
+    // the artwork is transparent line art, so it needs a light surface of its own
+    // to stay legible against the dark backdrop
+    img.style.cssText = 'display:block; margin:auto; background:#FAFAFC; user-select:none; -webkit-user-drag:none;';
     stage.appendChild(img);
 
     var bar = document.createElement('div');
@@ -2160,11 +2165,17 @@
       'align-items:center; gap:16px; padding:16px 20px 32px; pointer-events:none;' +
       'background:linear-gradient(rgba(15,16,20,.9), rgba(15,16,20,0));';
 
+    // the artwork scrolls under the bar at actual size, so the hint needs its own
+    // backing rather than relying on the scrim
     hint = document.createElement('div');
-    hint.style.cssText = 'font-size:10.5px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:rgba(255,255,255,.75);';
+    hint.style.cssText = 'font-size:10.5px; font-weight:600; letter-spacing:.1em; text-transform:uppercase;' +
+      'color:rgba(255,255,255,.85); background:rgba(15,16,20,.86); padding:7px 13px;' +
+      'border:1px solid rgba(255,255,255,.3);';
 
+    // margin-left:auto keeps these right-aligned even when the hint is hidden,
+    // which space-between alone would not
     var actions = document.createElement('div');
-    actions.style.cssText = 'display:flex; gap:8px; pointer-events:auto;';
+    actions.style.cssText = 'display:flex; gap:8px; pointer-events:auto; margin-left:auto;';
     fitBtn = mkBtn('Actual size');
     closeBtn = mkBtn('Close');
     actions.appendChild(fitBtn);
@@ -2180,16 +2191,25 @@
 
   function applyZoom() {
     if (fitted) {
-      img.style.width = '100%';
+      // contain within the stage, both axes — nothing to scroll, sits centred
+      img.style.width = 'auto';
       img.style.height = 'auto';
+      img.style.maxWidth = '100%';
+      img.style.maxHeight = '100%';
       fitBtn.textContent = 'Actual size';
       hint.textContent = '';
+      hint.style.display = 'none';
       stage.style.cursor = 'default';
     } else {
-      img.style.width = img.naturalWidth + 'px';
+      img.style.maxWidth = 'none';
+      img.style.maxHeight = 'none';
+      // 1:1 with the display's real pixels. Setting width to naturalWidth in CSS px
+      // would upscale by devicePixelRatio on a retina screen and look soft.
+      img.style.width = (img.naturalWidth / (window.devicePixelRatio || 1)) + 'px';
       img.style.height = 'auto';
       fitBtn.textContent = 'Fit to screen';
       hint.textContent = 'Drag to explore';
+      hint.style.display = 'block';
       stage.style.cursor = 'grab';
       // centre on the middle of the diagram
       stage.scrollLeft = (stage.scrollWidth - stage.clientWidth) / 2;
@@ -2205,9 +2225,10 @@
     overlay.style.display = 'block';
     prevOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
-    // open at actual size when the image is wider than the viewport — that is the point of it
+    // open at actual size — the artwork is authored at a readable scale, so this is
+    // the useful view; "Fit to screen" is there to get your bearings
     var start = function () {
-      fitted = img.naturalWidth <= window.innerWidth;
+      fitted = false;
       applyZoom();
     };
     if (img.complete && img.naturalWidth) start(); else img.onload = start;
