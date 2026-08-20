@@ -45,6 +45,19 @@
     @media (prefers-reduced-motion:reduce){
       [data-strip],[data-bar],[data-beam]{animation:none !important}
     }
+    /* Step chain uses grid, not flex, so the 133:36 card-to-arrow ratio stays exact.
+       With flex-basis:0 the cards' 16px padding forms a floor that is added before grow
+       is distributed, which leaks the padding into the ratio (cards render 139 not 133).
+       minmax(0,Nfr) has no such floor, and the 0 keeps a long word ("stakeholders") from
+       widening its column when the webfont falls back to a broader face. */
+    [data-r="flow4"] [data-steps]{
+      display:grid; align-items:start;
+      grid-template-columns:minmax(0,133fr) minmax(0,36fr) minmax(0,133fr) minmax(0,36fr) minmax(0,133fr) minmax(0,36fr) minmax(0,133fr);
+    }
+    /* Figma puts a drop shadow on each tool mark. drop-shadow, not box-shadow: these are
+       transparent PNGs with rounded or freeform silhouettes, and box-shadow would trace
+       the rectangular image box instead of the artwork. */
+    [data-r="flow4"] [data-toolbar] img{filter:drop-shadow(0 4px 4px rgba(0,0,0,.15))}
     @media (max-width:960px){
       [data-r="frame"]{grid-template-columns:1fr !important; gap:8px !important}
       [data-r="rail"]{position:static !important; margin-bottom:24px}
@@ -62,6 +75,30 @@
       [data-r="hero"],[data-r="cards"],[data-r="lab"],[data-r="contact"]{grid-template-columns:1fr !important}
       [data-r="hero"]{gap:32px !important}
       [data-r="hero"] > a{max-width:268px}
+      /* Equation row (vibe code + design system = handoff): three 219px cards plus two
+         80px operators need 896px. Stack once the content column can't carry that. */
+      [data-r="flow3"]{grid-template-columns:1fr !important; gap:12px !important}
+      [data-r="flow3"] [data-op]{aspect-ratio:auto !important; height:76px}
+      /* Stacked, each card would otherwise stretch to the full column and blow its
+         219x164 image box up past 400px tall. Cap and centre instead. */
+      [data-r="flow3"] > div:not([data-op]){max-width:340px; margin-left:auto; margin-right:auto}
+    }
+    @media (max-width:700px){
+      /* Before/after pair — arrow turns to point down the stack. */
+      [data-r="flow2"]{grid-template-columns:1fr !important; row-gap:4px}
+      [data-r="flow2"] [data-arrow]{aspect-ratio:auto !important; height:68px}
+      [data-r="flow2"] [data-arrow] svg{transform:rotate(90deg)}
+      /* Step chain — below this width the 133px cards can't hold their labels, so the
+         chain becomes a vertical list. The merged Iterate/tool-bar seam is a horizontal
+         refinement, so the step closes back into an ordinary card and the bar stands alone. */
+      [data-r="flow4"] > svg{display:none !important}
+      [data-r="flow4"] [data-steps]{grid-template-columns:minmax(0,1fr) !important; align-items:stretch}
+      [data-r="flow4"] [data-step]{min-height:0 !important}
+      [data-r="flow4"] [data-step][data-merge]{border-bottom:1px solid #6C2BF2 !important; border-radius:8px !important; margin-bottom:0 !important}
+      [data-r="flow4"] [data-step][data-merge] > div:last-child{margin-top:6px !important}
+      [data-r="flow4"] [data-arrow]{min-height:0 !important; height:36px}
+      [data-r="flow4"] [data-arrow] svg{transform:rotate(90deg)}
+      [data-r="flow4"] [data-toolbar]{margin-top:12px; flex-wrap:wrap; justify-content:center; gap:26px 34px; padding:24px}
     }
   </style>
 
@@ -350,7 +387,7 @@
   <!-- ================= COGNITE CASE STUDY ================= -->
   <div data-screen="cognite" data-accent="cognite" data-screen-label="Cognite Atlas AI">
 
-    <nav style="display:flex; justify-content:space-between; padding:24px; max-width:1240px; margin:0 auto; font-size:14px;">
+    <nav style="display:flex; justify-content:space-between; padding:28px 24px; max-width:1200px; margin:0 auto; font-size:14px;">
       <a href="#" data-nav="home" style="display:flex; align-items:center; gap:9px; font-weight:600; font-size:15px; letter-spacing:-.01em;"><img src="uploads/logo.png" alt="Ada Gu" style="width:38px; height:38px; display:block;"></a>
       <div style="display:flex; gap:26px; color:#8A8D96;"><a href="#work" data-jump="work">Work</a><a href="#lab" data-jump="lab">Lab</a><a href="#">About</a></div>
     </nav>
@@ -435,7 +472,7 @@
           <p style="margin-bottom:1.5em; color:#2B2D34;">Almost every design problem I worked on that year reduced to the same question.</p>
         </div>
 
-        <blockquote style="margin:3em 0; border-left:2px solid #6C2BF2; padding-left:26px; max-width:26em;">
+        <blockquote style="margin:3em 0; border-left:2px solid #6C2BF2; padding-left:26px; max-width:588px;">
           <p style="font-size:24px; font-weight:500; line-height:1.3; letter-spacing:-.015em; color:#0F1014;">How much of the agent’s invisible state does the user have to see, manage, or take back?</p>
         </blockquote>
 
@@ -476,7 +513,7 @@
           <p style="margin-bottom:1.5em; color:#2B2D34;">The PRD answered with two P0 requirements: persist the conversation, and add an agent selector at the top of the pane.</p>
         </div>
 
-        <blockquote style="margin:3em 0; border-left:2px solid #6C2BF2; padding-left:26px; max-width:26em;">
+        <blockquote style="margin:3em 0; border-left:2px solid #6C2BF2; padding-left:26px; max-width:588px;">
           <p style="font-size:24px; font-weight:500; line-height:1.3; letter-spacing:-.015em; color:#0F1014;">I suspected those two requirements contradicted each other, so I tested it.</p>
         </blockquote>
 
@@ -547,7 +584,7 @@
           <p style="margin-bottom:1.5em; color:#2B2D34;">On my spectrum, the ideal sat at the far right: the agent simply knows, keyword detection routes intent, no configuration at all. The constraint axis pushed back. Real-time inference over canvas content depended on API capabilities that didn’t exist yet. The buildable version sat closer to the middle: everything on the canvas enters the agent’s context by default, and the user can scope it manually.</p>
         </div>
 
-        <blockquote style="margin:3em 0; border-left:2px solid #6C2BF2; padding-left:26px; max-width:24em;">
+        <blockquote style="margin:3em 0; border-left:2px solid #6C2BF2; padding-left:26px; max-width:588px;">
           <p style="font-size:24px; font-weight:500; line-height:1.3; letter-spacing:-.015em; color:#0F1014;">Trust in an AI system isn’t a feeling you design; it’s the byproduct of the system being verifiable.</p>
         </blockquote>
 
@@ -602,39 +639,154 @@
         <div style="font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#6C2BF2; margin:44px 0 14px;">Query tool configuration</div>
         <h3 id="cg6" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:640px;">Where the agent must not guess</h3>
         <div style="max-width:640px;">
-          <p style="margin-bottom:1.5em; color:#2B2D34;">The third feature runs in the opposite direction from the first two, and it’s the one that changed how I think about AI design.</p>
-          <p style="margin-bottom:1.5em; color:#2B2D34;">Atlas agents query industrial data through a tool called Query Knowledge Graph. Builders — the people configuring agents for their teams — were fighting it. The LLM assembled queries itself, which meant it sometimes picked the wrong filter property, dropped a critical field, or returned results in a different shape than yesterday. Builders responded with ad hoc prompt engineering and Python workarounds, essentially begging a probabilistic system to behave deterministically.</p>
+          <p style="margin-bottom:1.5em; color:#2B2D34;">The third feature runs in the opposite direction from the first two. Atlas agents query industrial data through a tool called Query Knowledge Graph. Builders — the people configuring agents for their teams — were fighting it. The LLM assembled queries itself, which meant it sometimes picked the wrong filter property. Builders responded with ad hoc prompt engineering and Python workarounds.</p>
         </div>
 
-        <blockquote style="margin:3em 0; border-left:2px solid #6C2BF2; padding-left:26px; max-width:26em;">
-          <p style="font-size:24px; font-weight:500; line-height:1.3; letter-spacing:-.015em; color:#0F1014;">For a reliability engineer whose analysis is invalid if one filter is missing, “usually correct” is another way of saying broken.</p>
-        </blockquote>
+        <!-- Figma: 04 Freedom › design logic diagram (187:21716) -->
+        <figure data-r="flow2" style="margin:4.5em 0; max-width:640px; display:grid; grid-template-columns:minmax(0,290fr) minmax(0,60fr) minmax(0,290fr); align-items:start;">
+          <div>
+            <div style="aspect-ratio:290/101; display:flex; align-items:center; justify-content:center;">
+              <img src="images/cognite-atlas/qkg-before-adhoc.png" alt="A single hand-written filter condition in a code editor." style="width:72.4%; height:auto; display:block;">
+            </div>
+            <div style="font-size:10.5px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:#6C2BF2; margin-top:20px; text-align:center;">Before</div>
+            <div style="font-size:14.5px; font-weight:500; color:#0F1014; margin-top:4px; text-align:center;">Ad hoc scripts</div>
+            <p style="font-size:13px; color:#8A8D96; margin-top:6px; line-height:1.5;">A single hand-written condition, valid for one query, understood by one person, gone the moment the script is.</p>
+          </div>
+          <div data-arrow style="aspect-ratio:60/101; display:flex; align-items:center; justify-content:center;">
+            <svg width="40" height="10" viewBox="0 0 40 10" fill="none" aria-hidden="true" style="display:block;"><path d="M0 5h35" stroke="#6C2BF2" stroke-width="2"/><path d="M31 1.5l4 3.5-4 3.5" stroke="#6C2BF2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div>
+            <div style="aspect-ratio:290/101; display:flex; align-items:center; justify-content:center;">
+              <img src="images/cognite-atlas/qkg-after-structured.png" alt="The same logic expressed as a structured filter row in the query builder UI." style="width:72.4%; height:auto; display:block; filter:drop-shadow(0 4px 10px rgba(0,0,0,.25));">
+            </div>
+            <div style="font-size:10.5px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:#6C2BF2; margin-top:20px; text-align:center;">After</div>
+            <div style="font-size:14.5px; font-weight:500; color:#0F1014; margin-top:4px; text-align:center;">Structured, reusable UI</div>
+            <p style="font-size:13px; color:#8A8D96; margin-top:6px; line-height:1.5;">Same logic as a structured field — reusable across agents, enforced by the platform, and legible to a builder who’s never written code.</p>
+          </div>
+        </figure>
 
         <div style="max-width:640px;">
-          <p style="margin-bottom:1.5em; color:#2B2D34;">The fix was to remove freedom from the model. Builders needed to lock query parameters — filters, returned properties, sort order, limits — so the agent could still decide when to query and what to ask about, but never how the results come back. The initial scope stopped at raw JSON configuration; my design work was the interface that made those locked rules legible to people who don’t write query languages.</p>
-          <p style="margin-bottom:1.5em; color:#2B2D34;">The core of it is a filter builder that handles genuinely complex boolean logic without pretending it’s simple. Basic mode covers grouped AND/OR rules with nesting up to three levels — enough for almost every real case — using progressive disclosure to keep the first-glance surface small. Advanced mode is color-coded JSON for builders who want full expressiveness, with example templates to start from.</p>
-          <p style="margin-bottom:1.5em; color:#2B2D34;">The detail I’m most attached to is the seam between them: switching from Advanced back to Basic can be lossy, because arbitrary JSON doesn’t always round-trip into a visual builder — so the interface says exactly that, in a warning modal, before anything is discarded. An interface that translates between audiences owes both of them the truth about what survives translation.</p>
+          <p style="margin-bottom:1.5em; color:#2B2D34;">Builders needed to lock query parameters — filters, returned properties, sort order, limits — so the agent could still decide when to query and what to ask about, but never how the results come back. The initial scope stopped at raw JSON configuration; my design work was the interface that made those locked rules legible to people who don’t write query languages.</p>
         </div>
-
-        <figure data-r="bleed" style="margin:5.5em 0; width:calc(100% + max((100vw - 1240px) / 2, 0px));">
-          <img src="images/cognite-atlas/qkg-filter-iterations.png" alt="Two iterations of the filter builder: flat groups with a plain-language logic summary, then nested groups with Basic and Advanced modes." style="width:100%; display:block; aspect-ratio:896/364; object-fit:cover;">
-          <figcaption style="font-size:13px; color:#8A8D96; margin-top:12px; line-height:1.5; max-width:960px;">Two iterations of the filter builder: flat groups with a plain-language logic summary, then nested groups with Basic and Advanced modes.</figcaption>
-        </figure>
 
         <div style="font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#6C2BF2; margin:96px 0 14px;">Handoff</div>
         <h3 id="cg7" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:640px;">Prototype as the spec</h3>
-        <div data-r="two" style="margin:4.5em 0; display:grid; grid-template-columns:5fr 7fr; gap:48px; align-items:center;">
-          <div><p style="color:#2B2D34; margin-bottom:1.2em; font-size:15.5px;">Filter logic is exactly the kind of interaction that dies in static specs — the behavior <em>is</em> the design. So instead of writing interaction documentation, I built two working prototypes of the filter builder in React, generating the code with AI and directing it like a design tool, and attached them to the engineering ticket.</p><p style="color:#2B2D34; margin-bottom:1.2em; font-size:15.5px;">Engineers clicked through real nesting behavior, real mode-switching, real edge cases. Questions that would have taken a week of spec ping-pong were answered by opening a file.</p></div>
-          <div><img src="images/cognite-atlas/qkg-prototype.png" alt="The filter builder prototype running in the browser." style="width:100%; display:block; aspect-ratio:495/371; object-fit:cover;"></div>
+        <div style="max-width:640px;">
+          <p style="color:#2B2D34; margin-bottom:1.2em; font-size:15.5px;">Filter logic is exactly the kind of interaction that dies in static specs — the behavior <em>is</em> the design. So instead of writing interaction documentation, I built working prototypes of the filter builder in React, generating the code with AI and directing it like a design tool, and attached them to the engineering ticket.</p>
         </div>
+
+        <blockquote style="margin:3em 0; border-left:2px solid #6C2BF2; padding-left:26px; max-width:588px;">
+          <p style="font-size:24px; font-weight:500; line-height:1.3; letter-spacing:-.015em; color:#0F1014;">I iterate live with stakeholders by vibe coding, and handoff HTML in Jira.</p>
+        </blockquote>
+
+        <!-- Figma: Prototype as the spec › AI-native workflow (205:22045).
+             The "Iterate" step and the tool bar are one continuous shape in Figma (a boolean
+             union). Reproduced here by dropping the step's bottom border and letting its fill
+             overlap the bar's top border by 1px — both are #F4F1FE, so the seam disappears.
+             Card/arrow flex ratios are 133:36, which keeps the REPEATS bracket (a 640-wide
+             SVG scaled to 100%) aligned to the step centres at every width. -->
+        <figure data-r="flow4" style="margin:4.5em 0; max-width:640px;">
+          <svg viewBox="0 0 640 65" fill="none" aria-hidden="true" style="width:100%; height:auto; display:block;">
+            <path d="M234 56V16a8 8 0 018-8h153a8 8 0 018 8v40" stroke="#ACAFB8" stroke-width="1.2" stroke-dasharray="4 4"/>
+            <rect x="282" y="0" width="75" height="16" fill="#FAFAFC"/>
+            <text x="319.5" y="12" text-anchor="middle" font-family="'Instrument Sans',sans-serif" font-size="10" font-weight="600" letter-spacing="1.6" fill="#8A8D96">REPEATS</text>
+          </svg>
+
+          <div data-steps>
+            <div data-step style="min-height:108px; padding:18px 16px; border:1px solid #E6E8EE; border-radius:8px; background:#FFFFFF;">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#8A8D96" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:block;"><path d="M3 17l1-4 9.5-9.5a1.5 1.5 0 0 1 2.1 2.1L6 15z"/><path d="M12.5 4.5L15.5 7.5"/></svg>
+              <div style="margin-top:14px; font-size:14px; font-weight:500; line-height:1.3; color:#0F1014;">Sketch</div>
+            </div>
+            <div data-arrow style="min-height:108px; display:flex; align-items:center; justify-content:center;">
+              <svg width="26" height="10" viewBox="0 0 26 10" fill="none" stroke="#ACAFB8" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:block;"><path d="M0 5h24"/><path d="M20 1.5L24 5l-4 3.5"/></svg>
+            </div>
+            <div data-step style="min-height:108px; padding:18px 16px; border:1px solid #6C2BF2; border-radius:8px; background:#F4F1FE;">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#6C2BF2" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:block;"><path d="M7 6.5L3.5 10 7 13.5M13 6.5L16.5 10 13 13.5"/></svg>
+              <div style="margin-top:14px; font-size:14px; font-weight:500; line-height:1.3; color:#0F1014;">Prototype</div>
+              <div style="margin-top:2px; font-size:12.5px; line-height:1.35; color:#8A8D96;">vibe-coded</div>
+            </div>
+            <div data-arrow style="min-height:108px; display:flex; align-items:center; justify-content:center;">
+              <svg width="26" height="10" viewBox="0 0 26 10" fill="none" stroke="#6C2BF2" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:block;"><path d="M0 5h24"/><path d="M20 1.5L24 5l-4 3.5"/></svg>
+            </div>
+            <div data-step data-merge style="min-height:108px; padding:18px 16px; border:1px solid #6C2BF2; border-bottom:none; border-radius:8px 8px 0 0; background:#F4F1FE; margin-bottom:-1px; position:relative; z-index:1;">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#6C2BF2" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:block;"><rect x="2" y="3.5" width="16" height="10.5" rx="1"/><path d="M7 17h6M10 14v3"/><path d="M6 8.5h4M6 11h6.5"/></svg>
+              <div style="margin-top:14px; font-size:14px; font-weight:500; line-height:1.3; color:#0F1014;">Iterate live with stakeholders</div>
+              <div style="margin-top:20px; font-size:12.5px; line-height:1.35; color:#8A8D96;">cover feedbacks</div>
+            </div>
+            <div data-arrow style="min-height:108px; display:flex; align-items:center; justify-content:center;">
+              <svg width="26" height="10" viewBox="0 0 26 10" fill="none" stroke="#ACAFB8" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:block;"><path d="M0 5h24"/><path d="M20 1.5L24 5l-4 3.5"/></svg>
+            </div>
+            <div data-step style="min-height:108px; padding:18px 16px; border:1px dashed #ACAFB8; border-radius:8px;">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#8A8D96" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:block;"><path d="M10 2.5v9M6.5 8.5L10 12l3.5-3.5"/><path d="M3.5 14v2.5h13V14"/></svg>
+              <div style="margin-top:14px; font-size:14px; font-weight:500; line-height:1.3; color:#0F1014;">Handoff</div>
+              <div style="margin-top:2px; font-size:12.5px; line-height:1.35; color:#8A8D96;">coded prototype</div>
+            </div>
+          </div>
+
+          <div data-toolbar style="border:1px solid #6C2BF2; border-radius:8px; background:#F4F1FE; padding:24px 40px; display:flex; justify-content:space-between; align-items:flex-start; gap:16px;">
+            <div style="text-align:center;"><img src="images/cognite-atlas/tool-lovable.png" alt="" style="height:40px; width:auto; display:block; margin:0 auto;"><div style="margin-top:8px; font-size:12.5px; color:#8A8D96;">Lovable</div></div>
+            <div style="text-align:center;"><img src="images/cognite-atlas/tool-gemini.png" alt="" style="height:40px; width:auto; display:block; margin:0 auto;"><div style="margin-top:8px; font-size:12.5px; color:#8A8D96;">Gemini</div></div>
+            <div style="text-align:center;"><img src="images/cognite-atlas/tool-chatgpt.png" alt="" style="height:40px; width:auto; display:block; margin:0 auto;"><div style="margin-top:8px; font-size:12.5px; color:#8A8D96;">ChatGPT</div></div>
+            <div style="text-align:center;"><img src="images/cognite-atlas/tool-cursor.png" alt="" style="height:40px; width:auto; display:block; margin:0 auto;"><div style="margin-top:8px; font-size:12.5px; color:#8A8D96;">Cursor</div></div>
+            <div style="text-align:center;"><img src="images/cognite-atlas/tool-figma.png" alt="" style="height:40px; width:auto; display:block; margin:0 auto;"><div style="margin-top:8px; font-size:12.5px; color:#8A8D96;">Figma</div></div>
+            <div style="text-align:center;"><img src="images/cognite-atlas/tool-claude.png" alt="" style="height:40px; width:auto; display:block; margin:0 auto;"><div style="margin-top:8px; font-size:12.5px; color:#8A8D96;">Claude</div></div>
+          </div>
+
+          <figcaption style="margin-top:26px; text-align:center;">
+            <div style="font-size:10.5px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:#6C2BF2;">Built, not described</div>
+            <div style="font-size:14.5px; font-weight:500; color:#0F1014; margin-top:4px;">AI native product design work flow</div>
+          </figcaption>
+        </figure>
+
+        <div style="max-width:640px;">
+          <p style="color:#2B2D34; margin-bottom:1.2em; font-size:15.5px;">Engineers clicked through real nesting behavior, real mode-switching, real edge cases. Questions that would have taken a week of spec ping-pong were answered by opening a file.</p>
+        </div>
+
+        <!-- Figma: Prototype as the spec › Main Container (220:22794) — vibe code + design system = handoff -->
+        <figure data-r="flow3" style="margin:4.5em 0; display:grid; grid-template-columns:minmax(0,218.67fr) minmax(0,80fr) minmax(0,218.67fr) minmax(0,80fr) minmax(0,218.67fr); gap:20px; align-items:start;">
+          <div>
+            <div style="aspect-ratio:218.67/164; display:flex; align-items:center; justify-content:center;">
+              <img src="images/cognite-atlas/handoff-vibe-code.png" alt="A scroll of generated prototype code unrolling out of a laptop." style="max-width:100%; max-height:100%; height:auto; display:block;">
+            </div>
+            <div style="font-size:10.5px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:#6C2BF2; margin-top:20px; text-align:center;">Vibe code</div>
+            <div style="font-size:14.5px; font-weight:500; color:#0F1014; margin-top:4px; text-align:center; line-height:1.35;">Behavior is the design, static design specs can not achieve</div>
+          </div>
+          <div data-op style="aspect-ratio:80/164; display:flex; align-items:center; justify-content:center;">
+            <svg width="40" height="40" viewBox="0 0 40 40" fill="none" aria-hidden="true" style="display:block;"><path d="M0 20h40M20 0v40" stroke="#6C2BF2" stroke-width="5"/></svg>
+          </div>
+          <div>
+            <div style="aspect-ratio:218.67/164; display:flex; align-items:center; justify-content:center; padding:0 20px;">
+              <img src="images/cognite-atlas/handoff-design-system.png" alt="The COGS design system library: components, patterns, community utilities and community components." style="max-width:100%; max-height:100%; height:auto; display:block; filter:drop-shadow(0 4px 10px rgba(0,0,0,.25));">
+            </div>
+            <div style="font-size:10.5px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:#6C2BF2; margin-top:20px; text-align:center;">Company design system</div>
+            <div style="font-size:14.5px; font-weight:500; color:#0F1014; margin-top:4px; text-align:center; line-height:1.35;">Speak the same design language is the gap</div>
+          </div>
+          <div data-op style="aspect-ratio:80/164; display:flex; align-items:center; justify-content:center;">
+            <svg width="40" height="40" viewBox="0 0 40 40" fill="none" aria-hidden="true" style="display:block;"><path d="M0 12.5h40M0 27.5h40" stroke="#6C2BF2" stroke-width="5"/></svg>
+          </div>
+          <div>
+            <div style="aspect-ratio:218.67/164; display:flex; align-items:center; justify-content:center;">
+              <img src="images/cognite-atlas/handoff-jira.png" alt="The finished Jira ticket carrying the HTML prototype and component specs." style="max-width:100%; max-height:100%; height:auto; display:block;">
+            </div>
+            <div style="font-size:10.5px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:#6C2BF2; margin-top:20px; text-align:center;">Jira final handoff</div>
+            <div style="font-size:14.5px; font-weight:500; color:#0F1014; margin-top:4px; text-align:center; line-height:1.35;">Full HTML file &amp; UI component specs</div>
+          </div>
+        </figure>
 
         <div style="margin:2.5em 0 0; display:flex; align-items:baseline; gap:14px; border-top:1px solid #E6E8EE; padding-top:18px; max-width:640px;">
           <span style="font-size:10.5px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:#6C2BF2; white-space:nowrap;">Shipped</span>
           <span style="font-size:15.5px; color:#2B2D34;">November 2025 — and it completed the spectrum I’d sketched back in April, in a way I didn’t expect.</span>
         </div>
 
+        <figure style="margin:4.5em 0; max-width:640px;">
+          <video data-lazyvideo="images/cognite-atlas/qkg-tool-demo.mp4" muted loop playsinline preload="none"
+                 aria-label="Screen recording of the QKG tool design running as a standalone HTML file."
+                 style="width:100%; height:auto; aspect-ratio:1/1; display:block; background:#F3F4F8; box-shadow:0 4px 20px rgba(0,0,0,.25);"></video>
+          <figcaption style="font-size:13px; color:#8A8D96; margin-top:12px; line-height:1.5;">The QKG tool design stand alone as HTML that was handoff in the Jira ticket.</figcaption>
+        </figure>
+
         <div style="max-width:640px;">
-          <p style="margin-bottom:1.5em; color:#2B2D34;">I’d drawn that line as manual to automatic, assuming the work was moving things rightward — more inference, less configuration. QKG taught me the line runs both ways. AI-native design isn’t maximizing what the model decides. It’s choosing, per interaction, what the model <em>gets</em> to decide — and building the interface that makes that boundary visible.</p>
+          <p style="margin-bottom:1.5em; color:#2B2D34;">QKG taught me the line runs both ways. AI-native design isn’t maximizing what the model decides. It’s choosing, per interaction, what the model <em>gets</em> to decide — and building the interface that makes that boundary visible.</p>
         </div>
 
         <div style="margin:150px 0 0; border-top:1px solid #0F1014; padding-top:13px; display:flex; align-items:baseline; gap:13px;"><span style="font-size:10.5px; font-weight:600; letter-spacing:.1em; color:#6C2BF2;">05</span><span style="font-size:10.5px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#0F1014;">Takeaway</span></div>
@@ -676,7 +828,7 @@
   <!-- ================= ASHLEY TNT CASE STUDY ================= -->
   <div data-screen="ashley" data-accent="ashley" data-screen-label="Ashley Furniture TNT">
 
-    <nav style="display:flex; justify-content:space-between; padding:24px; max-width:1240px; margin:0 auto; font-size:14px;">
+    <nav style="display:flex; justify-content:space-between; padding:28px 24px; max-width:1200px; margin:0 auto; font-size:14px;">
       <a href="#" data-nav="home" style="display:flex; align-items:center; gap:9px; font-weight:600; font-size:15px; letter-spacing:-.01em;"><img src="uploads/logo.png" alt="Ada Gu" style="width:38px; height:38px; display:block;"></a>
       <div style="display:flex; gap:26px; color:#8A8D96;"><a href="#work" data-jump="work">Work</a><a href="#lab" data-jump="lab">Lab</a><a href="#">About</a></div>
     </nav>
@@ -788,7 +940,7 @@
           </div>
         </div>
 
-        <blockquote style="margin:3em 0; border-left:2px solid #D24700; padding-left:26px; max-width:26em;">
+        <blockquote style="margin:3em 0; border-left:2px solid #D24700; padding-left:26px; max-width:588px;">
           <p style="font-size:24px; font-weight:500; line-height:1.3; letter-spacing:-.015em; color:#0F1014;">The app was organized around its own structure instead of around the job.</p>
         </blockquote>
 
@@ -882,7 +1034,7 @@
   <!-- ================= P&G ARTWORK CASE STUDY ================= -->
   <div data-screen="pg" data-accent="pg" data-screen-label="P&amp;G Artwork">
 
-    <nav style="display:flex; justify-content:space-between; padding:24px; max-width:1240px; margin:0 auto; font-size:14px;">
+    <nav style="display:flex; justify-content:space-between; padding:28px 24px; max-width:1200px; margin:0 auto; font-size:14px;">
       <a href="#" data-nav="home" style="display:flex; align-items:center; gap:9px; font-weight:600; font-size:15px; letter-spacing:-.01em;"><img src="uploads/logo.png" alt="Ada Gu" style="width:38px; height:38px; display:block;"></a>
       <div style="display:flex; gap:26px; color:#8A8D96;"><a href="#work" data-jump="work">Work</a><a href="#lab" data-jump="lab">Lab</a><a href="#">About</a></div>
     </nav>
@@ -1007,7 +1159,7 @@
           </div>
         </div>
 
-        <blockquote style="margin:3em 0; border-left:2px solid #0B5BFF; padding-left:26px; max-width:26em;">
+        <blockquote style="margin:3em 0; border-left:2px solid #0B5BFF; padding-left:26px; max-width:588px;">
           <p style="font-size:24px; font-weight:500; line-height:1.3; letter-spacing:-.015em; color:#0F1014;">A slow model isn't something you can style your way out of.</p>
         </blockquote>
 
@@ -1054,7 +1206,7 @@
           </div>
         </div>
 
-        <blockquote style="margin:3.5em 0; border-left:2px solid #0B5BFF; padding-left:26px; max-width:26em;">
+        <blockquote style="margin:3.5em 0; border-left:2px solid #0B5BFF; padding-left:26px; max-width:588px;">
           <p style="font-size:24px; font-weight:500; line-height:1.3; letter-spacing:-.015em; color:#0F1014;">A comparison is only meaningful when the two files share a property.</p>
         </blockquote>
 
@@ -1135,7 +1287,7 @@
   <!-- ================= WAYHOME CASE STUDY ================= -->
   <div data-screen="wayhome" data-accent="wayhome" data-screen-label="WayHome">
 
-    <nav style="display:flex; justify-content:space-between; padding:24px; max-width:1240px; margin:0 auto; font-size:14px;">
+    <nav style="display:flex; justify-content:space-between; padding:28px 24px; max-width:1200px; margin:0 auto; font-size:14px;">
       <a href="#" data-nav="home" style="display:flex; align-items:center; gap:9px; font-weight:600; font-size:15px; letter-spacing:-.01em;"><img src="uploads/logo.png" alt="Ada Gu" style="width:38px; height:38px; display:block;"></a>
       <div style="display:flex; gap:26px; color:#8A8D96;"><a href="#work" data-jump="work">Work</a><a href="#lab" data-jump="lab">Lab</a><a href="#">About</a></div>
     </nav>
@@ -1236,7 +1388,7 @@
           </div>
         </div>
 
-        <blockquote style="margin:3em 0; border-left:2px solid #0B7D74; padding-left:26px; max-width:26em;">
+        <blockquote style="margin:3em 0; border-left:2px solid #0B7D74; padding-left:26px; max-width:588px;">
           <p style="font-size:24px; font-weight:500; line-height:1.3; letter-spacing:-.015em; color:#0F1014;">"Small and local" read as trustworthy where "polished" read as risky.</p>
         </blockquote>
 
@@ -1351,7 +1503,7 @@
   <!-- ================= HALLIBURTON CASE STUDY ================= -->
   <div data-screen="case" data-accent="halliburton" data-screen-label="Halliburton InnerVue">
 
-    <nav style="display:flex; justify-content:space-between; padding:24px; max-width:1240px; margin:0 auto; font-size:14px;">
+    <nav style="display:flex; justify-content:space-between; padding:28px 24px; max-width:1200px; margin:0 auto; font-size:14px;">
       <a href="#" data-nav="home" style="display:flex; align-items:center; gap:9px; font-weight:600; font-size:15px; letter-spacing:-.01em;"><img src="uploads/logo.png" alt="Ada Gu" style="width:38px; height:38px; display:block;"></a>
       <div style="display:flex; gap:26px; color:#8A8D96;"><a href="#work" data-jump="work">Work</a><a href="#lab" data-jump="lab">Lab</a><a href="#">About</a></div>
     </nav>
@@ -1495,7 +1647,7 @@
           <p style="margin-bottom:1.5em; color:#2B2D34;">The existing input UI split those parameters across six tabs — one per parameter type. Engineers told us in feedback it was extremely time-consuming, and the product owner proposed the obvious fix: restyle the fields, make them more readable.</p>
         </div>
 
-        <blockquote style="margin:3em 0; border-left:2px solid #DD0F26; padding-left:26px; max-width:24em;">
+        <blockquote style="margin:3em 0; border-left:2px solid #DD0F26; padding-left:26px; max-width:588px;">
           <p style="font-size:24px; font-weight:500; line-height:1.3; letter-spacing:-.015em; color:#0F1014;">I didn't think readability was the problem, and said so.</p>
         </blockquote>
 
@@ -1510,7 +1662,7 @@
         <div style="font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#DD0F26; margin:44px 0 14px;">The insight</div>
         <h3 id="hb3" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:640px;">The insight underneath</h3>
 
-        <div style="max-width:640px;"><p style="margin-bottom:1.5em; color:#2B2D34;">To make that case properly, I ran a round of usability testing and interviews. The pattern was immediate: engineers were constantly jumping back to the first tab, &ldquo;Distance,&rdquo; because every parameter in every other tab refers to it.</p><blockquote style="margin:3em 0; border-left:2px solid #DD0F26; padding-left:26px; max-width:26em;">
+        <div style="max-width:640px;"><p style="margin-bottom:1.5em; color:#2B2D34;">To make that case properly, I ran a round of usability testing and interviews. The pattern was immediate: engineers were constantly jumping back to the first tab, &ldquo;Distance,&rdquo; because every parameter in every other tab refers to it.</p><blockquote style="margin:3em 0; border-left:2px solid #DD0F26; padding-left:26px; max-width:588px;">
           <p style="font-size:24px; font-weight:500; line-height:1.3; letter-spacing:-.015em; color:#0F1014;">The six tabs mirrored how the data was stored, not how engineers think.</p>
         </blockquote><p style="margin-bottom:1.5em; color:#2B2D34;">To an engineer, a pipeline is one continuous object where everything is a function of distance. Splitting it into tabs shattered that mental model and forced them to hold it in their heads while clicking back and forth.</p></div><figure data-motion="pipeline-mental-model" style="margin:4em 0;"><div style="background:#FFFFFF; border:1px solid #DADAD6; padding:44px 32px 36px;">
     <svg viewBox="0 0 880 400" style="width:100%; height:auto; display:block;">
