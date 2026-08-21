@@ -901,48 +901,51 @@
         <div style="margin:128px 0 0; border-top:1px solid #0F1014; padding-top:13px; display:flex; align-items:baseline; gap:13px;"><span style="font-size:10.5px; font-weight:600; letter-spacing:.1em; color:#D24700;">01</span><span style="font-size:10.5px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#0F1014;">Understanding the problem</span></div>
         <div style="font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#D24700; margin:44px 0 14px;">The path</div>
         <h3 id="as1" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:640px;">The long way to a short answer</h3>
-        <div style="max-width:640px;">
-          <p style="margin-bottom:1.5em; color:#2B2D34;">Before I changed anything, I mapped the existing path to a trip detail: sign in, then not one but two separate search pages, then an account page, then a location page — and only then the trip detail the user actually came for.</p>
-          <p style="margin-bottom:1.5em; color:#2B2D34;">Every screen in that chain was a real destination to the app. None of them was the destination to the user.</p>
+        <!-- Figma: Section — The long way to a short answer (35:48). Text 592 / audit 288, 16px gutter. -->
+        <div data-r="two" style="margin:0 0 4.5em; display:grid; grid-template-columns:minmax(0,592fr) minmax(0,288fr); gap:16px; align-items:start;">
+          <div>
+            <p style="margin-bottom:1.5em; color:#2B2D34;">Before I changed anything, I mapped the existing path to a trip detail: sign in, then not one but two separate search pages, then an account page, then a location page — and only then the trip detail the user actually came for.</p>
+            <p style="margin-bottom:1.5em; color:#2B2D34;">One screen in that chain was worse than the rest. Before the search would return anything, it asked the user to fill in five separate fields — the kind of form that assumes you already know the order number, the dealer code, and the date range.</p>
+            <p style="margin-bottom:1.5em; color:#2B2D34;">But the person opening this app is usually looking <em>because</em> they don't have those details to hand. The form asked users to recall exactly what they'd come to find out.</p>
+          </div>
+          <figure style="margin:0;">
+            <video data-lazyvideo="images/ashley-tnt/existing-audit.mp4" muted loop playsinline preload="none"
+                   aria-label="Screen recording of the existing TNT app, audited before the redesign."
+                   style="width:48.6%; max-width:280px; height:auto; margin:0 auto; display:block; aspect-ratio:888/1920; background:#F3F4F8; box-shadow:0 4px 10px rgba(0,0,0,.25);"></video>
+            <figcaption style="font-size:13px; color:#8A8D96; margin-top:26px; line-height:1.5; text-align:center;">Existing APP Audit</figcaption>
+          </figure>
         </div>
 
-        <figure data-r="bleed" style="margin:5em 0; width:calc(100% + max((100vw - 1240px) / 2, 0px));">
-          <img src="images/ashley-tnt/old-flow.png" alt="sign-in, two search pages, an account page, a location page" style="width:100%; display:block; aspect-ratio:16/6.5; object-fit:cover;">
-          <figcaption style="font-size:13px; color:#8A8D96; margin-top:12px; line-height:1.5; max-width:960px;">The original path to a single trip detail.</figcaption>
+        <figure style="margin:4.5em 0;">
+          <img src="images/ashley-tnt/user-flow-before.png" alt="The original user flow: open app, sign in, two search pages, account page, location page, then the trip detail." style="width:100%; height:auto; display:block; aspect-ratio:896/367;">
+          <figcaption style="font-size:13px; color:#8A8D96; margin-top:12px; line-height:1.5; max-width:640px;">The original seven-step path from sign-in to a single trip detail.</figcaption>
         </figure>
-
-        <div data-r="two" style="margin:4.5em 0; display:grid; grid-template-columns:5fr 7fr; gap:48px; align-items:center;">
-          <div>
-            <p style="color:#2B2D34; margin-bottom:1.2em; font-size:15.5px;">One screen in that chain was worse than the rest. Before the search would return anything, it asked the user to fill in five separate fields — the kind of form that assumes you already know the order number, the dealer code, the date range, and everything else about the thing you're looking up.</p>
-            <p style="color:#2B2D34; margin-bottom:1.2em; font-size:15.5px;">But the person opening this app is usually looking <em>because</em> they don't have those details to hand. The form asked users to recall exactly what they'd come to find out.</p>
-          </div>
-          <div>
-            <img src="images/ashley-tnt/five-field-search.png" alt="five fields before a single result" style="width:100%; display:block; aspect-ratio:4/3; object-fit:cover;">
-          </div>
-        </div>
 
         <div style="font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#D24700; margin:96px 0 14px;">Testing</div>
         <h3 id="as2" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:640px;">What testing surfaced</h3>
         <div style="max-width:640px;">
           <p style="margin-bottom:1.5em; color:#2B2D34;">I ran two rounds of usability testing across the redesign, and they pointed at the same two problems every time.</p>
+          <p style="margin-bottom:1.5em; color:#2B2D34;">Users lost the thread of where they were and why, somewhere between opening the app and the one answer. People hesitated in front of five empty fields, backed out, or guessed wrong and started over.</p>
         </div>
 
-        <div data-r="two" style="margin:3em 0 4em; display:grid; grid-template-columns:1fr 1fr; gap:48px; max-width:840px;">
-          <div style="border-top:1px solid #E6E8EE; padding-top:20px;">
-            <div style="font-size:10.5px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:#D24700; margin-bottom:10px;">Pain point 01</div>
-            <b style="font-weight:600; font-size:17px; letter-spacing:-.01em; display:block; margin-bottom:8px;">Too many screens</b>
-            <p style="font-size:15px; color:#2B2D34;">Users lost the thread of where they were and why, somewhere between opening the app and the one answer.</p>
+        <!-- Figma: Options (231:23003) — three 283px columns, 24px gutters. -->
+        <div data-r="three" style="margin:3em 0 0; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:24px; align-items:start;">
+          <div>
+            <div style="font-size:10.5px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:#D24700;">Pain point 1</div>
+            <div style="font-size:14.5px; font-weight:600; color:#0F1014; margin-top:8px;">Complex Navigation</div>
+            <p style="font-size:13px; color:#8A8D96; margin-top:8px; line-height:1.55;">Users must navigate through a cumbersome process before reaching the trip detail page, causing frustration and inefficiency.</p>
           </div>
-          <div style="border-top:1px solid #E6E8EE; padding-top:20px;">
-            <div style="font-size:10.5px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:#D24700; margin-bottom:10px;">Pain point 02</div>
-            <b style="font-weight:600; font-size:17px; letter-spacing:-.01em; display:block; margin-bottom:8px;">Input load in search</b>
-            <p style="font-size:15px; color:#2B2D34;">People hesitated in front of five empty fields, backed out, or guessed wrong and started over.</p>
+          <div>
+            <div style="font-size:10.5px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:#D24700;">Pain point 2</div>
+            <div style="font-size:14.5px; font-weight:600; color:#0F1014; margin-top:8px;">Overwhelming Input Requirements</div>
+            <p style="font-size:13px; color:#8A8D96; margin-top:8px; line-height:1.55;">One of the search pages requires users to fill out five input fields, making the process overwhelming and confusing, leading to potential user drop-offs.</p>
+          </div>
+          <div>
+            <div style="font-size:10.5px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:#D24700;">Pain point 3</div>
+            <div style="font-size:14.5px; font-weight:600; color:#0F1014; margin-top:8px;">Lack of Branding</div>
+            <p style="font-size:13px; color:#8A8D96; margin-top:8px; line-height:1.55;">The current app design does not align with Ashley Furniture's branding, resulting in an inconsistent visual identity that diminishes brand cohesion and recognition.</p>
           </div>
         </div>
-
-        <blockquote style="margin:3em 0; border-left:2px solid #D24700; padding-left:26px; max-width:588px;">
-          <p style="font-size:24px; font-weight:500; line-height:1.3; letter-spacing:-.015em; color:#0F1014;">The app was organized around its own structure instead of around the job.</p>
-        </blockquote>
 
         <div style="margin:150px 0 0; border-top:1px solid #0F1014; padding-top:13px; display:flex; align-items:baseline; gap:13px;"><span style="font-size:10.5px; font-weight:600; letter-spacing:.1em; color:#D24700;">02</span><span style="font-size:10.5px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#0F1014;">The redesign</span></div>
         <div style="font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#D24700; margin:44px 0 14px;">Navigation</div>
@@ -952,49 +955,45 @@
           <p style="margin-bottom:1.5em; color:#2B2D34;">I restructured the flow so the app opens toward that job rather than routing users through account and location screens they never asked for, and rebuilt the eleven key screens along that path so each one moved the user forward instead of sideways.</p>
         </div>
 
-        <div style="margin:2.5em 0 0; display:flex; align-items:baseline; gap:14px; border-top:1px solid #E6E8EE; padding-top:18px; max-width:640px;">
-          <span style="font-size:10.5px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:#D24700; white-space:nowrap;">Result</span>
-          <span style="font-size:15.5px; color:#2B2D34;">Three taps from opening the app to a trip detail, down from seven.</span>
-        </div>
-
-        <figure data-r="bleed" style="margin:5em 0; width:calc(100% + max((100vw - 1240px) / 2, 0px));">
-          <img src="images/ashley-tnt/new-flow.png" alt="three taps to the trip detail" style="width:100%; display:block; aspect-ratio:16/6.5; object-fit:cover;">
-          <figcaption style="font-size:13px; color:#8A8D96; margin-top:12px; line-height:1.5; max-width:960px;">The redesigned path.</figcaption>
+        <figure style="margin:4.5em 0;">
+          <img src="images/ashley-tnt/user-flow-after.png" alt="The redesigned wireframe flow: three steps from opening the app to a trip detail, with branches for single and multiple accounts." style="width:100%; height:auto; display:block; aspect-ratio:896/428;">
+          <figcaption style="font-size:13px; color:#8A8D96; margin-top:12px; line-height:1.5; max-width:640px;">Seven steps reduced to three.</figcaption>
         </figure>
 
         <div style="font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#D24700; margin:96px 0 14px;">Search</div>
         <h3 id="as4" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:640px;">Replacing a form with a choice</h3>
-        <div style="max-width:640px;">
-          <p style="margin-bottom:1.5em; color:#2B2D34;">The five-field search needed a different fix, not a shorter one. Typing is recall — it asks the user to produce information from memory. Choosing is recognition — it shows the options and lets the user point.</p>
-          <p style="margin-bottom:1.5em; color:#2B2D34;">Recognition is nearly always the cheaper cognitive move, and it fit this audience exactly: a store owner narrowing down a delivery is far better at recognizing the right trip than at reciting its parameters.</p>
-        </div>
 
-        <div data-r="two" style="margin:4.5em 0; display:grid; grid-template-columns:7fr 5fr; gap:48px; align-items:center;">
+        <!-- Figma: Frame 591 (231:25303) — copy 432 / final design 432, 32px gutter. -->
+        <div data-r="two" style="margin:2.5em 0 0; display:grid; grid-template-columns:minmax(0,432fr) minmax(0,432fr); gap:32px; align-items:start;">
           <div>
-            <img src="images/ashley-tnt/filter-capsules.png" alt="tap to narrow, instead of typing" style="width:100%; display:block; aspect-ratio:4/3; object-fit:cover;">
+            <p style="margin-bottom:1.5em; color:#2B2D34;">The five-field search needed a different fix, not a shorter one. Typing is recall — it asks the user to produce information from memory. Choosing is recognition — it shows the options and lets the user point.</p>
+            <p style="margin-bottom:1.5em; color:#2B2D34;">Recognition is nearly always the cheaper cognitive move, and it fit this audience exactly: a store owner narrowing down a delivery is far better at recognizing the right trip than at reciting its parameters.</p>
+            <p style="margin-bottom:1.5em; color:#2B2D34;">So the form became a set of visual filter capsules. Instead of five empty fields, the user taps to narrow — by the dimensions that actually distinguish one delivery from another — and watches the list shrink toward the trip they want.</p>
           </div>
-          <div>
-            <p style="color:#2B2D34; margin-bottom:1.2em; font-size:15.5px;">So the form became a set of visual filter capsules. Instead of five empty fields, the user taps to narrow — by the dimensions that actually distinguish one delivery from another — and watches the list shrink toward the trip they want.</p>
-            <p style="color:#2B2D34; margin-bottom:1.2em; font-size:15.5px;">Same filtering power, none of the blank-form dread.</p>
-          </div>
-        </div>
-
-        <div style="max-width:640px;">
-          <p style="margin-bottom:1.5em; color:#2B2D34;">Together, the shorter path and the recognition-based search halved the time to find a trip — about 50% per search. Support calls from dealers who simply couldn't locate a delivery dropped. The work shipped across versions 1.9 to 2.1.</p>
+          <figure style="margin:0;">
+            <!-- The GIF's whole canvas is opaque #FEFEFE, so it reads as a white card on the
+                 page. multiply drops that surround into the #FAFAFC background (254x250/255
+                 lands back on the page colour) while leaving the phone body dark. It costs the
+                 screen content about 2% darkening, which is below the visible threshold. -->
+            <img src="images/ashley-tnt/final-design.gif" alt="The redesigned search: visual filter capsules narrowing a list of deliveries." style="width:57%; max-width:300px; height:auto; margin:0 auto; display:block; aspect-ratio:493/920; mix-blend-mode:multiply;">
+            <figcaption style="font-size:13px; color:#8A8D96; margin-top:24px; line-height:1.5; text-align:center;">Final Design for single account route</figcaption>
+          </figure>
         </div>
 
         <div style="margin:150px 0 0; border-top:1px solid #0F1014; padding-top:13px; display:flex; align-items:baseline; gap:13px;"><span style="font-size:10.5px; font-weight:600; letter-spacing:.1em; color:#D24700;">03</span><span style="font-size:10.5px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#0F1014;">What outlived the engagement</span></div>
         <div style="font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#D24700; margin:44px 0 14px;">The rest of the work</div>
         <h3 id="as5" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:640px;">The other half: the design system</h3>
         <div style="max-width:640px;">
-          <p style="margin-bottom:1.5em; color:#2B2D34;">The redesign only holds together if the pieces do, and the existing kit had drifted from Ashley's brand. Alongside the flows I refreshed the mobile design system — sixteen components rebuilt and five type styles updated against Ashley's latest brand guidelines — so the new screens read as one product rather than a patchwork.</p>
-          <p style="margin-bottom:1.5em; color:#2B2D34;">I handed that system to Ashley's own mobile team, where it was folded into their library and became the foundation their later work built on. In a short engagement, that mattered as much as the flows.</p>
+          <p style="margin-bottom:1.5em; color:#2B2D34;">The redesign only holds together if the pieces do, and the existing kit had drifted from Ashley's brand. Alongside the flows I refreshed the mobile design system — sixteen components rebuilt and five type styles updated against Ashley's latest brand.</p>
         </div>
 
-        <figure style="margin:4em 0;">
-          <img src="images/ashley-tnt/design-system.png" alt="The refreshed component and type kit, aligned to Ashley&#x27;s brand and handed off as a reusable library." style="width:100%; display:block; aspect-ratio:16/8; object-fit:cover;">
-          <figcaption style="font-size:13px; color:#8A8D96; margin-top:12px; line-height:1.5;">The refreshed component and type kit, aligned to Ashley's brand and handed off as a reusable library.</figcaption>
+        <figure style="margin:3.5em 0;">
+          <img src="images/ashley-tnt/design-system.png" alt="The refreshed mobile design system: typography, controls, icons, colour palette and rebuilt screens." style="width:100%; height:auto; display:block; aspect-ratio:896/585; background:#FFFFFF;">
         </figure>
+
+        <div style="max-width:640px;">
+          <p style="margin-bottom:1.5em; color:#2B2D34;">I handed that system to Ashley's own mobile team, where it was folded into their library and became the foundation their later work built on. In a short engagement, that mattered as much as the flows.</p>
+        </div>
 
         <div style="margin:150px 0 0; border-top:1px solid #0F1014; padding-top:13px; display:flex; align-items:baseline; gap:13px;"><span style="font-size:10.5px; font-weight:600; letter-spacing:.1em; color:#D24700;">04</span><span style="font-size:10.5px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#0F1014;">Takeaway</span></div>
         <div style="font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#D24700; margin:44px 0 14px;">In closing</div>
