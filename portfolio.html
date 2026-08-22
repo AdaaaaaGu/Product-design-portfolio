@@ -1111,21 +1111,15 @@
           </div>
         </div>
 
-        <figure style="margin:4.5em 0 0;">
-          <img src="images/pg-artwork/ai-image-scan.png" alt="The core requirement: two artworks in, an AI image scan, differences highlighted on the way out." style="width:100%; height:auto; display:block; aspect-ratio:896/400;">
-          <figcaption style="font-size:13px; color:#8A8D96; margin-top:16px; line-height:1.5; max-width:640px;">The core requirement: two artworks in, an AI image scan, differences highlighted on the way out.</figcaption>
-        </figure>
-
         <div style="margin:128px 0 0; border-top:1px solid #0F1014; padding-top:13px; display:flex; align-items:baseline; gap:13px;"><span style="font-size:10.5px; font-weight:600; letter-spacing:.1em; color:#0B5BFF;">01</span><span style="font-size:10.5px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#0F1014;">The shape of the work</span></div>
         <div style="font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#0B5BFF; margin:44px 0 14px;">Use cases</div>
         <h3 id="pg1" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:640px;">Three questions, one comparison</h3>
         <div style="max-width:640px;">
           <p style="margin-bottom:1.2em; color:#2B2D34;">The work organized around three kinds of comparison, each answering a different question:</p>
-          <ul style="margin:0 0 1.5em; padding-left:1.1em; color:#2B2D34;">
-            <li style="margin-bottom:.5em; line-height:1.65;"><b style="font-weight:600;">Final Art vs Template</b> — does the finished artwork still match the approved template? A compliance check.</li>
-            <li style="margin-bottom:.5em; line-height:1.65;"><b style="font-weight:600;">Lineup Compare</b> — across a product lineup, is the style consistent? A family check.</li>
-            <li style="line-height:1.65;"><b style="font-weight:600;">New Concept vs Predecessors</b> — how has this design evolved from the versions before it? A history check.</li>
-          </ul>
+        </div>
+
+        <div style="max-width:640px; margin-top:0;">
+          <p style="margin-bottom:1.5em; color:#2B2D34;">On the surface all three are the same task: put two images side by side, show what changed. The model was good at that part. But a model that can spot every difference between two images is not yet a tool anyone will use every day. The gap between the capability and the product showed up most sharply in the second use case — the lineup compare — which is where I spent most of the project.</p>
         </div>
 
         <!-- Figma: Figure (36:58) — three 272px cards, 40px gutters, icon strips 252x56. -->
@@ -1150,10 +1144,6 @@
           </div>
         </div>
 
-        <div style="max-width:640px; margin-top:3.5em;">
-          <p style="margin-bottom:1.5em; color:#2B2D34;">On the surface all three are the same task: put two images side by side, show what changed. The model was good at that part. But a model that can spot every difference between two images is not yet a tool anyone will use every day. The gap between the capability and the product showed up most sharply in the second use case — the lineup compare — which is where I spent most of the project.</p>
-        </div>
-
         <div style="margin:150px 0 0; border-top:1px solid #0F1014; padding-top:13px; display:flex; align-items:baseline; gap:13px;"><span style="font-size:10.5px; font-weight:600; letter-spacing:.1em; color:#0B5BFF;">02</span><span style="font-size:10.5px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#0F1014;">Meaning</span></div>
         <div style="font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#0B5BFF; margin:44px 0 14px;">The insight</div>
         <h3 id="pg2" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:640px;">What makes a comparison mean anything</h3>
@@ -1161,14 +1151,8 @@
           <p style="margin-bottom:1.5em; color:#2B2D34;">The lineup compare drew the most testing and the most argument between me, the business analyst, and the stakeholders. The first version of its flow was simple and linear: pick a brand, upload a few files, compare. Clean on paper.</p>
         </div>
 
-        <figure style="margin:3em 0;">
-          <img src="images/pg-artwork/usecase2-existing.png" alt="The first lineup flow: select a brand, drop in files, hit compare." style="width:100%; height:auto; display:block; aspect-ratio:896/400;">
-          <figcaption style="font-size:13px; color:#8A8D96; margin-top:16px; line-height:1.5; max-width:640px;">The first lineup flow: select a brand, drop in files, hit compare.</figcaption>
-        </figure>
-
         <div style="max-width:640px;">
           <p style="margin-bottom:1.5em; color:#2B2D34;">But the first round of usability testing and interviews turned up three pain points the linear flow couldn't hold. People didn't run one comparison — they cross-compared within a set of ten to twenty files, over and over. They struggled to keep track of which file was which variant and size. And they couldn't remember which comparisons they'd already submitted.</p>
-          <p style="margin-bottom:1.5em; color:#2B2D34;">Underneath all three was a single insight, and it reframed the whole feature: <b style="font-weight:600;">a comparison is only meaningful when the two files share a property.</b> You don't compare any file to any other file. You hold something constant — the same variant across two sizes, the same size across two variants — and read the differences against that shared ground. Every comparison the users actually cared about was organized around a property they were holding fixed. The linear "upload two files" flow was blind to that. It treated every pair as equivalent, when the users' entire mental model was built on which property tied a pair together.</p>
         </div>
 
         <!-- Figma: Figure (36:81) — insight cards at 216.5 / 216.5 / 443, 10px gutters. -->
@@ -1190,10 +1174,6 @@
           </div>
         </div>
 
-        <div style="max-width:640px; margin-top:3.5em;">
-          <p style="margin-bottom:1.5em; color:#2B2D34;">So the design stopped being an upload form and became a table. Files lay out in a grid by their properties — variant across the top, size down the side — so you can see the whole set at once and pick what to compare along a shared axis. The comparison you run is legible from the structure of the table itself.</p>
-        </div>
-
         <div style="margin:150px 0 0; border-top:1px solid #0F1014; padding-top:13px; display:flex; align-items:baseline; gap:13px;"><span style="font-size:10.5px; font-weight:600; letter-spacing:.1em; color:#0B5BFF;">03</span><span style="font-size:10.5px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#0F1014;">Outcome</span></div>
         <div style="font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#0B5BFF; margin:44px 0 14px;">Scoping</div>
         <h3 id="pg3" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:640px;">Cutting to what mattered</h3>
@@ -1202,7 +1182,7 @@
         </div>
 
         <figure style="margin:3em 0 0;">
-          <img src="images/pg-artwork/prioritized-features.png" alt="The prioritization plot: the clickable property table lands in the high-value, feasible zone; auto-populate, filters, and auto-sort wait for a later phase." style="width:100%; height:auto; display:block; aspect-ratio:896/367;">
+          <img src="images/pg-artwork/prioritized-features.png" alt="The prioritization plot: the clickable property table lands in the high-value, feasible zone; auto-populate, filters, and auto-sort wait for a later phase." style="width:100%; max-width:640px; height:auto; display:block; aspect-ratio:644/701;">
           <figcaption style="font-size:13px; color:#8A8D96; margin-top:16px; line-height:1.5; max-width:640px;">The prioritization plot: the clickable property table lands in the high-value, feasible zone; auto-populate, filters, and auto-sort wait for a later phase.</figcaption>
         </figure>
 
@@ -1213,7 +1193,7 @@
         </div>
 
         <figure style="margin:3em 0;">
-          <img src="images/pg-artwork/sketch-options.png" alt="Two sketch directions: a clickable property grid, and an upload list with explicit compare toggles." style="width:100%; height:auto; display:block; aspect-ratio:896/400;">
+          <img src="images/pg-artwork/sketch-options.png" alt="Two sketch directions: a clickable property grid, and an upload list with explicit compare toggles." style="width:100%; height:auto; display:block; aspect-ratio:896/367;">
           <figcaption style="font-size:13px; color:#8A8D96; margin-top:16px; line-height:1.5; max-width:640px;">Two sketch directions: a clickable property grid, and an upload list with explicit compare toggles.</figcaption>
         </figure>
 
@@ -1231,11 +1211,6 @@
         <div style="max-width:640px;">
           <p style="margin-bottom:1.5em; color:#2B2D34;">Each of the three pain points got a specific answer in the flow. Cross-comparing the same ten-to-twenty files over and over became a persistent <em>file pool</em> you fetch into once and compare from repeatedly, instead of re-uploading every time. Losing track of which file was which variant and size became an inline edit field for labeling files right in the table. And forgetting what you'd already submitted became a one-tap re-submit straight from the pool. The table stopped being just where you set up a comparison — it became where the whole set lived between comparisons.</p>
         </div>
-
-        <figure style="margin:3em 0 0;">
-          <img src="images/pg-artwork/table-before-after.png" alt="The refined wireframe: a restricted three-file upload becomes an embedded, editable file table." style="width:100%; height:auto; display:block; aspect-ratio:896/400;">
-          <figcaption style="font-size:13px; color:#8A8D96; margin-top:16px; line-height:1.5; max-width:640px;">The refined wireframe: a restricted three-file upload becomes an embedded, editable file table.</figcaption>
-        </figure>
 
         <div style="font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#0B5BFF; margin:96px 0 14px;">Shipped</div>
         <h3 id="pg5" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:640px;">What shipped</h3>
