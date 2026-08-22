@@ -483,15 +483,15 @@
           <p style="margin-bottom:1.5em; color:#2B2D34;">Early on I sketched a spectrum to reason about it. At one end, the user tells the agent everything by hand — the sketch labels it “I don’t know unless you tell me.” At the far end, the agent works everything out on its own: “I know exactly just by listening.”</p>
         </div>
 
-        <div data-r="two" style="margin:4em 0; display:grid; grid-template-columns:1fr 1fr; gap:16px; align-items:start;">
-          <div>
-            <p style="margin-bottom:1.5em; color:#2B2D34;">Every feature has an ideal position on that line, and a buildable position, which is usually further toward the manual end. A lot of my job was deciding where each interaction should sit — and what to protect when it couldn’t sit where I wanted.</p>
-            <p style="color:#2B2D34;">This case study follows three features, each dealing with a different part of what the agent holds invisibly. Session persistence is about the agent’s memory. Context awareness is about its knowledge. The query tool configuration is about its freedom — the one feature where the right design was to let the model decide less, not more.</p>
-          </div>
-          <figure style="margin:0; padding:0 40px;">
-            <img src="images/cognite-atlas/manual-auto-spectrum.png" alt="The manual-to-automatic spectrum, plotted against technical constraint." style="width:100%; height:auto; display:block;">
-            <figcaption style="font-size:13px; color:#8A8D96; margin-top:12px; line-height:1.5;">The manual-to-automatic spectrum — the framework behind all three features.</figcaption>
-          </figure>
+        <!-- Figma: Frame 1321314577 (105:9007) — 460 image inside the 640 column, padded 40/120/20/60. -->
+        <figure style="margin:4em 0 0; max-width:640px; padding:40px 120px 20px 60px;">
+          <img src="images/cognite-atlas/manual-auto-spectrum.png" alt="The manual-to-automatic spectrum, plotted against technical constraint." style="width:100%; height:auto; display:block; aspect-ratio:760/754; filter:drop-shadow(0 4px 10px rgba(0,0,0,.25));">
+          <figcaption style="font-size:13px; color:#8A8D96; margin-top:10px; line-height:1.5;">The manual-to-automatic spectrum — the framework behind all three features.</figcaption>
+        </figure>
+
+        <div style="max-width:640px;">
+          <p style="margin-bottom:1em; color:#2B2D34;">Every feature has an ideal position on that line, and a buildable position, which is usually further toward the manual end. A lot of my job was deciding where each interaction should sit — and what to protect when it couldn&#x27;t sit where I wanted.</p>
+          <p style="color:#2B2D34;">This case study follows three features, each dealing with a different part of what the agent holds invisibly. Session persistence is about the agent&#x27;s memory. Context awareness is about its knowledge. The query tool configuration is about its freedom — the one feature where the right design was to let the model decide less, not more.</p>
         </div>
 
         <div style="margin:150px 0 0; border-top:1px solid #0F1014; padding-top:13px; display:flex; align-items:baseline; gap:13px;"><span style="font-size:10.5px; font-weight:600; letter-spacing:.1em; color:#6C2BF2;">02</span><span style="font-size:10.5px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#0F1014;">Memory</span></div>
