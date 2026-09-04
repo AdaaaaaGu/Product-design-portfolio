@@ -73,6 +73,12 @@
     }
     @media (max-width:820px){
       [data-r="hero"],[data-r="cards"],[data-r="lab"],[data-r="contact"]{grid-template-columns:1fr !important}
+      /* Above this width the Atlas card spans both columns, and its wide crop lands at
+         the same height as the 16/10 cards beside it (350 vs 353 at 1200px) — that match
+         is what makes the span read as a hero rather than a bulge. Stacked, nothing spans,
+         so the same crop would sit as a ~104px strip above four full-height cards. Drop it
+         into the same box as its peers. */
+      [data-r="cards"] > a[data-nav="cognite"] img{aspect-ratio:16/10 !important}
       [data-r="hero"]{gap:32px !important}
       [data-r="hero"] > a{max-width:268px}
       /* Equation row (vibe code + design system = handoff): three 219px cards plus two
