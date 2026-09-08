@@ -296,7 +296,7 @@
           <div style="position:relative; overflow:hidden; background:#F3F4F8; margin-bottom:14px;"><img src="images/cognite-atlas/card.png" alt="Atlas AI agent canvas in a plant workstation" style="display:block; width:100%; aspect-ratio:1152/350; object-fit:cover; object-position:center; transition:transform 620ms cubic-bezier(.2,.7,.2,1)"></div>
           <h2 style="font-weight:600; font-size:23px; line-height:1.2; letter-spacing:-.015em; display:inline; color:inherit;">Cognite · Atlas AI</h2>
           <span style="font-size:13px; color:#8A8D96; margin-left:10px; white-space:nowrap;">2025</span>
-          <p style="font-size:14.5px; color:#54575F; margin-top:7px; max-width:40em;">A year on Atlas AI, Cognite's agent platform for industrial data. How much of an AI system's state should the user see, manage, and take back?</p>
+          <p style="font-size:14.5px; color:#54575F; margin-top:7px;">A year on Atlas AI, Cognite's agent platform for industrial data. How much of an AI system's state should the user see, manage, and take back?</p>
           <div style="display:flex; flex-wrap:wrap; gap:6px; margin-top:11px"><span style="background:#F3F4F8; padding:4px 9px; font-size:10.5px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:#5C5F68; white-space:nowrap">ENTERPRISE B2B</span><span style="background:#F3F4F8; padding:4px 9px; font-size:10.5px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:#5C5F68; white-space:nowrap">Trust &amp; control</span><span style="background:#F3F4F8; padding:4px 9px; font-size:10.5px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:#5C5F68; white-space:nowrap">AI AGENT PATTERN</span><span style="background:#F3F4F8; padding:4px 9px; font-size:10.5px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:#5C5F68; white-space:nowrap">DESIGN &amp; BUILD</span></div>
         </a>
 
@@ -2028,20 +2028,14 @@
       e.preventDefault();
       var target = document.getElementById(el.getAttribute('data-jump'));
       if (!target) return;
-      var home = document.querySelector('[data-screen="home"]');
-      var alreadyHome = home && home.classList.contains('is-on');
       show('home', true);
-      // Gliding across a screen change would scroll through the whole page.
-      var jump = function () {
-        target.scrollIntoView({
-          behavior: alreadyHome ? 'smooth' : 'instant',
-          block: 'start'
-        });
-      };
-      // A screen that was display:none has no layout yet, so its offsets are
-      // stale until the browser reflows. Wait a frame before measuring.
-      if (alreadyHome) jump();
-      else requestAnimationFrame(jump);
+      // Instant, and scrolled straight away. Two things that look optional here
+      // are not: a smooth scroll silently does nothing in some engines and
+      // embedded webviews, and a screen revealed this tick has no layout until
+      // something asks for it, so deferring to requestAnimationFrame breaks in
+      // any tab that isn't painting. scrollIntoView flushes layout itself, so
+      // calling it now measures the just-revealed screen correctly.
+      target.scrollIntoView({ behavior: 'instant', block: 'start' });
     });
   });
 
