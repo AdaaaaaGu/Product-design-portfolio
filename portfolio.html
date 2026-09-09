@@ -9,6 +9,50 @@
   <style>
     *{box-sizing:border-box; margin:0; padding:0}
     html{scroll-behavior:smooth}
+    /* Shell widths. Kept as variables because the same three measures repeat
+       across ~30 inline styles; the large-screen step below is then one edit
+       instead of thirty overrides. --shell is the homepage/nav container,
+       --frame the case-study content frame and its footer, --about the About
+       page. Everything narrower than these — the 640px reading column above
+       all — is a measure, not a shell, and deliberately does not scale. */
+    :root{
+      /* Fluid shell, after the Webflow site: no ceiling, and a gutter that is a
+         share of the screen rather than a fixed inset, so the page fills the
+         window at any size without ever touching the edge. 5vw is the value
+         that site uses on its work grid. The max() keeps the phone gutter at
+         24px, since 5vw there is only 19px. Re-cap by giving --shell a width. */
+      --shell:none;
+      --pad:max(24px, 5vw);
+      --frame:1240px; --about:1080px;
+      /* Case-study measures. --body is the figure column — stats rows, images,
+         diagrams; --measure is the reading column inside it. They move together
+         so the gap between text and figure stays proportional rather than the
+         text stranding itself against a widening column. */
+      --body:960px; --measure:640px;
+    }
+    @media (min-width:1600px){
+      /* Case studies grow as one: the frame goes fluid, and both columns inside
+         it widen so the extra room reaches the text rather than pooling around
+         it. Line length is the cost — 640px already ran 77 characters, and 800
+         takes that near 96, past the point where the eye reliably finds the
+         next line. Scaling the type with the box would pull it back, but the
+         case-study sizes are inline px and would all have to move together.
+         --about stays put: its bio is capped at 600px further in. */
+      :root{--frame:none; --body:1200px; --measure:800px}
+      /* The case-study intro sets its measure in em — 16em on the title, 34em
+         on the standfirst — so it stayed at 768/680 while the px-based blocks
+         widened. Hand it the same measure as the rest; type sizes stay put. */
+      [data-r="frame"] h1,
+      [data-r="frame"] h1 + p{max-width:var(--measure) !important}
+      /* The wider shell hands the hero card 1392px, and at its native 3.29:1
+         that comes back 423px tall — within 5px of the 16/10 cards below it.
+         Correct at 1200, but on a large screen it makes the one card that
+         spans both columns read as merely another row. Taking it to 4:1 pulls
+         75px out of the height so it lands as a band rather than a block. The
+         art carries it: object-fit trims 17.7% off a 1400px source, all of it
+         panel margin, leaving the towers and every label intact. */
+      [data-r="cards"] > a[data-nav="cognite"] img{aspect-ratio:4/1 !important}
+    }
     body{background:#FAFAFC; color:#0F1014; font-family:'Instrument Sans',-apple-system,sans-serif; font-size:16px; line-height:1.65; -webkit-font-smoothing:antialiased}
     a{color:inherit; text-decoration:none}
     a:hover{color:#0F1014}
@@ -282,7 +326,7 @@
 
   <!-- ================= HOMEPAGE ================= -->
   <div data-screen="home" class="is-on" data-screen-label="Homepage">
-    <div style="max-width:1200px; margin:0 auto; padding:0 24px;">
+    <div style="max-width:var(--shell); margin:0 auto; padding:0 var(--pad);">
 
       <nav style="display:flex; justify-content:space-between; padding:28px 0;">
         <a href="#" style="display:flex; align-items:center; gap:9px; font-weight:600; font-size:15px; letter-spacing:-.01em;"><img src="uploads/logo.png" alt="Ada Gu" style="width:38px; height:38px; display:block;"></a>
@@ -406,12 +450,12 @@
   <!-- ================= ABOUT ================= -->
   <div data-screen="about" data-screen-label="About">
 
-    <nav style="display:flex; justify-content:space-between; padding:28px 24px; max-width:1200px; margin:0 auto; font-size:14px;">
+    <nav style="display:flex; justify-content:space-between; padding:28px var(--pad); max-width:var(--shell); margin:0 auto; font-size:14px;">
       <a href="#" data-nav="home" style="display:flex; align-items:center; gap:9px; font-weight:600; font-size:15px; letter-spacing:-.01em;"><img src="uploads/logo.png" alt="Ada Gu" style="width:38px; height:38px; display:block;"></a>
       <div style="display:flex; gap:26px; color:#8A8D96;"><a href="#work" data-jump="work">Work</a><a href="#lab" data-jump="lab">Lab</a><a href="#" data-nav="about" style="color:#0F1014; font-weight:500;">About</a></div>
     </nav>
 
-    <div data-r="about-wrap" style="max-width:1080px; margin:0 auto; padding:0 48px 72px;">
+    <div data-r="about-wrap" style="max-width:var(--about); margin:0 auto; padding:0 48px 72px;">
       <div data-r="about" style="display:grid; grid-template-columns:300px minmax(0,1fr); gap:64px; padding-top:88px;">
 
         <aside style="display:flex; flex-direction:column; gap:32px;">
@@ -465,14 +509,14 @@
   <!-- ================= COGNITE CASE STUDY ================= -->
   <div data-screen="cognite" data-accent="cognite" data-screen-label="Cognite Atlas AI">
 
-    <nav style="display:flex; justify-content:space-between; padding:28px 24px; max-width:1200px; margin:0 auto; font-size:14px;">
+    <nav style="display:flex; justify-content:space-between; padding:28px var(--pad); max-width:var(--shell); margin:0 auto; font-size:14px;">
       <a href="#" data-nav="home" style="display:flex; align-items:center; gap:9px; font-weight:600; font-size:15px; letter-spacing:-.01em;"><img src="uploads/logo.png" alt="Ada Gu" style="width:38px; height:38px; display:block;"></a>
       <div style="display:flex; gap:26px; color:#8A8D96;"><a href="#work" data-jump="work">Work</a><a href="#lab" data-jump="lab">Lab</a><a href="#" data-nav="about">About</a></div>
     </nav>
 
     <img src="images/cognite-atlas/cover.png" alt="Reliability engineer at a plant workstation with Atlas AI agent cards" style="display:block; width:100%; aspect-ratio:24/6; object-fit:cover; object-position:center; background:#F3F4F8;">
 
-    <div data-r="frame" style="max-width:1240px; margin:0 auto; padding:88px 24px 0; display:grid; grid-template-columns:200px minmax(0,960px); gap:56px; justify-content:center;">
+    <div data-r="frame" style="max-width:var(--frame); margin:0 auto; padding:88px 24px 0; display:grid; grid-template-columns:200px minmax(0,var(--body)); gap:56px; justify-content:center;">
       <div></div>
       <div>
         <h1 style="font-weight:600; font-size:clamp(34px,4.6vw,48px); line-height:1.03; letter-spacing:-.025em; margin-bottom:24px; max-width:16em;">Designing for a system that guesses</h1>
@@ -480,7 +524,7 @@
       </div>
     </div>
 
-    <div data-r="frame" style="max-width:1240px; margin:0 auto; padding:64px 24px 0; display:grid; grid-template-columns:200px minmax(0,960px); gap:56px; justify-content:center;">
+    <div data-r="frame" style="max-width:var(--frame); margin:0 auto; padding:64px 24px 0; display:grid; grid-template-columns:200px minmax(0,var(--body)); gap:56px; justify-content:center;">
 
       <aside data-r="rail" style="position:sticky; top:24px; align-self:start; font-size:13px;">
         <a href="#" data-nav="home" style="display:block; color:#8A8D96; margin-bottom:28px;">← All work</a>
@@ -521,7 +565,7 @@
         <figure style="margin:0 0 2.5em;">
           <img src="images/cognite-atlas/intro.png" alt="Atlas AI running on a desktop monitor." style="width:100%; max-width:611px; height:auto; display:block; aspect-ratio:611/515;">
         </figure>
-        <div style="max-width:640px;">
+        <div style="max-width:var(--measure);">
           <p style="font-size:18.5px; line-height:1.6; margin-bottom:1.4em; color:#0F1014;">Atlas AI is Cognite’s agent platform for industrial data.</p>
           <p style="margin-bottom:1.5em; color:#2B2D34;">Reliability engineers, maintenance planners, and operations teams use it to interrogate the messy reality of a plant — work orders, P&amp;IDs, sensor time series, maintenance histories — through AI agents that query and reason over that data.</p>
           <p style="margin-bottom:1.5em; color:#2B2D34;">Designing for agents turned out to be a different job than designing for software. Traditional software has state you can point at: this filter is on, this page is open. An agent’s state is mostly invisible and partly probabilistic — what it remembers, what it can see, what it will decide on its own.</p>
@@ -548,8 +592,8 @@
 
         <div style="margin:128px 0 0; border-top:1px solid #0F1014; padding-top:13px; display:flex; align-items:baseline; gap:13px;"><span style="font-size:10.5px; font-weight:600; letter-spacing:.1em; color:#6C2BF2;">01</span><span style="font-size:10.5px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#0F1014;">The framework</span></div>
         <div style="font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#6C2BF2; margin:44px 0 14px;">The question underneath</div>
-        <h3 id="cg1" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:640px;">The line from manual to automatic</h3>
-        <div style="max-width:640px;">
+        <h3 id="cg1" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:var(--measure);">The line from manual to automatic</h3>
+        <div style="max-width:var(--measure);">
           <p style="margin-bottom:1.5em; color:#2B2D34;">Almost every design problem I worked on that year reduced to the same question.</p>
         </div>
 
@@ -557,25 +601,25 @@
           <p style="font-size:24px; font-weight:500; line-height:1.3; letter-spacing:-.015em; color:#0F1014;">How much of the agent’s invisible state does the user have to see, manage, or take back?</p>
         </blockquote>
 
-        <div style="max-width:640px;">
+        <div style="max-width:var(--measure);">
           <p style="margin-bottom:1.5em; color:#2B2D34;">Early on I sketched a spectrum to reason about it. At one end, the user tells the agent everything by hand — the sketch labels it “I don’t know unless you tell me.” At the far end, the agent works everything out on its own: “I know exactly just by listening.”</p>
         </div>
 
         <!-- Figma: Frame 1321314577 (105:9007) — 460 image inside the 640 column, padded 40/120/20/60. -->
-        <figure style="margin:4em 0 0; max-width:640px; padding:40px 120px 20px 60px;">
+        <figure style="margin:4em 0 0; max-width:var(--measure); padding:40px 120px 20px 60px;">
           <img src="images/cognite-atlas/manual-auto-spectrum.png" alt="The manual-to-automatic spectrum, plotted against technical constraint." style="width:100%; height:auto; display:block; aspect-ratio:760/754; filter:drop-shadow(0 4px 10px rgba(0,0,0,.25));">
           <figcaption style="font-size:13px; color:#8A8D96; margin-top:10px; line-height:1.5;">The manual-to-automatic spectrum — the framework behind all three features.</figcaption>
         </figure>
 
-        <div style="max-width:640px;">
+        <div style="max-width:var(--measure);">
           <p style="margin-bottom:1em; color:#2B2D34;">Every feature has an ideal position on that line, and a buildable position, which is usually further toward the manual end. A lot of my job was deciding where each interaction should sit — and what to protect when it couldn&#x27;t sit where I wanted.</p>
           <p style="color:#2B2D34;">This case study follows three features, each dealing with a different part of what the agent holds invisibly. Session persistence is about the agent&#x27;s memory. Context awareness is about its knowledge. The query tool configuration is about its freedom — the one feature where the right design was to let the model decide less, not more.</p>
         </div>
 
         <div style="margin:150px 0 0; border-top:1px solid #0F1014; padding-top:13px; display:flex; align-items:baseline; gap:13px;"><span style="font-size:10.5px; font-weight:600; letter-spacing:.1em; color:#6C2BF2;">02</span><span style="font-size:10.5px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#0F1014;">Memory</span></div>
         <div style="font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#6C2BF2; margin:44px 0 14px;">Session persistence</div>
-        <h3 id="cg2" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:640px;">One conversation, many agents</h3>
-        <div style="max-width:640px;">
+        <h3 id="cg2" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:var(--measure);">One conversation, many agents</h3>
+        <div style="max-width:var(--measure);">
           <p style="margin-bottom:1.5em; color:#2B2D34;">Atlas users work with multiple specialized agents — a root cause analysis agent, a work order agent, a data exploration agent. In the original design, the conversation belonged to the agent: switch agents, lose your chat.</p>
         </div>
 
@@ -590,7 +634,7 @@
           </figure>
         </div>
 
-        <div style="max-width:640px;">
+        <div style="max-width:var(--measure);">
           <p style="margin-bottom:1.5em; color:#2B2D34;">The PRD answered with two P0 requirements: persist the conversation, and add an agent selector at the top of the pane.</p>
         </div>
 
@@ -598,7 +642,7 @@
           <p style="font-size:24px; font-weight:500; line-height:1.3; letter-spacing:-.015em; color:#0F1014;">I suspected those two requirements contradicted each other, so I tested it.</p>
         </blockquote>
 
-        <div style="max-width:640px;">
+        <div style="max-width:var(--measure);">
           <p style="color:#2B2D34; margin-bottom:1.2em; font-size:15.5px;">I built paper prototypes — two interaction models, sticky notes standing in for dropdowns — and ran think-aloud sessions with seven participants, ten minutes each. Cheap on purpose: the question was about mental models, not visual design, and paper answers that faster than Figma.</p>
         </div>
 
@@ -615,17 +659,17 @@
           </div>
         </div>
 
-        <div style="max-width:640px;">
+        <div style="max-width:var(--measure);">
           <p style="color:#2B2D34; margin-bottom:1.2em; font-size:15.5px;">7 of 7 wanted their conversation to persist. But 5 of 7 expected that switching agents via a top dropdown would erase it. The placement itself made a promise: a selector at the conversation level says the conversation is scoped to the agent.</p>
         </div>
 
         <div style="font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#6C2BF2; margin:96px 0 14px;">The shipped model</div>
-        <h3 id="cg3" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:640px;">Inverting the hierarchy</h3>
-        <div style="max-width:640px;">
+        <h3 id="cg3" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:var(--measure);">Inverting the hierarchy</h3>
+        <div style="max-width:var(--measure);">
           <p style="margin-bottom:1.5em; color:#2B2D34;">The conversation became the persistent container, and agents became participants inside it — selected at the message level, like addressing someone in a group chat. You can @-mention an agent directly when you know who you need, or take a suggested follow-up action and let the right agent pick it up without ever knowing its name.</p>
         </div>
 
-        <figure style="margin:4.5em 0; max-width:640px; display:grid; grid-template-columns:1fr 1fr; gap:16px; align-items:start;">
+        <figure style="margin:4.5em 0; max-width:var(--measure); display:grid; grid-template-columns:1fr 1fr; gap:16px; align-items:start;">
           <div>
             <img src="images/cognite-atlas/group-chat-q2.png" alt="The Q2 shipped model: agent selector embedded in the message input." style="width:100%; height:auto; display:block;">
             <div style="font-size:10.5px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:#6C2BF2; margin-top:26px; text-align:center;">2025 Q2 Shipped</div>
@@ -640,14 +684,14 @@
           </div>
         </figure>
 
-        <div style="max-width:640px;">
+        <div style="max-width:var(--measure);">
           <p style="margin-bottom:1.5em; color:#2B2D34;">The feedback that mattered most arrived unprompted — a customer engineer at Rockwell wrote in to say the switching between AI agents was a fantastic new feature, in a thread our team only saw because he’d asked someone to pass the thanks along.</p>
         </div>
 
         <div style="margin:150px 0 0; border-top:1px solid #0F1014; padding-top:13px; display:flex; align-items:baseline; gap:13px;"><span style="font-size:10.5px; font-weight:600; letter-spacing:.1em; color:#6C2BF2;">03</span><span style="font-size:10.5px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#0F1014;">Knowledge</span></div>
         <div style="font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#6C2BF2; margin:44px 0 14px;">Context awareness</div>
-        <h3 id="cg4" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:640px;">I see what you see</h3>
-        <div style="max-width:640px;">
+        <h3 id="cg4" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:var(--measure);">I see what you see</h3>
+        <div style="max-width:var(--measure);">
           <p style="margin-bottom:1.5em; color:#2B2D34;">The second feature brought agents into Canvas, Cognite’s visual workspace where engineers lay out P&amp;IDs, documents, and asset data during an investigation. The requirement sounded simple: the agent should know what’s on the canvas. The design question was harder — should the user have to tell it?</p>
         </div>
 
@@ -661,7 +705,7 @@
           </div>
         </div>
 
-        <div style="max-width:640px;">
+        <div style="max-width:var(--measure);">
           <p style="margin-bottom:1.5em; color:#2B2D34;">On my spectrum, the ideal sat at the far right: the agent simply knows, keyword detection routes intent, no configuration at all. The constraint axis pushed back. Real-time inference over canvas content depended on API capabilities that didn’t exist yet. The buildable version sat closer to the middle: everything on the canvas enters the agent’s context by default, and the user can scope it manually.</p>
         </div>
 
@@ -681,7 +725,7 @@
           </div>
         </div>
 
-        <div style="max-width:640px;">
+        <div style="max-width:var(--measure);">
           <p style="margin-bottom:1.5em; color:#2B2D34;">My flow diagrams from that period have the goal written directly on them — “I see what you see” before the user asks anything.</p>
         </div>
 
@@ -696,18 +740,18 @@
           <figcaption style="font-size:13px; color:#8A8D96; margin-top:12px; line-height:1.5;">Exploration flows for canvas context: entry points, context management, and the two mental-model goals.</figcaption>
         </figure>
 
-        <div style="max-width:640px;">
+        <div style="max-width:var(--measure);">
           <p style="margin-bottom:1.5em; color:#2B2D34;">What I took from this feature is that the honest version of “AI-powered” is often a degradation path. You design the ideal, you design the constrained version that can actually ship, and you decide which quality survives the compression. Here, the thing worth protecting was the user’s mental model of what the agent knows. The inference can improve underneath later; the legibility had to be there on day one.</p>
         </div>
 
         <div style="font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#6C2BF2; margin:96px 0 14px;">North star</div>
-        <h3 id="cg5" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:640px;">The north star underneath</h3>
-        <div style="max-width:640px;">
+        <h3 id="cg5" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:var(--measure);">The north star underneath</h3>
+        <div style="max-width:var(--measure);">
           <p style="margin-bottom:1.5em; color:#2B2D34;">These first two features were never separate destinations — they were steps toward the same north star chat experience: one conversation that follows the user across every surface. So I designed a chat starts from an email notification, runs through multiple agents, carries its context between apps, and can be saved, left, and resumed days later with everything intact.</p>
           <p style="margin-bottom:1.5em; color:#2B2D34;">The shipped releases map onto it deliberately. Persistence covers the browser session today; durable, resumable conversations are the next step. Having the end state on the wall meant every release could be checked against one question: does this teach users a mental model we’ll never have to break?</p>
         </div>
 
-        <figure style="margin:4.5em 0; max-width:640px;">
+        <figure style="margin:4.5em 0; max-width:var(--measure);">
           <div style="padding:20px;">
             <video data-lazyvideo="images/cognite-atlas/northstar-flow.mp4" muted loop playsinline preload="none"
                    aria-label="Screen recording of the consistent chat experience: from notification, through multiple agents, to a saved, resumable session."
@@ -718,13 +762,13 @@
 
         <div style="margin:150px 0 0; border-top:1px solid #0F1014; padding-top:13px; display:flex; align-items:baseline; gap:13px;"><span style="font-size:10.5px; font-weight:600; letter-spacing:.1em; color:#6C2BF2;">04</span><span style="font-size:10.5px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#0F1014;">Freedom</span></div>
         <div style="font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#6C2BF2; margin:44px 0 14px;">Query tool configuration</div>
-        <h3 id="cg6" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:640px;">Where the agent must not guess</h3>
-        <div style="max-width:640px;">
+        <h3 id="cg6" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:var(--measure);">Where the agent must not guess</h3>
+        <div style="max-width:var(--measure);">
           <p style="margin-bottom:1.5em; color:#2B2D34;">The third feature runs in the opposite direction from the first two. Atlas agents query industrial data through a tool called Query Knowledge Graph. Builders — the people configuring agents for their teams — were fighting it. The LLM assembled queries itself, which meant it sometimes picked the wrong filter property. Builders responded with ad hoc prompt engineering and Python workarounds.</p>
         </div>
 
         <!-- Figma: 04 Freedom › design logic diagram (187:21716) -->
-        <figure data-r="flow2" style="margin:4.5em 0; max-width:640px; display:grid; grid-template-columns:minmax(0,290fr) minmax(0,60fr) minmax(0,290fr); align-items:start;">
+        <figure data-r="flow2" style="margin:4.5em 0; max-width:var(--measure); display:grid; grid-template-columns:minmax(0,290fr) minmax(0,60fr) minmax(0,290fr); align-items:start;">
           <div>
             <div style="aspect-ratio:290/101; display:flex; align-items:center; justify-content:center;">
               <img src="images/cognite-atlas/qkg-before-adhoc.png" alt="A single hand-written filter condition in a code editor." style="width:72.4%; height:auto; display:block;">
@@ -746,13 +790,13 @@
           </div>
         </figure>
 
-        <div style="max-width:640px;">
+        <div style="max-width:var(--measure);">
           <p style="margin-bottom:1.5em; color:#2B2D34;">Builders needed to lock query parameters — filters, returned properties, sort order, limits — so the agent could still decide when to query and what to ask about, but never how the results come back. The initial scope stopped at raw JSON configuration; my design work was the interface that made those locked rules legible to people who don’t write query languages.</p>
         </div>
 
         <div style="font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#6C2BF2; margin:96px 0 14px;">Handoff</div>
-        <h3 id="cg7" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:640px;">Prototype as the spec</h3>
-        <div style="max-width:640px;">
+        <h3 id="cg7" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:var(--measure);">Prototype as the spec</h3>
+        <div style="max-width:var(--measure);">
           <p style="color:#2B2D34; margin-bottom:1.2em; font-size:15.5px;">Filter logic is exactly the kind of interaction that dies in static specs — the behavior <em>is</em> the design. So instead of writing interaction documentation, I built working prototypes of the filter builder in React, generating the code with AI and directing it like a design tool, and attached them to the engineering ticket.</p>
         </div>
 
@@ -766,7 +810,7 @@
              overlap the bar's top border by 1px — both are #F4F1FE, so the seam disappears.
              Card/arrow flex ratios are 133:36, which keeps the REPEATS bracket (a 640-wide
              SVG scaled to 100%) aligned to the step centres at every width. -->
-        <figure data-r="flow4" style="margin:4.5em 0; max-width:640px;">
+        <figure data-r="flow4" style="margin:4.5em 0; max-width:var(--measure);">
           <svg viewBox="0 0 640 65" fill="none" aria-hidden="true" style="width:100%; height:auto; display:block;">
             <path d="M234 56V16a8 8 0 018-8h153a8 8 0 018 8v40" stroke="#ACAFB8" stroke-width="1.2" stroke-dasharray="4 4"/>
             <rect x="282" y="0" width="75" height="16" fill="#FAFAFC"/>
@@ -819,7 +863,7 @@
           </figcaption>
         </figure>
 
-        <div style="max-width:640px;">
+        <div style="max-width:var(--measure);">
           <p style="color:#2B2D34; margin-bottom:1.2em; font-size:15.5px;">Engineers clicked through real nesting behavior, real mode-switching, real edge cases. Questions that would have taken a week of spec ping-pong were answered by opening a file.</p>
         </div>
 
@@ -854,26 +898,26 @@
           </div>
         </figure>
 
-        <div style="margin:2.5em 0 0; display:flex; align-items:baseline; gap:14px; border-top:1px solid #E6E8EE; padding-top:18px; max-width:640px;">
+        <div style="margin:2.5em 0 0; display:flex; align-items:baseline; gap:14px; border-top:1px solid #E6E8EE; padding-top:18px; max-width:var(--measure);">
           <span style="font-size:10.5px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:#6C2BF2; white-space:nowrap;">Shipped</span>
           <span style="font-size:15.5px; color:#2B2D34;">November 2025 — and it completed the spectrum I’d sketched back in April, in a way I didn’t expect.</span>
         </div>
 
-        <figure style="margin:4.5em 0; max-width:640px;">
+        <figure style="margin:4.5em 0; max-width:var(--measure);">
           <video data-lazyvideo="images/cognite-atlas/qkg-tool-demo.mp4" muted loop playsinline preload="none"
                  aria-label="Screen recording of the QKG tool design running as a standalone HTML file."
                  style="width:100%; height:auto; aspect-ratio:1/1; display:block; background:#F3F4F8; box-shadow:0 4px 20px rgba(0,0,0,.25);"></video>
           <figcaption style="font-size:13px; color:#8A8D96; margin-top:12px; line-height:1.5;">The QKG tool design stand alone as HTML that was handoff in the Jira ticket.</figcaption>
         </figure>
 
-        <div style="max-width:640px;">
+        <div style="max-width:var(--measure);">
           <p style="margin-bottom:1.5em; color:#2B2D34;">QKG taught me the line runs both ways. AI-native design isn’t maximizing what the model decides. It’s choosing, per interaction, what the model <em>gets</em> to decide — and building the interface that makes that boundary visible.</p>
         </div>
 
         <div style="margin:150px 0 0; border-top:1px solid #0F1014; padding-top:13px; display:flex; align-items:baseline; gap:13px;"><span style="font-size:10.5px; font-weight:600; letter-spacing:.1em; color:#6C2BF2;">05</span><span style="font-size:10.5px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#0F1014;">Takeaway</span></div>
         <div style="font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#6C2BF2; margin:44px 0 14px;">In closing</div>
-        <h3 id="cg8" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:640px;">What stayed with me</h3>
-        <div style="max-width:640px;">
+        <h3 id="cg8" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:var(--measure);">What stayed with me</h3>
+        <div style="max-width:var(--measure);">
           <p style="font-size:18.5px; line-height:1.6; margin-bottom:1.4em; color:#0F1014;">Before designing any AI interaction, place it on the line.</p>
           <p style="margin-bottom:1.5em; color:#2B2D34;">What must the user state explicitly? What can the system infer with help? What should it never infer at all? Session persistence moved conversation state into the system. Context awareness made the system’s knowledge inspectable. QKG fenced off the territory where guessing is failure.</p>
           <p style="margin-bottom:1.5em; color:#2B2D34;">By the end of that year, Atlas’s enterprise customer base had grown more than 5×, clearing its annual adoption target three months early. That growth belongs to the whole team — but the agent experience is the surface it happened on, every day.</p>
@@ -884,7 +928,7 @@
 
     <div style="border-top:1px solid #E6E8EE; margin-top:150px;">
       <a href="#" data-nav="case" data-nextcase="" style="display:block; padding:68px 24px 84px; color:#0F1014;">
-        <div data-r="frame" style="max-width:1240px; margin:0 auto; display:grid; grid-template-columns:200px minmax(0,960px); gap:56px; justify-content:center;">
+        <div data-r="frame" style="max-width:var(--frame); margin:0 auto; display:grid; grid-template-columns:200px minmax(0,var(--body)); gap:56px; justify-content:center;">
           <div style="font-size:10.5px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:#8A8D96; padding-top:6px;">Next case study</div>
           <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:40px;">
             <div>
@@ -899,7 +943,7 @@
     </div>
 
     <footer style="border-top:1px solid #E6E8EE; padding:34px 24px 76px;">
-      <div style="max-width:1240px; margin:0 auto; display:flex; justify-content:space-between; color:#8A8D96; font-size:13px;">
+      <div style="max-width:var(--frame); margin:0 auto; display:flex; justify-content:space-between; color:#8A8D96; font-size:13px;">
         <div>wanyinggu8@gmail.com</div>
         <div>Austin, TX</div>
       </div>
@@ -909,14 +953,14 @@
   <!-- ================= ASHLEY TNT CASE STUDY ================= -->
   <div data-screen="ashley" data-accent="ashley" data-screen-label="Ashley Furniture TNT">
 
-    <nav style="display:flex; justify-content:space-between; padding:28px 24px; max-width:1200px; margin:0 auto; font-size:14px;">
+    <nav style="display:flex; justify-content:space-between; padding:28px var(--pad); max-width:var(--shell); margin:0 auto; font-size:14px;">
       <a href="#" data-nav="home" style="display:flex; align-items:center; gap:9px; font-weight:600; font-size:15px; letter-spacing:-.01em;"><img src="uploads/logo.png" alt="Ada Gu" style="width:38px; height:38px; display:block;"></a>
       <div style="display:flex; gap:26px; color:#8A8D96;"><a href="#work" data-jump="work">Work</a><a href="#lab" data-jump="lab">Lab</a><a href="#" data-nav="about">About</a></div>
     </nav>
 
     <img src="images/ashley-tnt/cover.png" alt="Employee tracking a delivery on the TNT app beside stacked Ashley cartons" style="display:block; width:100%; aspect-ratio:24/6; object-fit:cover; object-position:center; background:#F3F4F8;">
 
-    <div data-r="frame" style="max-width:1240px; margin:0 auto; padding:88px 24px 0; display:grid; grid-template-columns:200px minmax(0,960px); gap:56px; justify-content:center;">
+    <div data-r="frame" style="max-width:var(--frame); margin:0 auto; padding:88px 24px 0; display:grid; grid-template-columns:200px minmax(0,var(--body)); gap:56px; justify-content:center;">
       <div></div>
       <div>
         <h1 style="font-weight:600; font-size:clamp(34px,4.6vw,48px); line-height:1.03; letter-spacing:-.025em; margin-bottom:24px; max-width:16em;">Seven taps to three</h1>
@@ -924,7 +968,7 @@
       </div>
     </div>
 
-    <div data-r="frame" style="max-width:1240px; margin:0 auto; padding:64px 24px 0; display:grid; grid-template-columns:200px minmax(0,960px); gap:56px; justify-content:center;">
+    <div data-r="frame" style="max-width:var(--frame); margin:0 auto; padding:64px 24px 0; display:grid; grid-template-columns:200px minmax(0,var(--body)); gap:56px; justify-content:center;">
 
       <aside data-r="rail" style="position:sticky; top:24px; align-self:start; font-size:13px;">
         <a href="#" data-nav="home" style="display:block; color:#8A8D96; margin-bottom:28px;">← All work</a>
@@ -957,7 +1001,7 @@
       </aside>
 
       <div>
-        <div style="max-width:640px;">
+        <div style="max-width:var(--measure);">
           <p style="font-size:18.5px; line-height:1.6; margin-bottom:1.4em; color:#0F1014;">Ashley Furniture ships to thousands of independent dealers, and those dealers use an app called Ashley TNT to check where a delivery is.</p>
           <p style="margin-bottom:1.5em; color:#2B2D34;">It does one main job. A store owner has a customer asking about an order, opens the app, and needs the status of that delivery — fast.</p>
           <p style="margin-bottom:1.5em; color:#2B2D34;"><strong style="font-weight:600; color:#0F1014;">The app I was handed made that job take seven taps.</strong></p>
@@ -985,7 +1029,7 @@
 
         <div style="margin:128px 0 0; border-top:1px solid #0F1014; padding-top:13px; display:flex; align-items:baseline; gap:13px;"><span style="font-size:10.5px; font-weight:600; letter-spacing:.1em; color:#D24700;">01</span><span style="font-size:10.5px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#0F1014;">Understanding the problem</span></div>
         <div style="font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#D24700; margin:44px 0 14px;">The path</div>
-        <h3 id="as1" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:640px;">The long way to a short answer</h3>
+        <h3 id="as1" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:var(--measure);">The long way to a short answer</h3>
         <!-- Figma: Section — The long way to a short answer (35:48). Text 592 / audit 288, 16px gutter. -->
         <div data-r="two" style="margin:0 0 4.5em; display:grid; grid-template-columns:minmax(0,592fr) minmax(0,288fr); gap:16px; align-items:start;">
           <div>
@@ -1003,12 +1047,12 @@
 
         <figure style="margin:4.5em 0;">
           <img src="images/ashley-tnt/user-flow-before.png" alt="The original user flow: open app, sign in, two search pages, account page, location page, then the trip detail." style="width:100%; height:auto; display:block; aspect-ratio:896/367;">
-          <figcaption style="font-size:13px; color:#8A8D96; margin-top:12px; line-height:1.5; max-width:640px;">The original seven-step path from sign-in to a single trip detail.</figcaption>
+          <figcaption style="font-size:13px; color:#8A8D96; margin-top:12px; line-height:1.5; max-width:var(--measure);">The original seven-step path from sign-in to a single trip detail.</figcaption>
         </figure>
 
         <div style="font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#D24700; margin:96px 0 14px;">Testing</div>
-        <h3 id="as2" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:640px;">What testing surfaced</h3>
-        <div style="max-width:640px;">
+        <h3 id="as2" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:var(--measure);">What testing surfaced</h3>
+        <div style="max-width:var(--measure);">
           <p style="margin-bottom:1.5em; color:#2B2D34;">I ran two rounds of usability testing across the redesign, and they pointed at the same two problems every time.</p>
           <p style="margin-bottom:1.5em; color:#2B2D34;">Users lost the thread of where they were and why, somewhere between opening the app and the one answer. People hesitated in front of five empty fields, backed out, or guessed wrong and started over.</p>
         </div>
@@ -1034,19 +1078,19 @@
 
         <div style="margin:150px 0 0; border-top:1px solid #0F1014; padding-top:13px; display:flex; align-items:baseline; gap:13px;"><span style="font-size:10.5px; font-weight:600; letter-spacing:.1em; color:#D24700;">02</span><span style="font-size:10.5px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#0F1014;">The redesign</span></div>
         <div style="font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#D24700; margin:44px 0 14px;">Navigation</div>
-        <h3 id="as3" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:640px;">Collapsing the path</h3>
-        <div style="max-width:640px;">
+        <h3 id="as3" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:var(--measure);">Collapsing the path</h3>
+        <div style="max-width:var(--measure);">
           <p style="margin-bottom:1.5em; color:#2B2D34;">Once the problem was framed that way, the direction was almost forced. If the job is "find this delivery," the design goal is the shortest honest path from opening the app to seeing it.</p>
           <p style="margin-bottom:1.5em; color:#2B2D34;">I restructured the flow so the app opens toward that job rather than routing users through account and location screens they never asked for, and rebuilt the eleven key screens along that path so each one moved the user forward instead of sideways.</p>
         </div>
 
         <figure style="margin:4.5em 0;">
           <img src="images/ashley-tnt/user-flow-after.png" alt="The redesigned wireframe flow: three steps from opening the app to a trip detail, with branches for single and multiple accounts." style="width:100%; height:auto; display:block; aspect-ratio:896/428;">
-          <figcaption style="font-size:13px; color:#8A8D96; margin-top:12px; line-height:1.5; max-width:640px;">Seven steps reduced to three.</figcaption>
+          <figcaption style="font-size:13px; color:#8A8D96; margin-top:12px; line-height:1.5; max-width:var(--measure);">Seven steps reduced to three.</figcaption>
         </figure>
 
         <div style="font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#D24700; margin:96px 0 14px;">Search</div>
-        <h3 id="as4" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:640px;">Replacing a form with a choice</h3>
+        <h3 id="as4" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:var(--measure);">Replacing a form with a choice</h3>
 
         <!-- Figma: Frame 591 (231:25303) — copy 432 / final design 432, 32px gutter. -->
         <div data-r="two" style="margin:2.5em 0 0; display:grid; grid-template-columns:minmax(0,432fr) minmax(0,432fr); gap:32px; align-items:start;">
@@ -1067,8 +1111,8 @@
 
         <div style="margin:150px 0 0; border-top:1px solid #0F1014; padding-top:13px; display:flex; align-items:baseline; gap:13px;"><span style="font-size:10.5px; font-weight:600; letter-spacing:.1em; color:#D24700;">03</span><span style="font-size:10.5px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#0F1014;">What outlived the engagement</span></div>
         <div style="font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#D24700; margin:44px 0 14px;">The rest of the work</div>
-        <h3 id="as5" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:640px;">The other half: the design system</h3>
-        <div style="max-width:640px;">
+        <h3 id="as5" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:var(--measure);">The other half: the design system</h3>
+        <div style="max-width:var(--measure);">
           <p style="margin-bottom:1.5em; color:#2B2D34;">The redesign only holds together if the pieces do, and the existing kit had drifted from Ashley's brand. Alongside the flows I refreshed the mobile design system — sixteen components rebuilt and five type styles updated against Ashley's latest brand.</p>
         </div>
 
@@ -1076,14 +1120,14 @@
           <img src="images/ashley-tnt/design-system.png" alt="The refreshed mobile design system: typography, controls, icons, colour palette and rebuilt screens." style="width:100%; height:auto; display:block; aspect-ratio:896/585; background:#FFFFFF;">
         </figure>
 
-        <div style="max-width:640px;">
+        <div style="max-width:var(--measure);">
           <p style="margin-bottom:1.5em; color:#2B2D34;">I handed that system to Ashley's own mobile team, where it was folded into their library and became the foundation their later work built on. In a short engagement, that mattered as much as the flows.</p>
         </div>
 
         <div style="margin:150px 0 0; border-top:1px solid #0F1014; padding-top:13px; display:flex; align-items:baseline; gap:13px;"><span style="font-size:10.5px; font-weight:600; letter-spacing:.1em; color:#D24700;">04</span><span style="font-size:10.5px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#0F1014;">Takeaway</span></div>
         <div style="font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#D24700; margin:44px 0 14px;">In closing</div>
-        <h3 id="as6" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:640px;">What stayed with me</h3>
-        <div style="max-width:640px;">
+        <h3 id="as6" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:var(--measure);">What stayed with me</h3>
+        <div style="max-width:var(--measure);">
           <p style="font-size:18.5px; line-height:1.6; margin-bottom:1.4em; color:#0F1014;">The old app wasn't badly built — it was badly <em>aimed</em>.</p>
           <p style="margin-bottom:1.5em; color:#2B2D34;">Its screens were organized as though sign-in, search, account, and location were places users wanted to go, when they were only ever obstacles between the user and one piece of information.</p>
           <p style="margin-bottom:1.5em; color:#2B2D34;">Measure a utility app by a single distance: how far is it from opening the app to the answer? Everything else is negotiable; that distance is the design. And wherever the app still has to ask the user for something, ask them to recognize, not to recall.</p>
@@ -1093,7 +1137,7 @@
 
     <div style="border-top:1px solid #E6E8EE; margin-top:150px;">
       <a href="#" data-nav="pg" data-nextcase="" style="display:block; padding:68px 24px 84px; color:#0F1014;">
-        <div data-r="frame" style="max-width:1240px; margin:0 auto; display:grid; grid-template-columns:200px minmax(0,960px); gap:56px; justify-content:center;">
+        <div data-r="frame" style="max-width:var(--frame); margin:0 auto; display:grid; grid-template-columns:200px minmax(0,var(--body)); gap:56px; justify-content:center;">
           <div style="font-size:10.5px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:#8A8D96; padding-top:6px;">Next case study</div>
           <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:40px;">
             <div>
@@ -1108,7 +1152,7 @@
     </div>
 
     <footer style="border-top:1px solid #E6E8EE; padding:34px 24px 76px;">
-      <div style="max-width:1240px; margin:0 auto; display:flex; justify-content:space-between; color:#8A8D96; font-size:13px;">
+      <div style="max-width:var(--frame); margin:0 auto; display:flex; justify-content:space-between; color:#8A8D96; font-size:13px;">
         <div>wanyinggu8@gmail.com</div>
         <div>Austin, TX</div>
       </div>
@@ -1118,14 +1162,14 @@
   <!-- ================= P&G ARTWORK CASE STUDY ================= -->
   <div data-screen="pg" data-accent="pg" data-screen-label="P&amp;G Artwork">
 
-    <nav style="display:flex; justify-content:space-between; padding:28px 24px; max-width:1200px; margin:0 auto; font-size:14px;">
+    <nav style="display:flex; justify-content:space-between; padding:28px var(--pad); max-width:var(--shell); margin:0 auto; font-size:14px;">
       <a href="#" data-nav="home" style="display:flex; align-items:center; gap:9px; font-weight:600; font-size:15px; letter-spacing:-.01em;"><img src="uploads/logo.png" alt="Ada Gu" style="width:38px; height:38px; display:block;"></a>
       <div style="display:flex; gap:26px; color:#8A8D96;"><a href="#work" data-jump="work">Work</a><a href="#lab" data-jump="lab">Lab</a><a href="#" data-nav="about">About</a></div>
     </nav>
 
     <img src="images/pg-artwork/cover.png" alt="P&amp;G artwork comparison tool" style="display:block; width:100%; aspect-ratio:24/6; object-fit:cover; object-position:center; background:#F3F4F8;">
 
-    <div data-r="frame" style="max-width:1240px; margin:0 auto; padding:88px 24px 0; display:grid; grid-template-columns:200px minmax(0,960px); gap:56px; justify-content:center;">
+    <div data-r="frame" style="max-width:var(--frame); margin:0 auto; padding:88px 24px 0; display:grid; grid-template-columns:200px minmax(0,var(--body)); gap:56px; justify-content:center;">
       <div></div>
       <div>
         <h1 style="font-weight:600; font-size:clamp(34px,4.6vw,48px); line-height:1.03; letter-spacing:-.025em; margin-bottom:24px; max-width:16em;">A model's capability is not a product</h1>
@@ -1133,7 +1177,7 @@
       </div>
     </div>
 
-    <div data-r="frame" style="max-width:1240px; margin:0 auto; padding:64px 24px 0; display:grid; grid-template-columns:200px minmax(0,960px); gap:56px; justify-content:center;">
+    <div data-r="frame" style="max-width:var(--frame); margin:0 auto; padding:64px 24px 0; display:grid; grid-template-columns:200px minmax(0,var(--body)); gap:56px; justify-content:center;">
 
       <aside data-r="rail" style="position:sticky; top:24px; align-self:start; font-size:13px;">
         <a href="#" data-nav="home" style="display:block; color:#8A8D96; margin-bottom:28px;">← All work</a>
@@ -1166,7 +1210,7 @@
       </aside>
 
       <div>
-        <div style="max-width:640px;">
+        <div style="max-width:var(--measure);">
           <p style="font-size:18.5px; line-height:1.6; margin-bottom:1.4em; color:#0F1014;">P&amp;G owns 65 brands, and every one of them ships package artwork in a constant churn of variants, sizes, languages, and yearly refreshes.</p>
           <p style="margin-bottom:1.5em; color:#2B2D34;">Small errors hide in that volume: a logo that shifted, a claim that drifted from the approved template, a barcode that changed between revisions. Catching them was manual, slow, and easy to get wrong.</p>
           <p style="margin-bottom:1.5em; color:#2B2D34;">The project was an AI image-recognition tool to do that checking automatically — feed it two pieces of artwork and it highlights where they differ. I was the UX designer on it, and the only designer on a nineteen-person team that was otherwise almost entirely machine learning: three senior data scientists, seven more data scientists, a couple of API developers, an Azure lead.</p>
@@ -1194,12 +1238,12 @@
 
         <div style="margin:128px 0 0; border-top:1px solid #0F1014; padding-top:13px; display:flex; align-items:baseline; gap:13px;"><span style="font-size:10.5px; font-weight:600; letter-spacing:.1em; color:#0B5BFF;">01</span><span style="font-size:10.5px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#0F1014;">The shape of the work</span></div>
         <div style="font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#0B5BFF; margin:44px 0 14px;">Use cases</div>
-        <h3 id="pg1" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:640px;">Three questions, one comparison</h3>
-        <div style="max-width:640px;">
+        <h3 id="pg1" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:var(--measure);">Three questions, one comparison</h3>
+        <div style="max-width:var(--measure);">
           <p style="margin-bottom:1.2em; color:#2B2D34;">The work organized around three kinds of comparison, each answering a different question:</p>
         </div>
 
-        <div style="max-width:640px; margin-top:0;">
+        <div style="max-width:var(--measure); margin-top:0;">
           <p style="margin-bottom:1.5em; color:#2B2D34;">On the surface all three are the same task: put two images side by side, show what changed. The model was good at that part. But a model that can spot every difference between two images is not yet a tool anyone will use every day. The gap between the capability and the product showed up most sharply in the second use case — the lineup compare — which is where I spent most of the project.</p>
         </div>
 
@@ -1227,12 +1271,12 @@
 
         <div style="margin:150px 0 0; border-top:1px solid #0F1014; padding-top:13px; display:flex; align-items:baseline; gap:13px;"><span style="font-size:10.5px; font-weight:600; letter-spacing:.1em; color:#0B5BFF;">02</span><span style="font-size:10.5px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#0F1014;">Meaning</span></div>
         <div style="font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#0B5BFF; margin:44px 0 14px;">The insight</div>
-        <h3 id="pg2" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:640px;">What makes a comparison mean anything</h3>
-        <div style="max-width:640px;">
+        <h3 id="pg2" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:var(--measure);">What makes a comparison mean anything</h3>
+        <div style="max-width:var(--measure);">
           <p style="margin-bottom:1.5em; color:#2B2D34;">The lineup compare drew the most testing and the most argument between me, the business analyst, and the stakeholders. The first version of its flow was simple and linear: pick a brand, upload a few files, compare. Clean on paper.</p>
         </div>
 
-        <div style="max-width:640px;">
+        <div style="max-width:var(--measure);">
           <p style="margin-bottom:1.5em; color:#2B2D34;">But the first round of usability testing and interviews turned up three pain points the linear flow couldn't hold. People didn't run one comparison — they cross-compared within a set of ten to twenty files, over and over. They struggled to keep track of which file was which variant and size. And they couldn't remember which comparisons they'd already submitted.</p>
         </div>
 
@@ -1257,28 +1301,28 @@
 
         <div style="margin:150px 0 0; border-top:1px solid #0F1014; padding-top:13px; display:flex; align-items:baseline; gap:13px;"><span style="font-size:10.5px; font-weight:600; letter-spacing:.1em; color:#0B5BFF;">03</span><span style="font-size:10.5px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#0F1014;">Outcome</span></div>
         <div style="font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#0B5BFF; margin:44px 0 14px;">Scoping</div>
-        <h3 id="pg3" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:640px;">Cutting to what mattered</h3>
-        <div style="max-width:640px;">
+        <h3 id="pg3" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:var(--measure);">Cutting to what mattered</h3>
+        <div style="max-width:var(--measure);">
           <p style="margin-bottom:1.5em; color:#2B2D34;">The full version of that table was more than phase 1 could afford — auto-populating files, smart filters, auto-sort. So I mapped every feature against two axes, what mattered to users and what was feasible on the timeline and budget, and cut to the part that carried the insight: a table the user drives, marking what to compare, rather than an engine left to guess. The ambitious features went on a later-phase list. The version that shipped kept the one thing that mattered — the property structure made visible — and let the rest wait.</p>
         </div>
 
         <figure style="margin:3em 0 0;">
-          <img src="images/pg-artwork/prioritized-features.png" alt="The prioritization plot: the clickable property table lands in the high-value, feasible zone; auto-populate, filters, and auto-sort wait for a later phase." style="width:100%; max-width:640px; height:auto; display:block; aspect-ratio:644/701;">
-          <figcaption style="font-size:13px; color:#8A8D96; margin-top:16px; line-height:1.5; max-width:640px;">The prioritization plot: the clickable property table lands in the high-value, feasible zone; auto-populate, filters, and auto-sort wait for a later phase.</figcaption>
+          <img src="images/pg-artwork/prioritized-features.png" alt="The prioritization plot: the clickable property table lands in the high-value, feasible zone; auto-populate, filters, and auto-sort wait for a later phase." style="width:100%; max-width:var(--measure); height:auto; display:block; aspect-ratio:644/701;">
+          <figcaption style="font-size:13px; color:#8A8D96; margin-top:16px; line-height:1.5; max-width:var(--measure);">The prioritization plot: the clickable property table lands in the high-value, feasible zone; auto-populate, filters, and auto-sort wait for a later phase.</figcaption>
         </figure>
 
         <div style="font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#0B5BFF; margin:96px 0 14px;">Design</div>
-        <h3 id="pg4" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:640px;">Working out the table</h3>
-        <div style="max-width:640px;">
+        <h3 id="pg4" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:var(--measure);">Working out the table</h3>
+        <div style="max-width:var(--measure);">
           <p style="margin-bottom:1.5em; color:#2B2D34;">Deciding on a table settled <em>what</em> to build, not <em>how</em> it should behave. I sketched two structures before committing.</p>
         </div>
 
         <figure style="margin:3em 0;">
           <img src="images/pg-artwork/sketch-options.png" alt="Two sketch directions: a clickable property grid, and an upload list with explicit compare toggles." style="width:100%; height:auto; display:block; aspect-ratio:896/367;">
-          <figcaption style="font-size:13px; color:#8A8D96; margin-top:16px; line-height:1.5; max-width:640px;">Two sketch directions: a clickable property grid, and an upload list with explicit compare toggles.</figcaption>
+          <figcaption style="font-size:13px; color:#8A8D96; margin-top:16px; line-height:1.5; max-width:var(--measure);">Two sketch directions: a clickable property grid, and an upload list with explicit compare toggles.</figcaption>
         </figure>
 
-        <div style="max-width:640px;">
+        <div style="max-width:var(--measure);">
           <p style="margin-bottom:1.5em; color:#2B2D34;">The first laid the files out as a matrix — variants across the top, sizes down the side — with each property header clickable, so the axis you were comparing along was visible in the layout itself. The second kept a running upload list and made every comparison an explicit choice: tick <em>compare a,</em> <em>compare b,</em> set an overall tolerance, toggle which results to show. The grid expressed the insight directly — the shared property <em>was</em> the structure — so it won the core. But the second sketch was solving the other half of the problem, the part the insight didn't touch: people weren't losing time on <em>what</em> to compare so much as on re-uploading the same twenty files and losing track of what they'd already run. So I took the grid's property structure and folded in the list's memory.</p>
           <p style="margin-bottom:1.5em; color:#2B2D34;">That changed the flow, not just the screen.</p>
         </div>
@@ -1286,31 +1330,31 @@
         <!-- Figma: Frame 420 (264:26396) — the before/after user flows for use case 2. -->
         <figure style="margin:3em 0;">
           <img src="images/pg-artwork/flow-change.png" alt="Before and after: the linear upload flow gains a persistent file pool, inline labeling, and one-tap re-submission." style="width:100%; height:auto; display:block; aspect-ratio:896/605;">
-          <figcaption style="font-size:13px; color:#8A8D96; margin-top:16px; line-height:1.5; max-width:640px;">Before and after: the linear upload flow gains a persistent file pool, inline labeling, and one-tap re-submission.</figcaption>
+          <figcaption style="font-size:13px; color:#8A8D96; margin-top:16px; line-height:1.5; max-width:var(--measure);">Before and after: the linear upload flow gains a persistent file pool, inline labeling, and one-tap re-submission.</figcaption>
         </figure>
 
-        <div style="max-width:640px;">
+        <div style="max-width:var(--measure);">
           <p style="margin-bottom:1.5em; color:#2B2D34;">Each of the three pain points got a specific answer in the flow. Cross-comparing the same ten-to-twenty files over and over became a persistent <em>file pool</em> you fetch into once and compare from repeatedly, instead of re-uploading every time. Losing track of which file was which variant and size became an inline edit field for labeling files right in the table. And forgetting what you'd already submitted became a one-tap re-submit straight from the pool. The table stopped being just where you set up a comparison — it became where the whole set lived between comparisons.</p>
         </div>
 
         <div style="font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#0B5BFF; margin:96px 0 14px;">Shipped</div>
-        <h3 id="pg5" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:640px;">What shipped</h3>
+        <h3 id="pg5" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:var(--measure);">What shipped</h3>
 
-        <figure style="margin:2.5em 0 0; max-width:640px;">
+        <figure style="margin:2.5em 0 0; max-width:var(--measure);">
           <video data-lazyvideo="images/pg-artwork/final-solution.mp4" muted loop playsinline preload="none"
                  aria-label="Screen recording of the shipped artwork comparison tool."
                  style="width:100%; height:auto; display:block; aspect-ratio:640/391; background:#F3F4F8;"></video>
           <figcaption style="font-size:13px; color:#8A8D96; margin-top:16px; line-height:1.5;">The shipped lineup tool.</figcaption>
         </figure>
 
-        <div style="max-width:640px; margin-top:3em;">
+        <div style="max-width:var(--measure); margin-top:3em;">
           <p style="margin-bottom:1.5em; color:#2B2D34;">The tool shipped in Q4 2022. It went to more than 10,000 P&amp;G employees managing artwork across the company's 65 brands, and it cut roughly 80% of the time the checking process used to take.</p>
         </div>
 
         <div style="margin:150px 0 0; border-top:1px solid #0F1014; padding-top:13px; display:flex; align-items:baseline; gap:13px;"><span style="font-size:10.5px; font-weight:600; letter-spacing:.1em; color:#0B5BFF;">04</span><span style="font-size:10.5px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#0F1014;">Takeaway</span></div>
         <div style="font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#0B5BFF; margin:44px 0 14px;">In closing</div>
-        <h3 id="pg6" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:640px;">What stayed with me</h3>
-        <div style="max-width:640px;">
+        <h3 id="pg6" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:var(--measure);">What stayed with me</h3>
+        <div style="max-width:var(--measure);">
           <p style="font-size:18.5px; line-height:1.6; margin-bottom:1.4em; color:#0F1014;">Two lessons, and they still travel together.</p>
           <p style="margin-bottom:1.5em; color:#2B2D34;">The first is about comparison itself: a difference only means something against a background of sameness. A figure needs a ground. The model could find any difference between any two images; the design's real job was making sure the two images shared a property worth holding constant — otherwise the tool was just generating noise faster than a person could read it.</p>
           <p style="margin-bottom:1.5em; color:#2B2D34;">The second is broader, and it's the one I keep meeting in AI work since. A model's raw capability is not a product. Between "the system can do this" and "a person will rely on this every day" sits everything the model can't do for itself — making an indiscriminate process meaningful, and making a repeated one manageable at scale. As the only designer on a team of data scientists, that gap was the whole job. I've been designing in it ever since.</p>
@@ -1320,7 +1364,7 @@
 
     <div style="border-top:1px solid #E6E8EE; margin-top:150px;">
       <a href="#" data-nav="wayhome" data-nextcase="" style="display:block; padding:68px 24px 84px; color:#0F1014;">
-        <div data-r="frame" style="max-width:1240px; margin:0 auto; display:grid; grid-template-columns:200px minmax(0,960px); gap:56px; justify-content:center;">
+        <div data-r="frame" style="max-width:var(--frame); margin:0 auto; display:grid; grid-template-columns:200px minmax(0,var(--body)); gap:56px; justify-content:center;">
           <div style="font-size:10.5px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:#8A8D96; padding-top:6px;">Next case study</div>
           <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:40px;">
             <div>
@@ -1335,7 +1379,7 @@
     </div>
 
     <footer style="border-top:1px solid #E6E8EE; padding:34px 24px 76px;">
-      <div style="max-width:1240px; margin:0 auto; display:flex; justify-content:space-between; color:#8A8D96; font-size:13px;">
+      <div style="max-width:var(--frame); margin:0 auto; display:flex; justify-content:space-between; color:#8A8D96; font-size:13px;">
         <div>wanyinggu8@gmail.com</div>
         <div>Austin, TX</div>
       </div>
@@ -1345,14 +1389,14 @@
   <!-- ================= WAYHOME CASE STUDY ================= -->
   <div data-screen="wayhome" data-accent="wayhome" data-screen-label="WayHome">
 
-    <nav style="display:flex; justify-content:space-between; padding:28px 24px; max-width:1200px; margin:0 auto; font-size:14px;">
+    <nav style="display:flex; justify-content:space-between; padding:28px var(--pad); max-width:var(--shell); margin:0 auto; font-size:14px;">
       <a href="#" data-nav="home" style="display:flex; align-items:center; gap:9px; font-weight:600; font-size:15px; letter-spacing:-.01em;"><img src="uploads/logo.png" alt="Ada Gu" style="width:38px; height:38px; display:block;"></a>
       <div style="display:flex; gap:26px; color:#8A8D96;"><a href="#work" data-jump="work">Work</a><a href="#lab" data-jump="lab">Lab</a><a href="#" data-nav="about">About</a></div>
     </nav>
 
     <img src="images/wayhome/cover.png" alt="Couple viewing a WayHome listing on a phone in a furnished living room" style="display:block; width:100%; aspect-ratio:24/6; object-fit:cover; object-position:center; background:#F3F4F8;">
 
-    <div data-r="frame" style="max-width:1240px; margin:0 auto; padding:88px 24px 0; display:grid; grid-template-columns:200px minmax(0,960px); gap:56px; justify-content:center;">
+    <div data-r="frame" style="max-width:var(--frame); margin:0 auto; padding:88px 24px 0; display:grid; grid-template-columns:200px minmax(0,var(--body)); gap:56px; justify-content:center;">
       <div></div>
       <div>
         <h1 style="font-weight:600; font-size:clamp(34px,4.6vw,48px); line-height:1.03; letter-spacing:-.025em; margin-bottom:24px; max-width:16em;">When the real problem is acquisition</h1>
@@ -1360,7 +1404,7 @@
       </div>
     </div>
 
-    <div data-r="frame" style="max-width:1240px; margin:0 auto; padding:64px 24px 0; display:grid; grid-template-columns:200px minmax(0,960px); gap:56px; justify-content:center;">
+    <div data-r="frame" style="max-width:var(--frame); margin:0 auto; padding:64px 24px 0; display:grid; grid-template-columns:200px minmax(0,var(--body)); gap:56px; justify-content:center;">
 
       <aside data-r="rail" style="position:sticky; top:24px; align-self:start; font-size:13px;">
         <a href="#" data-nav="home" style="display:block; color:#8A8D96; margin-bottom:28px;">← All work</a>
@@ -1393,7 +1437,7 @@
       </aside>
 
       <div>
-        <div style="max-width:640px;">
+        <div style="max-width:var(--measure);">
           <p style="font-size:18.5px; line-height:1.6; margin-bottom:1.4em; color:#0F1014;">WayHome ATX rented fully furnished homes to families moving to Austin for a few months at a time.</p>
           <p style="margin-bottom:1.5em; color:#2B2D34;">The transitional window between leaving one city and settling into the next. Austin was the fastest-growing metro in the country then, and a lot of that growth was families arriving from out of state before they'd figured out where to actually live.</p>
           <p style="margin-bottom:1.5em; color:#2B2D34;">I joined as one of three designers on a five-person team: a founder who also wrote the code, a real estate expert, and three of us on UI/UX. Over two sprints in late 2021 we took the product from nothing to a live site. I owned the home page and the full renter flow.</p>
@@ -1421,30 +1465,30 @@
 
         <div style="margin:128px 0 0; border-top:1px solid #0F1014; padding-top:13px; display:flex; align-items:baseline; gap:13px;"><span style="font-size:10.5px; font-weight:600; letter-spacing:.1em; color:#0B7D74;">01</span><span style="font-size:10.5px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#0F1014;">The constraint</span></div>
         <div style="font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#0B7D74; margin:44px 0 14px;">Inventory</div>
-        <h3 id="wh1" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:640px;">No listings to list</h3>
-        <div style="max-width:640px;">
+        <h3 id="wh1" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:var(--measure);">No listings to list</h3>
+        <div style="max-width:var(--measure);">
           <p style="margin-bottom:1.5em; color:#2B2D34;">WayHome had a handful of houses, not a catalog — and a classic chicken-and-egg underneath it: you need renter demand to justify signing more properties, but you need properties to attract renters.</p>
           <p style="margin-bottom:1.5em; color:#2B2D34;">So instead of a browse page, the home page led with a short survey. A renter tells us what they need, an admin curates matching homes on the back end, and we email a custom shortlist. The survey did double duty — it screened for real intent.</p>
           <p style="margin-bottom:1.5em; color:#2B2D34;">Where to put the survey was its own small argument. I tested a few entry points, and a pop-up modal won — direct, aligned with the "we'll send you a custom list" model, and easy to grow into a real listings page once there was inventory.</p>
         </div>
 
-        <figure style="margin:3.5em 0 0; max-width:640px;">
+        <figure style="margin:3.5em 0 0; max-width:var(--measure);">
           <img src="images/wayhome/survey-home.png" alt="The survey-first home page and the information architecture behind it." style="width:100%; height:auto; display:block; aspect-ratio:640/628;">
           <figcaption style="font-size:13px; color:#8A8D96; margin-top:24px; line-height:1.5;">The survey-first home page, standing in for a catalog that did not exist yet.</figcaption>
         </figure>
 
         <div style="margin:150px 0 0; border-top:1px solid #0F1014; padding-top:13px; display:flex; align-items:baseline; gap:13px;"><span style="font-size:10.5px; font-weight:600; letter-spacing:.1em; color:#0B7D74;">02</span><span style="font-size:10.5px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#0F1014;">Designing the funnel</span></div>
         <div style="font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#0B7D74; margin:44px 0 14px;">Brand</div>
-        <h3 id="wh2" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:640px;">A brand that converts</h3>
-        <div style="max-width:640px;">
+        <h3 id="wh2" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:var(--measure);">A brand that converts</h3>
+        <div style="max-width:var(--measure);">
           <p style="margin-bottom:1.5em; color:#2B2D34;">Because I was building the brand from scratch too — logo, colors, email templates, the ad creative itself — I could treat it as part of the funnel rather than decoration.</p>
         </div>
 
-        <figure style="margin:3em 0; max-width:640px;">
+        <figure style="margin:3em 0; max-width:var(--measure);">
           <img src="images/wayhome/brand-system.png" alt="The WayHome brand system: logo, type, colour and the listing email template." style="width:100%; height:auto; display:block; aspect-ratio:640/420;">
         </figure>
 
-        <div style="max-width:640px;">
+        <div style="max-width:var(--measure);">
           <p style="margin-bottom:1.5em; color:#2B2D34;">The design system underneath was small and practical: seven type styles, nineteen components, three neutral and four accent colors, shared across the marketing site and the portal so a lead never felt handed off between two different products.</p>
         </div>
 
@@ -1452,29 +1496,29 @@
           <p style="font-size:24px; font-weight:500; line-height:1.3; letter-spacing:-.015em; color:#0F1014;">"Small and local" read as trustworthy where "polished" read as risky.</p>
         </blockquote>
 
-        <div style="max-width:640px;">
+        <div style="max-width:var(--measure);">
           <p style="margin-bottom:1.5em; color:#2B2D34;">The test that mattered was on positioning. We ran two rounds of A/B testing on the ads and landing page, and the version that leaned into WayHome as a small, local business — not a slick national platform — lifted click-through by around 12%.</p>
         </div>
 
         <div style="font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#0B7D74; margin:96px 0 14px;">Analytics</div>
-        <h3 id="wh3" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:640px;">Reading the drop-off</h3>
-        <div style="max-width:640px;">
+        <h3 id="wh3" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:var(--measure);">Reading the drop-off</h3>
+        <div style="max-width:var(--measure);">
           <p style="margin-bottom:1.5em; color:#2B2D34;">Once the site launched, I watched behavior in Google Analytics, and one pattern stood out: people started the survey and stopped at the location question. Our search and ad keywords were generic — "house rental near me" and the like.</p>
         </div>
 
-        <figure style="margin:3em 0; max-width:640px;">
+        <figure style="margin:3em 0; max-width:var(--measure);">
           <img src="images/wayhome/analytics-dropoff.png" alt="Google Analytics showing the survey drop-off at the location question." style="width:100%; height:auto; display:block; aspect-ratio:1240/672;">
         </figure>
 
-        <div style="max-width:640px;">
+        <div style="max-width:var(--measure);">
           <p style="margin-bottom:1.5em; color:#2B2D34;">The fix was in the words, not the screens. We rewrote the SEO and ad copy to lead with "Austin, TX" and dropped "near me" entirely, since our audience was not nearby — they were trying to move here. Traffic got narrower and better.</p>
         </div>
 
         <div style="font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#0B7D74; margin:96px 0 14px;">The rule we couldn't beat</div>
-        <h3 id="wh4" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:640px;">The ad we weren't allowed to run</h3>
+        <h3 id="wh4" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:var(--measure);">The ad we weren't allowed to run</h3>
 
         <!-- Figma: Frame 595 (263:26033) — copy 284 / artwork 324, 32px gutter, inside the 640 column. -->
-        <div data-r="two" style="margin:2.5em 0 0; max-width:640px; display:grid; grid-template-columns:minmax(0,284fr) minmax(0,324fr); gap:32px; align-items:start;">
+        <div data-r="two" style="margin:2.5em 0 0; max-width:var(--measure); display:grid; grid-template-columns:minmax(0,284fr) minmax(0,324fr); gap:32px; align-items:start;">
           <div>
             <p style="margin-bottom:1.5em; color:#2B2D34;">Housing is a protected category in social advertising, which means you can't target ads by location the way most local businesses do. Our whole plan — paid social aimed at people moving to Austin — was off the table.</p>
             <p style="margin-bottom:0; color:#2B2D34;">The workaround came from watching where people already asked for help. Families relocating were posting in Facebook groups: "moving to Austin in March, any leads on a furnished rental?" Sharing a listing into a group like that is not a targeted ad.</p>
@@ -1482,7 +1526,7 @@
           <img src="images/wayhome/social-groups.png" alt="A WayHome listing shared into a Facebook relocation group." style="width:76.3%; height:auto; margin:0 auto; display:block; aspect-ratio:495/708;">
         </div>
 
-        <div style="max-width:640px; margin-top:2.5em;">
+        <div style="max-width:var(--measure); margin-top:2.5em;">
           <p style="margin-bottom:1.5em; color:#2B2D34;">So I designed a share feature into the listing pages, and we started seeding real homes into those groups. It stayed inside the rules, and it worked: inquiries came through social within a couple of weeks.</p>
         </div>
 
@@ -1493,8 +1537,8 @@
 
         <div style="margin:150px 0 0; border-top:1px solid #0F1014; padding-top:13px; display:flex; align-items:baseline; gap:13px;"><span style="font-size:10.5px; font-weight:600; letter-spacing:.1em; color:#0B7D74;">03</span><span style="font-size:10.5px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#0F1014;">The product</span></div>
         <div style="font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#0B7D74; margin:44px 0 14px;">Sprint two</div>
-        <h3 id="wh5" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:640px;">The rest of the build</h3>
-        <div style="max-width:640px;">
+        <h3 id="wh5" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:var(--measure);">The rest of the build</h3>
+        <div style="max-width:var(--measure);">
           <p style="margin-bottom:1.5em; color:#2B2D34;">The second sprint pushed past acquisition into the product itself. Mapping the full experience surfaced three distinct users whose flows fed each other: a renter's application shows up read-only in the owner's portal; a partner can list a property into the pipeline.</p>
           <p style="margin-bottom:1.5em; color:#2B2D34;">Renter: inquiry, application, and managing a stay — the flow I owned end to end. Owner: listing a home and reviewing renter applications read-only. Partner: listing a property and handing it off into the WayHome pipeline.</p>
         </div>
@@ -1503,17 +1547,17 @@
           <video data-lazyvideo="images/wayhome/pipeline.mp4" muted loop playsinline preload="none"
                  aria-label="Walkthrough of the three connected user flows: renter, owner and partner."
                  style="width:100%; height:auto; display:block; aspect-ratio:3018/1674; background:#F3F4F8;"></video>
-          <figcaption style="font-size:13px; color:#8A8D96; margin-top:24px; line-height:1.5; max-width:640px;">Three user types, one connected pipeline.</figcaption>
+          <figcaption style="font-size:13px; color:#8A8D96; margin-top:24px; line-height:1.5; max-width:var(--measure);">Three user types, one connected pipeline.</figcaption>
         </figure>
 
-        <div style="max-width:640px;">
+        <div style="max-width:var(--measure);">
           <p style="margin-bottom:1.5em; color:#2B2D34;">Testing kept correcting me in useful ways. The smallest example that stuck: renters didn't want to pick an exact bedroom count. Someone who needs three bedrooms happily considers four. So the filter became a range, not a number — obvious in hindsight, invisible until a real person hesitated in front of it.</p>
         </div>
 
         <div style="margin:150px 0 0; border-top:1px solid #0F1014; padding-top:13px; display:flex; align-items:baseline; gap:13px;"><span style="font-size:10.5px; font-weight:600; letter-spacing:.1em; color:#0B7D74;">04</span><span style="font-size:10.5px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#0F1014;">Takeaway</span></div>
         <div style="font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#0B7D74; margin:44px 0 14px;">In closing</div>
-        <h3 id="wh6" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:640px;">What stayed with me</h3>
-        <div style="max-width:640px;">
+        <h3 id="wh6" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:var(--measure);">What stayed with me</h3>
+        <div style="max-width:var(--measure);">
           <p style="font-size:18.5px; line-height:1.6; margin-bottom:1.4em; color:#0F1014;">Find the real constraint before designing anything, because that's usually where the design actually is.</p>
           <p style="margin-bottom:1.5em; color:#2B2D34;">This was my first time designing something that had to survive contact with a real business. On a team that small there's no line between "the design" and "the business" — the brand, the funnel, the keywords, the workaround for an ad rule were all the same job, and the bottleneck was never the pixels.</p>
           <p style="margin-bottom:1.5em; color:#2B2D34;">Here the constraint was acquisition, and twice the best answer was to take a rule working against us and build with it instead of around it.</p>
@@ -1523,7 +1567,7 @@
 
     <div style="border-top:1px solid #E6E8EE; margin-top:150px;">
       <a href="#" data-nav="cognite" data-nextcase="" style="display:block; padding:68px 24px 84px; color:#0F1014;">
-        <div data-r="frame" style="max-width:1240px; margin:0 auto; display:grid; grid-template-columns:200px minmax(0,960px); gap:56px; justify-content:center;">
+        <div data-r="frame" style="max-width:var(--frame); margin:0 auto; display:grid; grid-template-columns:200px minmax(0,var(--body)); gap:56px; justify-content:center;">
           <div style="font-size:10.5px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:#8A8D96; padding-top:6px;">Next case study</div>
           <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:40px;">
             <div>
@@ -1538,7 +1582,7 @@
     </div>
 
     <footer style="border-top:1px solid #E6E8EE; padding:34px 24px 76px;">
-      <div style="max-width:1240px; margin:0 auto; display:flex; justify-content:space-between; color:#8A8D96; font-size:13px;">
+      <div style="max-width:var(--frame); margin:0 auto; display:flex; justify-content:space-between; color:#8A8D96; font-size:13px;">
         <div>wanyinggu8@gmail.com</div>
         <div>Austin, TX</div>
       </div>
@@ -1548,14 +1592,14 @@
   <!-- ================= HALLIBURTON CASE STUDY ================= -->
   <div data-screen="case" data-accent="halliburton" data-screen-label="Halliburton InnerVue">
 
-    <nav style="display:flex; justify-content:space-between; padding:28px 24px; max-width:1200px; margin:0 auto; font-size:14px;">
+    <nav style="display:flex; justify-content:space-between; padding:28px var(--pad); max-width:var(--shell); margin:0 auto; font-size:14px;">
       <a href="#" data-nav="home" style="display:flex; align-items:center; gap:9px; font-weight:600; font-size:15px; letter-spacing:-.01em;"><img src="uploads/logo.png" alt="Ada Gu" style="width:38px; height:38px; display:block;"></a>
       <div style="display:flex; gap:26px; color:#8A8D96;"><a href="#work" data-jump="work">Work</a><a href="#lab" data-jump="lab">Lab</a><a href="#" data-nav="about">About</a></div>
     </nav>
 
     <img src="images/halliburton/cover.png" alt="Engineer reviewing an InnerVue deposition project on a desktop monitor" style="display:block; width:100%; aspect-ratio:24/6; object-fit:cover; object-position:center; background:#F3F4F8;">
 
-    <div data-r="frame" style="max-width:1240px; margin:0 auto; padding:88px 24px 0; display:grid; grid-template-columns:200px minmax(0,960px); gap:56px; justify-content:center;">
+    <div data-r="frame" style="max-width:var(--frame); margin:0 auto; padding:88px 24px 0; display:grid; grid-template-columns:200px minmax(0,var(--body)); gap:56px; justify-content:center;">
       <div></div>
       <div>
         <h1 style="font-weight:600; font-size:clamp(34px,4.6vw,48px); line-height:1.03; letter-spacing:-.025em; margin-bottom:24px; max-width:16em;">Halliburton InnerVue</h1>
@@ -1563,7 +1607,7 @@
       </div>
     </div>
 
-    <div data-r="frame" style="max-width:1240px; margin:0 auto; padding:64px 24px 0; display:grid; grid-template-columns:200px minmax(0,960px); gap:56px; justify-content:center;">
+    <div data-r="frame" style="max-width:var(--frame); margin:0 auto; padding:64px 24px 0; display:grid; grid-template-columns:200px minmax(0,var(--body)); gap:56px; justify-content:center;">
 
       <aside data-r="rail" style="position:sticky; top:24px; align-self:start; font-size:13px;">
         <a href="#" data-nav="home" style="display:block; color:#8A8D96; margin-bottom:28px;">← All work</a>
@@ -1600,7 +1644,7 @@
         <figure style="margin:0 0 2.5em;">
           <img src="images/halliburton/intro.png" alt="The InnerVue engineers’ portal on a laptop." style="width:100%; max-width:590px; height:auto; display:block; aspect-ratio:590/480;">
         </figure>
-        <div style="max-width:640px;">
+        <div style="max-width:var(--measure);">
           <p style="font-size:18.5px; line-height:1.6; margin-bottom:1.4em; color:#0F1014;">InnerVue is a Halliburton service that diagnoses pipelines without opening them.</p>
           <p style="margin-bottom:1.5em; color:#2B2D34;">A technician arrives at a rig with everything packed in a Pelican case, connects a device to the pipeline, sends a pressure pulse through a valve, and records how the pulse behaves. That recording travels to engineers in Houston, who run it through calculations to find deposition and blockage.</p>
           <p style="margin-bottom:1.5em; color:#2B2D34;">I spent two years as the sole designer on this product, embedded in a 19-person cross-functional team through Capgemini. My work covered all three surfaces of that journey: a 0-to-1 field portal for the technicians collecting data, the internal portal where engineers run the analysis, and the client-facing report portal.</p>
@@ -1627,8 +1671,8 @@
 
         <div style="margin:128px 0 0; border-top:1px solid #0F1014; padding-top:13px; display:flex; align-items:baseline; gap:13px;"><span style="font-size:10.5px; font-weight:600; letter-spacing:.1em; color:#DD0F26;">01</span><span style="font-size:10.5px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#0F1014;">Understanding the problem</span></div>
         <div style="font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#DD0F26; margin:44px 0 14px;">The material</div>
-        <h3 id="hb1" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:640px;">A pipeline is not a tube</h3>
-        <div style="max-width:640px;">
+        <h3 id="hb1" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:var(--measure);">A pipeline is not a tube</h3>
+        <div style="max-width:var(--measure);">
           <p style="margin-bottom:1.5em; color:#2B2D34;">Most people picture a pipeline as one long, constant pipe. An actual Piping and Instrumentation Diagram tells a different story.</p>
         </div>
 
@@ -1670,7 +1714,7 @@
     </div>
   </div>
 
-  <div style="position:relative; margin-top:22px; min-height:82px; max-width:640px;">
+  <div style="position:relative; margin-top:22px; min-height:82px; max-width:var(--measure);">
     <p id="pp-cap0" style="position:absolute; inset:0; margin:0; font-size:16.5px; line-height:1.6; color:#2B2D34; transition:opacity .3s ease; opacity:1;">People picture a pipeline as a tube. One diameter, one length, one set of numbers to enter.</p>
     <p id="pp-cap1" style="position:absolute; inset:0; margin:0; font-size:16.5px; line-height:1.6; color:#2B2D34; transition:opacity .3s ease; opacity:0;">Real lines change diameter along their length. Every change is another full set of parameters, entered by hand.</p>
     <p id="pp-cap2" style="position:absolute; inset:0; margin:0; font-size:16.5px; line-height:1.6; color:#2B2D34; transition:opacity .3s ease; opacity:0;">Count the places the engineer has to re-enter everything. That count — not the table — was the real problem to design against.</p>
@@ -1693,8 +1737,8 @@
         </div>
 
         <div style="font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#DD0F26; margin:96px 0 14px;">The argument</div>
-        <h3 id="hb2" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:640px;">Six tabs, and the fix that wasn't</h3>
-        <div style="max-width:640px;">
+        <h3 id="hb2" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:var(--measure);">Six tabs, and the fix that wasn't</h3>
+        <div style="max-width:var(--measure);">
           <p style="margin-bottom:1.5em; color:#2B2D34;">The existing input UI split those parameters across six tabs — one per parameter type. Engineers told us in feedback it was extremely time-consuming, and the product owner proposed the obvious fix: restyle the fields, make them more readable.</p>
         </div>
 
@@ -1702,7 +1746,7 @@
           <p style="font-size:24px; font-weight:500; line-height:1.3; letter-spacing:-.015em; color:#0F1014;">I didn't think readability was the problem, and said so.</p>
         </blockquote>
 
-        <div style="max-width:640px;">
+        <div style="max-width:var(--measure);">
           <p style="margin-bottom:1.5em; color:#2B2D34;">On our prioritization plot, restyling was a quick, low-impact iteration; reinventing the input component was high effort and high impact — a bet.</p>
           <p style="margin-bottom:1.5em; color:#2B2D34;">What justified the bet was the roadmap: the product's long-term vision involved handling increasingly complex pipeline scenarios, and all of them would sit on top of this input flow. Spending the effort once, here, would compound.</p>
         </div>
@@ -1711,9 +1755,9 @@
 
         <div style="margin:150px 0 0; border-top:1px solid #0F1014; padding-top:13px; display:flex; align-items:baseline; gap:13px;"><span style="font-size:10.5px; font-weight:600; letter-spacing:.1em; color:#DD0F26;">02</span><span style="font-size:10.5px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#0F1014;">Making the case</span></div>
         <div style="font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#DD0F26; margin:44px 0 14px;">The insight</div>
-        <h3 id="hb3" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:640px;">The insight underneath</h3>
+        <h3 id="hb3" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:var(--measure);">The insight underneath</h3>
 
-        <div style="max-width:640px;"><p style="margin-bottom:1.5em; color:#2B2D34;">To make that case properly, I ran a round of usability testing and interviews. The pattern was immediate: engineers were constantly jumping back to the first tab, &ldquo;Distance,&rdquo; because every parameter in every other tab refers to it.</p><blockquote style="margin:3em 0; border-left:2px solid #DD0F26; padding-left:26px; max-width:588px;">
+        <div style="max-width:var(--measure);"><p style="margin-bottom:1.5em; color:#2B2D34;">To make that case properly, I ran a round of usability testing and interviews. The pattern was immediate: engineers were constantly jumping back to the first tab, &ldquo;Distance,&rdquo; because every parameter in every other tab refers to it.</p><blockquote style="margin:3em 0; border-left:2px solid #DD0F26; padding-left:26px; max-width:588px;">
           <p style="font-size:24px; font-weight:500; line-height:1.3; letter-spacing:-.015em; color:#0F1014;">The six tabs mirrored how the data was stored, not how engineers think.</p>
         </blockquote><p style="margin-bottom:1.5em; color:#2B2D34;">To an engineer, a pipeline is one continuous object where everything is a function of distance. Splitting it into tabs shattered that mental model and forced them to hold it in their heads while clicking back and forth.</p></div><figure data-motion="pipeline-mental-model" style="margin:4em 0;"><div style="background:#FFFFFF; border:1px solid #DADAD6; padding:44px 32px 36px;">
     <svg viewBox="0 0 880 400" style="width:100%; height:auto; display:block;">
@@ -1806,19 +1850,19 @@
 
         
 
-        <div style="max-width:640px;">
+        <div style="max-width:var(--measure);">
           <p style="margin-bottom:1.5em; color:#2B2D34;">Once I saw that, the design was almost self-evident: <strong style="font-weight:600; color:#0F1014;">a single table.</strong> Distance as the anchoring first column, every parameter in a row beside it, so an engineer can see, edit, and cross-reference the whole pipeline profile on one screen.</p>
         </div>
 
         <div style="font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#DD0F26; margin:96px 0 14px;">Testing</div>
-        <h3 id="hb4" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:640px;">Three ways to handle overflow</h3><div style="max-width:640px;"><p style="margin-bottom:1.5em; color:#2B2D34;">A full parameter set is wider than any screen, so the real design question was overflow. I brought three options to testing.</p><p style="margin-bottom:1.5em; color:#2B2D34;">Option 2 won clearly &mdash; fewest clicks, fastest route to any value, fastest input time. Pinning Distance kept the anchor visible no matter where you scrolled, which is exactly what the mental model needed.</p></div><figure style="margin:4em 0;"><img src="images/halliburton/overflow-options.png" alt="Three overflow options compared: scrollable frame, fixed Distance column (chosen), collapsible groups" style="width:100%; height:auto; display:block;"></figure><div style="margin:150px 0 0; border-top:1px solid #0F1014; padding-top:13px; display:flex; align-items:baseline; gap:13px;"><span style="font-size:10.5px; font-weight:600; letter-spacing:.1em; color:#DD0F26;">03</span><span style="font-size:10.5px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#0F1014;">What it grew into</span></div>
+        <h3 id="hb4" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:var(--measure);">Three ways to handle overflow</h3><div style="max-width:var(--measure);"><p style="margin-bottom:1.5em; color:#2B2D34;">A full parameter set is wider than any screen, so the real design question was overflow. I brought three options to testing.</p><p style="margin-bottom:1.5em; color:#2B2D34;">Option 2 won clearly &mdash; fewest clicks, fastest route to any value, fastest input time. Pinning Distance kept the anchor visible no matter where you scrolled, which is exactly what the mental model needed.</p></div><figure style="margin:4em 0;"><img src="images/halliburton/overflow-options.png" alt="Three overflow options compared: scrollable frame, fixed Distance column (chosen), collapsible groups" style="width:100%; height:auto; display:block;"></figure><div style="margin:150px 0 0; border-top:1px solid #0F1014; padding-top:13px; display:flex; align-items:baseline; gap:13px;"><span style="font-size:10.5px; font-weight:600; letter-spacing:.1em; color:#DD0F26;">03</span><span style="font-size:10.5px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#0F1014;">What it grew into</span></div>
         <div style="font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#DD0F26; margin:44px 0 14px;">The payoff</div>
-        <h3 id="hb6" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:640px;">The bet pays off — twice</h3>
-        <div style="max-width:640px;">
+        <h3 id="hb6" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:var(--measure);">The bet pays off — twice</h3>
+        <div style="max-width:var(--measure);">
           <p style="margin-bottom:1.5em; color:#2B2D34;">The reason to reinvent rather than restyle was that the roadmap would build on this foundation. Later in 2023, it did.</p>
         </div>
 
-        <div style="max-width:640px;"><p style="margin-bottom:1.5em; color:#2B2D34;">Capturing a diagnostic blind spot close to the valve. Because the table was already structured around distance-keyed segments, this was a minor adaptation of the existing component rather than a new build &mdash; which saved significant development time.</p></div><figure data-motion="component-reuse" style="margin:4em 0;"><div class="cr" data-state="0">
+        <div style="max-width:var(--measure);"><p style="margin-bottom:1.5em; color:#2B2D34;">Capturing a diagnostic blind spot close to the valve. Because the table was already structured around distance-keyed segments, this was a minor adaptation of the existing component rather than a new build &mdash; which saved significant development time.</p></div><figure data-motion="component-reuse" style="margin:4em 0;"><div class="cr" data-state="0">
     <div class="cr-stage">
 
       <div class="cr-diagram">
@@ -1928,11 +1972,11 @@
       </div>
 
     </div>
-  </div><figcaption style="font-size:13px; color:#8A8D96; margin-top:12px; line-height:1.5;">One distance table reused across primary line, near field and junction.</figcaption></figure><div style="max-width:640px;"><p style="margin-bottom:1.5em; color:#2B2D34;">The harder one. Real client P&amp;IDs meant as many as 50 junctions in a single analysis &mdash; secondary pipes branching off the primary line, each with its own full parameter profile.</p><p style="margin-bottom:1.5em; color:#2B2D34;">The table grew into a complex, multi-line input &mdash; primary and secondary lines as linked tabs, junctions marked inline at their distance points. A form built around six parameter tabs could never have absorbed this. A table built around the structure of the pipeline itself absorbed it naturally.</p></div>
+  </div><figcaption style="font-size:13px; color:#8A8D96; margin-top:12px; line-height:1.5;">One distance table reused across primary line, near field and junction.</figcaption></figure><div style="max-width:var(--measure);"><p style="margin-bottom:1.5em; color:#2B2D34;">The harder one. Real client P&amp;IDs meant as many as 50 junctions in a single analysis &mdash; secondary pipes branching off the primary line, each with its own full parameter profile.</p><p style="margin-bottom:1.5em; color:#2B2D34;">The table grew into a complex, multi-line input &mdash; primary and secondary lines as linked tabs, junctions marked inline at their distance points. A form built around six parameter tabs could never have absorbed this. A table built around the structure of the pipeline itself absorbed it naturally.</p></div>
 
         <div style="font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#DD0F26; margin:96px 0 14px;">The rest of the work</div>
-        <h3 id="hb7" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:640px;">Around the table</h3>
-        <div style="max-width:640px;">
+        <h3 id="hb7" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:var(--measure);">Around the table</h3>
+        <div style="max-width:var(--measure);">
           <p style="margin-bottom:1.5em; color:#2B2D34;">The input redesign is the story I care most about, but it was one thread of two years of work across all three portals.</p>
         </div>
 
@@ -1954,8 +1998,8 @@
 
         <div style="margin:150px 0 0; border-top:1px solid #0F1014; padding-top:13px; display:flex; align-items:baseline; gap:13px;"><span style="font-size:10.5px; font-weight:600; letter-spacing:.1em; color:#DD0F26;">04</span><span style="font-size:10.5px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#0F1014;">Takeaway</span></div>
         <div style="font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#DD0F26; margin:44px 0 14px;">In closing</div>
-        <h3 id="hb8" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:640px;">What stayed with me</h3>
-        <div style="max-width:640px;">
+        <h3 id="hb8" style="font-weight:600; font-size:29px; line-height:1.15; letter-spacing:-.02em; margin:0 0 .9em; scroll-margin-top:80px; max-width:var(--measure);">What stayed with me</h3>
+        <div style="max-width:var(--measure);">
           <p style="font-size:18.5px; line-height:1.6; margin-bottom:1.4em; color:#0F1014;">Ask what structure the <em>work</em> has, not what structure the data has.</p>
           <p style="margin-bottom:1.5em; color:#2B2D34;">The six tabs weren't wrong by accident — they faithfully mirrored the database. They were wrong because engineers don't think in database tables; they think in pipelines.</p>
           <p style="margin-bottom:1.5em; color:#2B2D34;">Nearly every design decision that worked here came from studying the physical system — pressure pulses, diameter changes, junctions — until the interface could be shaped like the thing it describes.</p>
@@ -1965,7 +2009,7 @@
 
     <div style="border-top:1px solid #E6E8EE; margin-top:150px;">
       <a href="#" data-nav="ashley" data-nextcase="" style="display:block; padding:68px 24px 84px; color:#0F1014;">
-        <div data-r="frame" style="max-width:1240px; margin:0 auto; display:grid; grid-template-columns:200px minmax(0,960px); gap:56px; justify-content:center;">
+        <div data-r="frame" style="max-width:var(--frame); margin:0 auto; display:grid; grid-template-columns:200px minmax(0,var(--body)); gap:56px; justify-content:center;">
           <div style="font-size:10.5px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:#8A8D96; padding-top:6px;">Next case study</div>
           <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:40px;">
             <div>
@@ -1980,7 +2024,7 @@
     </div>
 
     <footer style="border-top:1px solid #E6E8EE; padding:34px 24px 76px;">
-      <div style="max-width:1240px; margin:0 auto; display:flex; justify-content:space-between; color:#8A8D96; font-size:13px;">
+      <div style="max-width:var(--frame); margin:0 auto; display:flex; justify-content:space-between; color:#8A8D96; font-size:13px;">
         <div>wanyinggu8@gmail.com</div>
         <div>Austin, TX</div>
       </div>
@@ -1991,7 +2035,7 @@
 
   <!-- ================= STYLE GUIDE ================= -->
   <div data-screen="style" data-screen-label="Style Guide">
-    <div style="max-width:1200px; margin:0 auto; padding:56px 24px;">
+    <div style="max-width:var(--shell); margin:0 auto; padding:56px var(--pad);">
       <h1 style="font-weight:600; font-size:48px; line-height:1.1; letter-spacing:-.025em; margin-bottom:56px;">Visual System</h1>
 
       <!-- Colors -->
