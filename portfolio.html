@@ -61,6 +61,11 @@
     [data-accent="ashley"] a:hover{color:#D24700}
     [data-accent="pg"] a:hover{color:#0B5BFF}
     [data-accent="wayhome"] a:hover{color:#0B7D74}
+    /* The accent belongs to the case study, not to the chrome around it —
+       Work / Lab / About sit on every screen and should hover the same
+       everywhere, as they do on the homepage. Same exemption the next-case
+       link already takes below. */
+    [data-accent] nav a:hover{color:#0F1014}
     [data-nextcase]{transition:background .25s ease}
     [data-nextcase]:hover{background:#F2F3F7}
     [data-accent] a[data-nextcase]:hover{color:#0F1014}
