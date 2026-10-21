@@ -259,17 +259,18 @@ Hairlines: 1px solid
 
 ## Files
 
-- **portfolio.html** — **the source of truth. Edit this directly.**
-  All seven screens, standalone, no build step, no dependencies except Google
-  Fonts (Instrument Sans).
+- **index.html** — **the source of truth. Edit this directly.**
+  All eight screens, standalone, no build step, no dependencies except Google
+  Fonts (Instrument Sans). Named `index.html` (it was `portfolio.html` until
+  2026-10-21) so a static host serves it at the domain root.
 
 - **Portfolio Pages v3.dc.html** — the original Claude Design export. Historical
   only; it needs a `support.js` runtime that was never shipped, so it does not
   run on its own.
 
 - **convert.py** — **retired 2026-08-09, do not run.** It converted the export
-  above into `portfolio.html`. Design authority has moved to Figma, so changes
-  now go straight into `portfolio.html`; re-running this would overwrite them.
+  above into what is now `index.html`. Design authority has moved to Figma, so
+  changes go straight into `index.html`; re-running this would overwrite them.
 
 ### Where the design lives now
 
