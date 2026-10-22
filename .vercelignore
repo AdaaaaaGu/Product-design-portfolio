@@ -1,0 +1,7 @@
+# Everything here is source or history, not the site. Without this they are
+# served as static files — convert.py and the .dc.html exports were all
+# fetchable at the domain root on the first deploy.
+convert.py
+*.dc.html
+README.md
+.claude/
