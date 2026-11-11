@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Filter Logic UI for Agentic Systems</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        // --- Icon Components (replaces lucide-react for single-file compatibility) ---
+        const Icon = ({ size = 18, children }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                {children}
+            </svg>
+        );
+        const Plus = ({ size }) => <Icon size={size}><path d="M5 12h14"/><path d="M12 5v14"/></Icon>;
+        const Trash2 = ({ size }) => <Icon size={size}><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></Icon>;
+        const Layers = ({ size }) => <Icon size={size}><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></Icon>;
+        const X = ({ size }) => <Icon size={size}><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></Icon>;
+        const Search = ({ size }) => <Icon size={size}><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></Icon>;
+        const ChevronDown = ({ size }) => <Icon size={size}><polyline points="6 9 12 15 18 9"/></Icon>;
+
+        // --- Configuration Data ---
+        const FIELDS_CONFIG = [
+          { id: 'user_name', label: 'User Name', type: 'text' },
+          { id: 'user_email', label: 'User Email', type: 'text' },
+          { id: 'age', label: 'Age', type: 'number' },
+          { id: 'is_verified', label: 'Is Verified', type: 'boolean' },
+          { id: 'last_login', label: 'Last Login', type: 'date' },
+          {
+            id: 'address',
+            label: 'Address',
+            type: 'object',
+            fields: [
+              { id: 'city', label: 'City', type: 'text' },
+              { id: 'country', label: 'Country', type: 'select', options: ['USA', 'Canada', 'UK', 'Germany', 'France'] },
+            ]
+          },
+          {
+            id: 'orders',
+            label: 'Orders',
+            type: 'list',
+            fields: [
+              { id: 'product_name', label: 'Product Name', type: 'text' },
+              { id: 'price', label: 'Price', type: 'number' },
+              { id: 'quantity', label: 'Quantity', type: 'number' },
+              { id: 'order_date', label: 'Order Date', type: 'date' },
+            ]
+          },
+        ];
+
+        const OPERATORS_CONFIG = {
+          text: [ { id: 'contains', label: 'contains' }, { id: 'not_contains', label: 'does not contain' }, { id: 'equals', label: 'is' }, { id: 'not_equals', label: 'is not' }, { id: 'starts_with', label: 'starts with' }, { id: 'ends_with', label: 'ends with' }, ],
+          number: [ { id: 'eq', label: '=' }, { id: 'neq', label: '!=' }, { id: 'gt', label: '>' }, { id: 'gte', label: '>=' }, { id: 'lt', label: '<' }, { id: 'lte', label: '<=' }, ],
+          select: [ { id: 'is', label: 'is' }, { id: 'is_not', label: 'is not' }, ],
+          boolean: [ { id: 'is', label: 'is' }, ],
+          date: [ { id: 'is', label: 'is' }, { id: 'is_before', label: 'is before' }, { id: 'is_after', label: 'is after' }, ],
+        };
+
+        const QUANTIFIERS = [ { id: 'ANY', label: 'at least one' }, { id: 'ALL', label: 'all' }, { id: 'NONE', label: 'none' }, ];
+
+        const FieldsContext = React.createContext(FIELDS_CONFIG);
+
+        // --- Helper Functions ---
+        const generateId = () => `id_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+        const flattenFields = (fields, prefix = '', prefixLabel = '') => {
+          let flat = [];
+          fields.forEach(field => {
+            const newId = prefix ? `${prefix}.${field.id}` : field.id;
+            const newLabel = prefixLabel ? `${prefixLabel} > ${field.label}` : field.label;
+            const isParent = (field.type === 'object' || field.type === 'list');
+            flat.push({ ...field, id: newId, label: newLabel, isParent });
+            if (isParent && field.fields) {
+              flat = flat.concat(flattenFields(field.fields, newId, newLabel));
+            }
+          });
+          return flat;
+        };
+
+        const getFieldConfig = (path, fields) => {
+          const parts = path.split('.');
+          let currentConfig = { fields };
+          for (const part of parts) {
+            if (!currentConfig || !currentConfig.fields) return null;
+            currentConfig = currentConfig.fields.find(f => f.id === part);
+          }
+          return currentConfig;
+        };
+
+        const createNewRule = (fieldsConfig) => {
+          const firstField = flattenFields(fieldsConfig).filter(f => !f.isParent)[0];
+          const fieldConfig = getFieldConfig(firstField.id, fieldsConfig);
+
+          if (fieldConfig.type === 'list') {
+              return {
+                id: generateId(),
+                field: firstField.id,
+                type: 'list_condition',
+                quantifier: 'ANY',
+                conditions: createNewGroup(fieldConfig.fields),
+              }
+          }
+
+          return {
+            id: generateId(),
+            field: firstField.id,
+            operator: OPERATORS_CONFIG[firstField.type][0].id,
+            value: fieldConfig.type === 'boolean' ? 'true' : '',
+            type: 'rule',
+          };
+        };
+
+        const createNewGroup = (fieldsConfig) => ({
+          id: generateId(),
+          combinator: 'AND',
+          rules: [createNewRule(fieldsConfig)],
+          type: 'group',
+        });
+
+        // --- UI Components ---
+        const { useState, useMemo, useContext, useRef, useEffect } = React;
+
+        const ValueInput = ({ rule, onUpdate, fieldConfig }) => {
+          const commonProps = {
+            value: rule.value,
+            onChange: (e) => onUpdate({ ...rule, value: e.target.value }),
+            className: "w-full flex-grow bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2",
+          };
+
+          switch (fieldConfig.type) {
+            case 'number': return <input type="number" {...commonProps} placeholder="e.g., 25" />;
+            case 'date': return <input type="date" {...commonProps} />;
+            case 'select': return ( <select {...commonProps}> {fieldConfig.options.map(o => <option key={o} value={o}>{o}</option>)} </select> );
+            case 'boolean': return ( <select {...commonProps}> <option value="true">True</option> <option value="false">False</option> </select> );
+            default: return <input type="text" {...commonProps} placeholder="Enter value..." />;
+          }
+        };
+
+        const SearchableFieldSelector = ({ value, onChange, fields }) => {
+          const [searchTerm, setSearchTerm] = useState('');
+          const [isOpen, setIsOpen] = useState(false);
+          const wrapperRef = useRef(null);
+          const inputRef = useRef(null);
+
+          const flatFields = useMemo(() => flattenFields(fields), [fields]);
+          const selectedField = useMemo(() => flatFields.find(f => f.id === value), [flatFields, value]);
+
+          const filteredFields = useMemo(() => {
+            if (!searchTerm) return flatFields;
+            return flatFields.filter(field => field.label.toLowerCase().includes(searchTerm.toLowerCase()));
+          }, [flatFields, searchTerm]);
+
+          useEffect(() => {
+            function handleClickOutside(event) {
+              if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
+                setIsOpen(false);
+                setSearchTerm('');
+              }
+            }
+            document.addEventListener("mousedown", handleClickOutside);
+            return () => document.removeEventListener("mousedown", handleClickOutside);
+          }, [wrapperRef]);
+
+          const handleSelect = (fieldId) => {
+            onChange(fieldId);
+            setIsOpen(false);
+            setSearchTerm('');
+          };
+
+          return (
+            <div ref={wrapperRef} className="relative w-full">
+              <div
+                className="flex-grow w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2 flex items-center justify-between cursor-pointer"
+                onClick={() => setIsOpen(true)}
+              >
+                <span>{selectedField?.label || 'Select a field...'}</span>
+                <ChevronDown size={16} className="text-gray-500" />
+              </div>
+
+              {isOpen && (
+                <div className="absolute z-10 top-full mt-1 w-full bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                  <div className="p-2 sticky top-0 bg-white border-b">
+                    <div className="relative">
+                       <Search size={16} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
+                       <input
+                          ref={inputRef}
+                          type="text"
+                          placeholder="Search fields..."
+                          className="w-full bg-gray-50 border border-gray-300 rounded-md p-2 pl-8 text-sm focus:ring-blue-500 focus:border-blue-500"
+                          value={searchTerm}
+                          onChange={(e) => setSearchTerm(e.target.value)}
+                          autoFocus
+                        />
+                    </div>
+                  </div>
+                  <ul>
+                    {filteredFields.map(field => {
+                      const isSelected = field.id === value;
+                      return (
+                        <li
+                          key={field.id}
+                          onClick={() => !field.isParent && handleSelect(field.id)}
+                          className={`p-2 text-sm cursor-pointer ${
+                            field.isParent
+                              ? 'font-bold text-gray-500 cursor-not-allowed'
+                              : `hover:bg-blue-50 ${isSelected ? 'bg-blue-100' : ''}`
+                          }`}
+                        >
+                          {field.label}
+                        </li>
+                      );
+                    })}
+                     {filteredFields.length === 0 && <li className="p-2 text-sm text-gray-500">No fields found.</li>}
+                  </ul>
+                </div>
+              )}
+            </div>
+          );
+        };
+
+        const StandardRule = ({ rule, onUpdate, onDelete }) => {
+          const fieldsConfig = useContext(FieldsContext);
+          const selectedField = getFieldConfig(rule.field, fieldsConfig);
+
+          const handleFieldChange = (newFieldPath) => {
+            const newField = getFieldConfig(newFieldPath, fieldsConfig);
+
+            if (newField.type === 'list') {
+              onUpdate({
+                id: rule.id,
+                field: newFieldPath,
+                type: 'list_condition',
+                quantifier: 'ANY',
+                conditions: createNewGroup(newField.fields),
+              });
+            } else {
+              onUpdate({
+                ...rule,
+                field: newFieldPath,
+                operator: OPERATORS_CONFIG[newField.type][0].id,
+                value: newField.type === 'boolean' ? 'true' : '',
+              });
+            }
+          };
+
+          if (!selectedField) return null;
+
+          return (
+            <div className="flex flex-col md:flex-row items-center gap-2 w-full p-2 bg-white rounded-lg border border-gray-200">
+              <div className="w-full md:w-1/3">
+                  <SearchableFieldSelector value={rule.field} onChange={handleFieldChange} fields={fieldsConfig} />
+              </div>
+              <div className="w-full md:w-auto">
+                <select value={rule.operator} onChange={(e) => onUpdate({ ...rule, operator: e.target.value })} className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2">
+                    {OPERATORS_CONFIG[selectedField.type].map(op => <option key={op.id} value={op.id}>{op.label}</option>)}
+                </select>
+              </div>
+              <div className="w-full flex-grow">
+                <ValueInput rule={rule} onUpdate={onUpdate} fieldConfig={selectedField} />
+              </div>
+              <button onClick={onDelete} className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-100 rounded-full transition-colors"><Trash2 size={18} /></button>
+            </div>
+          );
+        };
+
+        const ListConditionRule = ({ rule, onUpdate, onDelete }) => {
+            const fieldsConfig = useContext(FieldsContext);
+            const fieldConfig = getFieldConfig(rule.field, fieldsConfig);
+
+            return (
+                <div className="w-full p-3 bg-indigo-50 border-l-4 border-indigo-400 rounded-r-lg space-y-2">
+                    <div className="flex flex-col md:flex-row items-center gap-2">
+                        <span className="font-semibold text-indigo-800">{fieldConfig.label}</span>
+                        <span className="text-sm text-gray-700">where</span>
+                        <select value={rule.quantifier} onChange={(e) => onUpdate({ ...rule, quantifier: e.target.value })} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2">
+                            {QUANTIFIERS.map(q => <option key={q.id} value={q.id}>{q.label}</option>)}
+                        </select>
+                        <span className="text-sm text-gray-700">is true:</span>
+                        <button onClick={onDelete} className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-100 rounded-full transition-colors md:ml-auto"><Trash2 size={18} /></button>
+                    </div>
+                    <FieldsContext.Provider value={fieldConfig.fields}>
+                        <FilterGroup group={rule.conditions} onUpdate={(newConditions) => onUpdate({ ...rule, conditions: newConditions })} />
+                    </FieldsContext.Provider>
+                </div>
+            );
+        };
+
+        const Rule = ({ rule, onUpdate, onDelete }) => {
+          if (rule.type === 'list_condition') {
+            return <ListConditionRule rule={rule} onUpdate={onUpdate} onDelete={onDelete} />;
+          }
+          return <StandardRule rule={rule} onUpdate={onUpdate} onDelete={onDelete} />;
+        };
+
+        const FilterGroup = ({ group, onUpdate, onDelete, isRoot = false }) => {
+          const fieldsConfig = useContext(FieldsContext);
+
+          const updateChild = (childId, newChildData) => onUpdate({ ...group, rules: group.rules.map(r => (r.id === childId ? newChildData : r)) });
+          const deleteChild = (childId) => onUpdate({ ...group, rules: group.rules.filter(r => r.id !== childId) });
+          
+          const addRule = () => onUpdate({ ...group, rules: [...group.rules, createNewRule(fieldsConfig)] });
+          const addGroup = () => onUpdate({ ...group, rules: [...group.rules, createNewGroup(fieldsConfig)] });
+
+          return (
+            <div 
+                className={`p-4 rounded-lg bg-gray-100 border border-gray-200 w-full ${isRoot ? '' : 'ml-0 md:ml-4 mt-2'}`}
+            >
+              <div className="flex items-center gap-4 mb-3">
+                <div className="flex items-center bg-gray-200 rounded-full p-0.5">
+                  <button onClick={() => onUpdate({ ...group, combinator: 'AND'})} className={`px-4 py-1 text-sm font-semibold rounded-full transition-colors ${group.combinator === 'AND' ? 'bg-blue-600 text-white shadow' : 'text-gray-600 hover:bg-gray-300'}`}>AND</button>
+                  <button onClick={() => onUpdate({ ...group, combinator: 'OR'})} className={`px-4 py-1 text-sm font-semibold rounded-full transition-colors ${group.combinator === 'OR' ? 'bg-blue-600 text-white shadow' : 'text-gray-600 hover:bg-gray-300'}`}>OR</button>
+                </div>
+                {!isRoot && <button onClick={onDelete} className="ml-auto p-2 text-gray-500 hover:text-red-600 hover:bg-red-100 rounded-full transition-colors"><X size={18} /></button>}
+              </div>
+              <div className="relative">
+                {group.rules.map((item, index) => (
+                    <React.Fragment key={item.id}>
+                        {item.type === 'group' 
+                          ? <FilterGroup group={item} onUpdate={(newGroup) => updateChild(item.id, newGroup)} onDelete={() => deleteChild(item.id)} />
+                          : <Rule rule={item} onUpdate={(newRule) => updateChild(item.id, newRule)} onDelete={() => deleteChild(item.id)} />
+                        }
+                        {index < group.rules.length - 1 && (
+                          <div className="flex items-center justify-center my-3">
+                            <div className="flex-grow border-t border-gray-300"></div>
+                            <span className="flex-shrink mx-4 px-2 py-0.5 bg-gray-200 text-gray-600 text-xs font-semibold rounded-full">
+                              {group.combinator}
+                            </span>
+                            <div className="flex-grow border-t border-gray-300"></div>
+                          </div>
+                        )}
+                    </React.Fragment>
+                ))}
+              </div>
+              <div className="mt-4 flex items-center gap-2">
+                <button onClick={addRule} className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-blue-700 bg-blue-100 hover:bg-blue-200 rounded-lg transition-colors"><Plus size={16} /> Add Rule</button>
+                <button onClick={addGroup} className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-green-700 bg-green-100 hover:bg-green-200 rounded-lg transition-colors"><Layers size={16} /> Add Group</button>
+              </div>
+            </div>
+          );
+        };
+
+        function App() {
+          const [filters, setFilters] = useState(() => createNewGroup(FIELDS_CONFIG));
+          const [mode, setMode] = useState('basic'); // 'basic' or 'advanced'
+          const [jsonInput, setJsonInput] = useState(JSON.stringify(filters, null, 2));
+          const [jsonError, setJsonError] = useState(null);
+
+          useEffect(() => {
+            if (mode === 'basic') {
+              setJsonInput(JSON.stringify(filters, null, 2));
+              setJsonError(null);
+            }
+          }, [filters, mode]);
+
+          const handleModeChange = (newMode) => {
+            if (newMode === 'basic' && mode === 'advanced') {
+              try {
+                const parsedJson = JSON.parse(jsonInput);
+                setFilters(parsedJson);
+                setJsonError(null);
+                setMode('basic');
+              } catch (error) {
+                setJsonError('Invalid JSON format. Please correct it before switching to Basic mode.');
+              }
+            } else {
+              setMode(newMode);
+            }
+          };
+
+          const handleReset = () => {
+              const newFilters = createNewGroup(FIELDS_CONFIG);
+              setFilters(newFilters);
+              setJsonInput(JSON.stringify(newFilters, null, 2));
+              setJsonError(null);
+              setMode('basic');
+          };
+
+          return (
+            <div className="min-h-screen bg-gray-50 text-gray-800 p-4 md:p-8">
+              <div className="max-w-4xl mx-auto">
+                <header className="mb-6">
+                  <h1 className="text-3xl font-bold text-gray-900">Agentic Filter Builder</h1>
+                  <p className="text-gray-600 mt-1">Construct complex queries for nested data models.</p>
+                </header>
+                <div className="grid grid-cols-1 gap-8">
+                  <div className="p-6 bg-white rounded-xl shadow-md border border-gray-200">
+                    <div className="flex items-center justify-between mb-4">
+                        <h2 className="text-xl font-semibold">Filter Conditions</h2>
+                        <div className="flex items-center bg-gray-200 rounded-full p-1">
+                          <button onClick={() => handleModeChange('basic')} className={`px-4 py-1 text-sm font-medium rounded-full transition-colors ${mode === 'basic' ? 'bg-white text-gray-800 shadow' : 'bg-transparent text-gray-600'}`}>Basic</button>
+                          <button onClick={() => handleModeChange('advanced')} className={`px-4 py-1 text-sm font-medium rounded-full transition-colors ${mode === 'advanced' ? 'bg-white text-gray-800 shadow' : 'bg-transparent text-gray-600'}`}>Advanced</button>
+                        </div>
+                    </div>
+                    
+                    {mode === 'basic' ? (
+                        <FieldsContext.Provider value={FIELDS_CONFIG}>
+                            <FilterGroup group={filters} onUpdate={setFilters} isRoot={true} />
+                        </FieldsContext.Provider>
+                    ) : (
+                        <div>
+                            <textarea
+                                className={`w-full h-96 p-3 font-mono text-sm bg-gray-50 rounded-lg border ${jsonError ? 'border-red-500' : 'border-gray-300'} focus:ring-blue-500 focus:border-blue-500`}
+                                value={jsonInput}
+                                onChange={(e) => setJsonInput(e.target.value)}
+                            ></textarea>
+                            {jsonError && <p className="mt-2 text-sm text-red-600">{jsonError}</p>}
+                        </div>
+                    )}
+
+                    <div className="mt-6 flex justify-end"><button onClick={handleReset} className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-lg transition-colors">Reset Filters</button></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        }
+
+        const container = document.getElementById('root');
+        const root = ReactDOM.createRoot(container);
+        root.render(<App />);
+
+    </script>
+</body>
+</html>
+

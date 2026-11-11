@@ -72,6 +72,12 @@
        everywhere, as they do on the homepage. Same exemption the next-case
        link already takes below. */
     [data-accent] nav a:hover{color:#0F1014}
+    /* Live prototype link: the handoff artifact itself, opened in its own tab.
+       Bordered rather than inline so it reads as a thing to go to, not a
+       reference inside the prose. */
+    a[data-protolink]{transition:background .25s ease, border-color .25s ease}
+    a[data-protolink]:hover{background:#F3F0FF; border-color:#6C2BF2}
+    a[data-protolink]:hover [data-pl-title],a[data-protolink]:hover [data-pl-arrow]{color:#6C2BF2}
     [data-nextcase]{transition:background .25s ease}
     [data-nextcase]:hover{background:#F2F3F7}
     [data-accent] a[data-nextcase]:hover{color:#0F1014}
@@ -904,6 +910,14 @@
 
         <div style="max-width:var(--measure);">
           <p style="margin-bottom:1.5em; color:#2B2D34;">QKG taught me the line runs both ways. AI-native design isn’t maximizing what the model decides. It’s choosing, per interaction, what the model <em>gets</em> to decide — and building the interface that makes that boundary visible.</p>
+          <a href="/prototypes/qkg-filters.html" target="_blank" rel="noopener" data-protolink="" style="margin-top:2.2em; display:flex; align-items:center; justify-content:space-between; gap:24px; border:1px solid #E6E8EE; background:#FFFFFF; padding:20px 24px; color:#0F1014;">
+            <span>
+              <span style="display:block; font-size:10.5px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:#6C2BF2;">Live prototype</span>
+              <span data-pl-title="" style="display:block; font-size:16.5px; font-weight:500; margin-top:5px; line-height:1.35; color:#0F1014;">Open the QKG filter builder</span>
+              <span style="display:block; font-size:13.5px; color:#8A8D96; margin-top:3px; line-height:1.45;">The standalone HTML handed off in the Jira ticket.</span>
+            </span>
+            <span data-pl-arrow="" aria-hidden="true" style="font-size:24px; line-height:1; color:#ACAFB8; flex-shrink:0;">↗</span>
+          </a>
         </div>
 
         <div style="margin:150px 0 0; border-top:1px solid #0F1014; padding-top:13px; display:flex; align-items:baseline; gap:13px;"><span style="font-size:10.5px; font-weight:600; letter-spacing:.1em; color:#6C2BF2;">05</span><span style="font-size:10.5px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#0F1014;">Takeaway</span></div>
